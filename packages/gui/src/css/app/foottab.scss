@@ -1,0 +1,77 @@
+$height: size(foottab);
+
+.foottab-nav {
+   position: relative;
+   &::before,
+   &::after {
+      content: "";
+      position: absolute;
+      z-index: 10;
+      left: 0;
+      width: 100%;
+      height: line-width(slim);
+      background-color: line-color(normal);
+   }
+
+   &::before {
+      top: 0;
+   }
+
+   &::after {
+      bottom: 0;
+   }
+}
+
+.foottab-nav-label {
+   div {
+      @include reactive-box();
+   }
+
+   li {
+      @include fore-panel();
+      @include plane-radius(normal);
+      @include reactive-box(false, false, true);
+   }
+
+   p {
+      @include fore-button();
+      @include plane-radius(normal);
+   }
+
+   q {
+      @include fore-button();
+      @include reactive-box(true, true, true);
+      @include plane-radius(normal);
+   }
+
+   s {
+      @include plane-radius(small);
+      @include font-size(small);
+      @include selection();
+   }
+}
+
+.message {
+   b {
+      @include font-size(small);
+
+      &::after {
+         @include selection();
+      }
+   }
+
+   li {
+      &[level="debug"] {
+         color: info-color(success);
+      }
+      &[level="info"] {
+         color: info-color(detail);
+      }
+      &[level="warn"] {
+         color: info-color(warn);
+      }
+      &[level="error"] {
+         color: info-color(error);
+      }
+   }
+}

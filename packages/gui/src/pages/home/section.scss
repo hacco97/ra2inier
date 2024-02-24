@@ -1,0 +1,49 @@
+$height: size(foottab);
+
+> section {
+   position: relative;
+   @include z-index(main);
+   display: flex;
+   width: 100%;
+   flex: 1;
+   min-height: 0;
+
+   // 左侧边栏
+   > aside {
+      flex: 0 1 250px;
+      position: relative;
+      @include z-index(lefttab);
+      min-width: size(lefttab);
+   }
+
+   // 中间面板
+   > main {
+      flex: 1 1 0;
+      position: relative;
+      @include z-index(main); // z-index最小
+      min-width: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+
+      // 在此之上，panel面板
+      > article {
+         position: relative;
+         height: 100%;
+         min-height: 0;
+         min-width: 0;
+      }
+
+      // 在此之上，下边栏的index
+      > aside {
+         position: absolute;
+         @include z-index(foottab);
+         left: 0;
+         bottom: 0;
+         width: 100%;
+         height: 300px;
+         max-height: 100%;
+         min-height: $height;
+      }
+   }
+}

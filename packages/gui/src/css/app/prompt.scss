@@ -1,0 +1,14 @@
+.prompt {
+   @include fore-panel();
+   @include plane-radius(normal);
+
+   number-input{
+      @include normal-panel(normal);
+   }
+
+   button {
+      @include reactive-box(true, true, true);
+      @include normal-button();
+      @include plane-radius(normal);
+   }
+}

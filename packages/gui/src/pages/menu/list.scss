@@ -1,0 +1,75 @@
+$height: size(menu);
+$item-height: line-height(small);
+$item-width: 50px;
+
+> section {
+   flex: 2 1 0;
+   min-width: 0;
+
+   > ul {
+      width: 100%;
+      height: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+
+      > h2 {
+         display: flex;
+         // height: 100%;
+         flex-wrap: nowrap;
+         align-items: center;
+
+         > div {
+            flex: 0 0 $item-width;
+
+            li {
+               position: relative;
+               text-align: center;
+               line-height: 100%;
+            }
+
+            h3 {
+               height: $height;
+            }
+         }
+      }
+   }
+
+   > ol {
+      position: relative;
+      z-index: 10;
+      height: 0px;
+      width: 0px;
+
+      > div {
+         display: flex;
+         position: absolute;
+         top: 0;
+         flex-wrap: nowrap;
+
+         > p {
+            flex: 0 0 $item-width;
+            text-align: left;
+            overflow: visible;
+
+            li {
+               width: fit-content;
+               overflow: hidden;
+            }
+
+            em {
+               display: inline-block;
+               height: $item-height;
+               padding-left: 1em;
+               height: fit-content;
+            }
+
+            h4 {
+               width: 150px;
+               height: $item-height;
+               line-height: $item-height;
+               text-overflow: ellipsis;
+            }
+         }
+      }
+   }
+}

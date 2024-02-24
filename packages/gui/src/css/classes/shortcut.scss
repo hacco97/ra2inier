@@ -1,0 +1,45 @@
+@use "@/css/mixins/index.scss" as *;
+
+.reactive-h {
+   @include reactive-box(true, false, false);
+}
+
+.reactive-hcs {
+   @include reactive-box(true, true, true);
+}
+
+.reactive-c {
+   @include reactive-box(false, true, false);
+}
+
+.reactive-hc {
+   @include reactive-box(true, true, false);
+}
+
+.normal-rpanel {
+   @include plane-radius(normal);
+}
+
+.normal-panel {
+   @include normal-panel();
+}
+
+.normal-button {
+   @include normal-button();
+}
+
+.normal-label {
+   @include normal-label();
+}
+
+.fore-button {
+   @include fore-button();
+}
+
+.fore-panel {
+   @include fore-panel();
+}
+
+.list-item {
+   @include list-item();
+}

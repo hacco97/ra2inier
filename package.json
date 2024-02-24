@@ -1,0 +1,12 @@
+{
+   "name": "ra2inier",
+   "version": "1.0.0",
+   "description": "A powerful editor for the ini rule file of Red Alert 2.",
+   "private": "true",
+   "scripts": {
+      "dev": "cd packages/gui && pnpm run dev"
+   },
+   "keywords": [],
+   "author": "",
+   "license": "GPL-3.0-only"
+}

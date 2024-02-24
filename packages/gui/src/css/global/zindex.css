@@ -1,0 +1,11 @@
+:root {
+   --z-index-mask: 120;
+   --z-index-icon: 100;
+   --z-index-menu: 90;
+   --z-index-footer: 80;
+   --z-index-ctxmenu: 70;
+   --z-index-lefttab: 60;
+   --z-index-nav: 50;
+   --z-index-foottab: 40;
+   --z-index-main: 30;
+}

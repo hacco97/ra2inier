@@ -1,0 +1,17 @@
+{
+  "name": "Name",
+  "scopes": [
+    "BuildingsType",
+    "VehicleType"
+  ],
+  "files": [
+    "rules",
+    "art",
+    "ai"
+  ],
+  "platform": "ra2",
+  "values": "",
+  "default": "",
+  "version": "时间戳",
+  "brief": "程序编写的注释名称"
+}

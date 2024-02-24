@@ -1,0 +1,27 @@
+{
+   "compilerOptions": {
+      "target": "ESNext",
+      "composite": true,
+      "strict": true,
+      "module": "ESNext",
+      "moduleResolution": "Node",
+      "resolveJsonModule": true,
+      "allowSyntheticDefaultImports": true,
+      "experimentalDecorators": true, // 正确编译依赖此项，不能修改
+      "useDefineForClassFields": true, // 正确编译依赖此项，不能修改
+      "baseUrl": ".",
+      "paths": {
+         "~/*": [
+            "./electron/*"
+         ],
+         "~main/*": [
+            "./electron/mainWindow/*"
+         ]
+      }
+   },
+   "include": [
+      "vite.config.mts",
+      "electron",
+      "env/env.d.ts",
+   ]
+}

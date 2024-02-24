@@ -1,0 +1,181 @@
+/* 定义全局的基础类 */
+
+/* 浮动清除 */
+.clearfix:before,
+.clearfix:after {
+   content: "";
+   display: table;
+}
+
+.clearfix:after {
+   clear: both;
+}
+
+/* 竖向滚动 */
+.scroll {
+   height: 100%;
+   overflow-y: auto;
+   overflow-x: hidden;
+}
+
+.scroll::-webkit-scrollbar {
+   width: 8px;
+   height: 8px;
+   background-color: rgba(0, 0, 0, 0);
+   border-radius: 4px;
+}
+
+.scroll::-webkit-scrollbar-button {
+   height: 8px;
+   width: 8px;
+   border-radius: 4px;
+   background-color: var(--scroll-color-button);
+}
+
+.scroll::-webkit-scrollbar-thumb {
+   border-radius: 4px;
+   background-color: var(--scroll-color-thumb);
+
+   &:hover {
+      background-color: color-mix(in srgb, var(--scroll-color-thumb) 80%, white 20%);
+   }
+}
+
+.scroll::-webkit-scrollbar-track {
+   border-radius: 4px;
+   background-color: var(--scroll-color-track);
+}
+
+/* 横向滚动 */
+.scrollx {
+   width: 100%;
+   overflow-y: hidden;
+   overflow-x: auto;
+}
+
+.scrollx::-webkit-scrollbar {
+   width: 4px;
+   height: 4px;
+   border-radius: 2px;
+   background-color: rgba(0, 0, 0, 0);
+}
+
+.scrollx::-webkit-scrollbar-button {
+   height: 4px;
+   width: 4px;
+   border-radius: 2px;
+   background-color: var(--scroll-color-button);
+}
+
+.scrollx::-webkit-scrollbar-thumb {
+   border-radius: 2px;
+   background-color: var(--scroll-color-thumb);
+
+   &:hover {
+      background-color: color-mix(in srgb, var(--scroll-color-thumb) 80%, white 20%);
+   }
+}
+
+.scrollx::-webkit-scrollbar-track {
+   border-radius: 2px;
+   background-color: var(--scroll-color-track);
+}
+
+.scrollxb {
+   width: 100%;
+   overflow-y: hidden;
+   overflow-x: auto;
+}
+
+.scrollxb::-webkit-scrollbar {
+   width: 8px;
+   height: 8px;
+   border-radius: 4px;
+   background-color: rgba(0, 0, 0, 0);
+}
+
+.scrollxb::-webkit-scrollbar-button {
+   height: 8px;
+   width: 8px;
+   border-radius: 4px;
+   background-color: var(--scroll-color-button);
+}
+
+.scrollxb::-webkit-scrollbar-thumb {
+   border-radius: 4px;
+   background-color: var(--scroll-color-thumb);
+
+   &:hover {
+      filter: brightness(1.5);
+   }
+}
+
+.scrollxb::-webkit-scrollbar-track {
+   border-radius: 4px;
+   background-color: var(--scroll-color-track);
+}
+
+.svg-icon {
+   div {
+      width: 100%;
+      height: 100%;
+   }
+
+   svg {
+      display: block;
+      height: 100%;
+      width: 100%;
+   }
+
+   path {
+      fill: currentColor;
+   }
+}
+
+@mixin center() {
+   content: "";
+   height: 100%;
+   width: 0;
+   display: inline-block;
+   vertical-align: middle;
+}
+
+.vertical-center::after {
+   @include center();
+}
+
+.vertical-center > ::after {
+   @include center();
+}
+
+.text-center {
+   text-align: center;
+}
+
+.text-center::after {
+   @include center();
+}
+
+.text-center > ::after {
+   @include center();
+}
+
+.file-box {
+   display: block;
+   position: relative;
+   z-index: auto;
+   overflow: hidden;
+   cursor: pointer;
+
+   input {
+      display: block;
+      position: absolute;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+   }
+}

@@ -1,0 +1,107 @@
+@use "./env.scss" as *;
+@forward "./env.scss";
+@use "./shortcut.scss" as *;
+@forward "./shortcut.scss";
+
+// 高阶mixin
+@mixin outline-box($width: slim, $color: normal, $offset: -1px) {
+   outline: line-width($width) line-style() line-color($color);
+   outline-offset: $offset;
+}
+
+@mixin border-box($width: slim, $color: normal) {
+   border: line-width($width) line-style() line-color($color);
+}
+
+@mixin normal-panel($round: false, $fsize: normal) {
+   @include font-size($fsize);
+   @include font-color(normal);
+   @include plane-color(normal);
+   @if $round {
+      @include plane-radius(normal);
+   }
+}
+
+@mixin back-panel($round: false, $fsize: normal) {
+   @include font-size($fsize);
+   @include font-color(back);
+   @include plane-color(back);
+   @if $round {
+      @include plane-radius($round);
+   }
+}
+
+@mixin app-panel() {
+   @include font-size(normal);
+   @include font-color(back);
+   @include plane-color(default);
+}
+
+@mixin fore-panel($round: false, $fsize: normal) {
+   @include font-size($fsize);
+   @include font-color(fore);
+   @include plane-color(fore);
+   @if $round {
+      @include plane-radius(normal);
+   }
+}
+
+@mixin panel($type, $round: false, $fsize: normal) {
+   @if $type==normal {
+      @include normal-panel($round, $fsize);
+   } @else if $type==fore {
+      @include fore-panel($round, $fsize);
+   } @else {
+      @include back-panel($round, $fsize);
+   }
+}
+
+@mixin normal-box($round: true) {
+   @include normal-panel($round);
+   @include outline-box(normal, normal, -2px);
+}
+
+@mixin fore-box($round) {
+   @include fore-panel($round);
+   @include outline-box(normal, normal, -2px);
+}
+
+@mixin reactive-box($hover: true, $click: true, $select: false) {
+   @if $click==true {
+      &:active {
+         scale: 0.9;
+      }
+   }
+
+   @if $select==true {
+      &[selected="true"] {
+         background-color: info-color(detail);
+      }
+   }
+
+   @if $hover==true {
+      &:hover {
+         filter: brightness(1.35);
+      }
+   }
+}
+
+@mixin normal-button($round: true) {
+   @include normal-box($round);
+   @include reactive-box();
+}
+
+@mixin fore-button($round: true) {
+   @include fore-box($round);
+   @include reactive-box();
+}
+
+@mixin normal-label($round: true) {
+   @include normal-box($round);
+   @include reactive-box(true, true, true);
+}
+
+@mixin list-item() {
+   @include panel(back, false, small);
+   @include reactive-box(true, false, false);
+}

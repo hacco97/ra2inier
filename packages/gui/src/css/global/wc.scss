@@ -1,0 +1,9 @@
+
+flex-area {
+   @include selection-var();
+}
+
+flex-input::part(input)::selection,
+number-input::part(input)::selection {
+   @include selection();
+}

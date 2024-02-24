@@ -1,0 +1,24 @@
+{
+   "id": 1708260173189,
+   "seed": 1567420349345,
+   "version": 1708260173189,
+   "name": "Name",
+   "brief": "对象的名称",
+   "default": "",
+   "author": "",
+   "files": [
+      "rules.ini"
+   ],
+   "values": "str",
+   "valueParam": [
+      {
+         "type": "str",
+         "exp": "str()",
+         "repeat": 1
+      }
+   ],
+   "scopes": [
+      "VehicleTypes",
+      "/\\.+Types/"
+   ]
+}

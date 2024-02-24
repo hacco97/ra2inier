@@ -1,0 +1,111 @@
+$padding: 1ch;
+
+li {
+   /* 不能在这层新建层叠上下文，cursor逻辑的行为依赖于这个要求 */
+   // 不能将li的display改为block，那样会变得很卡顿，原因未知，
+   // 可能与columns布局的底层代码的限制有关，当其子元素为block时会很卡
+   display: inline-block;
+   width: 100%;
+   height: fit-content;
+   max-width: 100%;
+
+   &:nth-child(even) {
+      background-color: var(--color-bg-1);
+   }
+
+   &:nth-child(odd) {
+      background-color: var(--color-bg-2);
+   }
+
+   p {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 100%;
+      margin: 3px 0;
+      padding: 0 $padding;
+      min-height: 1lh;
+      line-height: var(--line-height);
+   }
+
+   article {
+      padding: 0 $padding;
+   }
+
+   pre {
+      margin: 3px;
+      padding: 0 $padding;
+   }
+
+   i {
+      display: block;
+      height: 1lh;
+      aspect-ratio: 1;
+      text-align: center;
+      transition: all 0.5s ease;
+   }
+
+   span {
+      display: block;
+      position: relative;
+      height: 100%;
+      min-height: 0;
+      min-width: 100px;
+      padding: 0 1.5ch 0 2ch;
+      text-overflow: ellipsis;
+      text-align: right;
+      border-radius: var(--textbox-radius);
+      background-color: var(--color-bg-3);
+
+      &[selected="true"] {
+         color: var(--color-t-5);
+         background-color: var(--color-bg-5);
+      }
+
+      &[cursor="true"]::after {
+         content: ">";
+         position: absolute;
+         top: 0;
+         left: 1ch;
+      }
+   }
+
+   flex-input {
+      position: relative;
+      z-index: auto;
+      display: block;
+      height: 1lh;
+      min-width: 80px;
+      max-width: 100%;
+      padding: 0 1em;
+      text-align: center;
+      border-radius: var(--textbox-radius);
+      background-color: var(--color-bg-4);
+   }
+
+   flex-input:focus {
+      color: var(--color-t-2);
+      outline: var(--color-line-light) solid 2px;
+      outline-offset: -1px;
+   }
+
+   flex-input::after {
+      content: ",";
+      display: block;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+   }
+
+   flex-input:last-child::after {
+      content: "";
+   }
+
+   em {
+      flex: 0 0 auto;
+      margin: 0 2ch;
+      min-height: 0;
+      font-weight: 700;
+   }
+}

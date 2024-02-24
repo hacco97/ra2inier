@@ -1,0 +1,60 @@
+.panel {
+   @include back-panel(big);
+   @include outline-box(slim, normal, 0px);
+}
+
+.panel-view {
+   @include back-panel(big);
+   @include outline-box(slim, normal, 0px);
+   @include font-family(code);
+}
+
+.nav-label {
+   @include fore-panel();
+   @include reactive-box(true, true, true);
+   @include plane-radius(normal);
+   @include font-family(control);
+}
+
+.panel-nav {
+   &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      display: block;
+      width: 100%;
+      height: line-width(slim);
+      background-color: line-color(normal);
+   }
+}
+
+.nav-close {
+   @include fore-panel();
+   @include reactive-box(true, false, false);
+   @include plane-radius(normal);
+}
+
+.panelnav-btn {
+   s {
+      @include fore-button();
+   }
+}
+
+.drager-hoverable {
+   background-color: color-mix(in srgb, info-color(detail) 50%, #0000 50%);
+}
+
+.panel-drager {
+   flex-basis: line-width(slim) !important;
+   background-color: line-color(normal);
+   p:hover,
+   p[dragging="true"] {
+      @extend .drager-hoverable;
+   }
+}
+
+.drager-hover:hover,
+.drager-hover[dragging="true"] {
+   @extend .drager-hoverable;
+}

@@ -1,0 +1,54 @@
+{
+   // 使用 IntelliSense 了解相关属性。
+   // 悬停以查看现有属性的描述。
+   // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+   "version": "0.2.0",
+   "compounds": [
+      {
+         "name": "调试gui",
+         "configurations": [
+            "Main",
+            "Renderer"
+         ],
+         "stopAll": true
+      }
+   ],
+   "configurations": [
+      {
+         "name": "Main",
+         "type": "node",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/packages/gui",
+         "runtimeArgs": [
+            "vite",
+            "dev"
+         ],
+         "outputCapture": "std",
+         "console": "integratedTerminal",
+         "runtimeExecutable": "pnpm",
+         "skipFiles": [
+            "<node_internals>/**"
+         ],
+      },
+      {
+         "name": "Renderer",
+         "port": 19222,
+         "request": "attach",
+         "type": "chrome",
+         "webRoot": "${workspaceFolder}/packages/gui"
+      },
+      {
+         "name": "调试test用例",
+         "request": "launch",
+         "runtimeArgs": [
+            "test"
+         ],
+         "runtimeExecutable": "pnpm",
+         "skipFiles": [
+            "<node_internals>/**"
+         ],
+         "type": "node",
+         "cwd": "${workspaceFolder}/packages/test"
+      }
+   ]
+}

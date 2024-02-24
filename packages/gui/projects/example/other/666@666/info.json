@@ -1,0 +1,1 @@
+{"id":666,"version":666, "seed": 5,"name":"Image","brief":"指定游戏实体的美术资源","default":"null","author":"dfaddddddsdf","files":["rulesmo.ini","artmo.ini"],"values":"obj(Vxl)","valueParam":[{"type":"obj","exp":"obj(Vxl)","objectType":"Vxl","repeat":1}],"scopes":["BuildingsType","VehicleType"]}

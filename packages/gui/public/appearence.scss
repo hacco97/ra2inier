@@ -1,0 +1,214 @@
+
+/* 定义全局的基础类 */
+
+//  文本框
+.tb {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   overflow: hidden;
+   white-space: nowrap;
+   text-overflow: ellipsis;
+}
+
+// 单行文字
+.tl {
+   display: flex;
+   align-items: center;
+   overflow: hidden;
+   white-space: nowrap;
+   text-overflow: ellipsis;
+}
+
+// 圆角
+
+
+.rd {
+   overflow: hidden;
+   border-radius: 10px;
+}
+
+.rd2 {
+   overflow: hidden;
+   border-radius: 15px;
+}
+
+.rd3 {
+   overflow: hidden;
+   border-radius: 20px;
+}
+
+// 外边框
+.ol-l {
+   outline: var(--color-line-light) solid 2px;
+   outline-offset: -1px;
+}
+
+.ol-n {
+   outline: var(--color-line-normal) solid 2px;
+   outline-offset: -1px;
+}
+
+.ol-d {
+   outline: var(--color-line-dark) solid 2px;
+   outline-offset: -1px;
+}
+
+// 外边框
+.bd-l {
+   border: var(--color-line-light) solid 1px;
+}
+
+.bd-n {
+   border: var(--color-line-normal) solid 1px;
+}
+
+.bd-d {
+   border: var(--color-line-dark) solid 1px;
+}
+
+
+// hover效果
+.c-h-ll:hover {
+   color: var(--color-text-deepdark);
+   background-color: white;
+}
+
+.c-h-l:hover {
+   color: var(--color-text-dark);
+   background-color: var(--color-background-highlight);
+}
+
+.c-h-n:hover {
+   color: var(--color-text-light);
+   background-color: var(--color-background-light);
+}
+
+.c-h-d:hover {
+   color: var(--color-text-light);
+   background-color: var(--color-background-normal);
+}
+
+.c-h-dd:hover {
+   color: var(--color-text-highlight);
+   background-color: var(--color-background-dark);
+}
+
+.f-menu {
+   font-family: var(--font-menubar);
+}
+
+.f-label {
+   font-family: var(--font-label);
+}
+
+.f-tab {
+   font-family: var(--font-tab);
+}
+
+.f-text {
+   font-family: var(--font-text);
+}
+
+.f-main {
+   font-family: var(--font-main);
+}
+
+.f-s-s {
+   font-size: var(--font-size-small);
+}
+
+.f-s-n {
+   font-size: var(--font-size-normal);
+}
+
+.f-s-b {
+   font-size: var(--font-size-big);
+}
+
+.list-item {
+   width: 100%;
+   padding: 3px 10px;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.list-item2 {
+   width: 100%;
+   padding: 7px 10px;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.list-item3 {
+   width: 100%;
+   padding: 11px 10px;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.text-box {
+   display: block;
+   width: 100%;
+   margin: 0 auto;
+   padding: 1em;
+   line-height: 1.3em;
+   overflow: auto;
+}
+
+.file-box {
+   display: block;
+   position: relative;
+   z-index: auto;
+   overflow: hidden;
+   cursor: pointer;
+
+   input {
+      display: block;
+      position: absolute;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+   }
+}
+
+.simple-button {
+   background-color: var(--color-background-light);
+   border-radius: 5px;
+
+   &:hover {
+      filter: brightness(1.3);
+   }
+
+   &:active {
+      filter: brightness(1.7);
+   }
+}
+
+.required {
+   color: var(--color-text-highlight);
+}
+
+
+.sh-btn {
+
+}
+
+.sh-btn[selected=true] {
+   filter: hue-rotate(10deg) saturate(150%) brightness(1.05);
+}
+
+.sh-btn:hover {
+   filter: brightness(1.2);
+}
+
+.sh-btn[selected=true]:hover {
+   filter: hue-rotate(10deg) saturate(150%) brightness(1.2);
+}

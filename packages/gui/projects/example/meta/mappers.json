@@ -1,0 +1,1 @@
+[{"id":2341,"seed":5,"version":10,"name":"rulesmo.ini","detail":"mo3游戏规则文件啊","targetPath":"./","inputList":{"VehicleTypes":"vehicleIHandler","InfantryTypes":"infantryIHandler","BuildingTypes":"buildingIHandler"},"outputList":["generalOHandler","register"]}]

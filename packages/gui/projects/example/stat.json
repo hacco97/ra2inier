@@ -1,0 +1,34 @@
+{
+   "authors": [
+      {
+         "id": 0,
+         "name": "zs",
+         "contact": [
+            "qq:14231432",
+            "mail:adf@com",
+            "bilibili:adsceafg",
+            "......:......"
+         ]
+      }
+   ],
+   "resList": [
+      {
+         "files": [
+            "ctnk.vxl",
+            "ctnk.hva"
+         ],
+         "name": "CTNK",
+         "brief": "麒麟坦克",
+         "author": 0
+      }
+   ],
+   "extra": [
+      {
+         "files": [
+            "ares.dll",
+            "ares.pdb"
+         ],
+         "outDir": "."
+      }
+   ]
+}

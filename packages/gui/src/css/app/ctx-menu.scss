@@ -1,0 +1,7 @@
+.mask {
+   @include normal-panel();
+}
+
+.context-menu {
+   @include fore-panel(normal);
+}

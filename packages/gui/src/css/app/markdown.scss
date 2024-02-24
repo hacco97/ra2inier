@@ -1,0 +1,113 @@
+* {
+   margin: 7px 1em;
+   padding: 0 1em;
+}
+
+h1 {
+   font-size: 2em;
+   font-weight: bold;
+   color: var(--color-text-light);
+   padding-left: 0;
+}
+
+h2 {
+   font-size: 1.8em;
+   font-weight: bold;
+   color: var(--color-text-light);
+   padding-left: 0.4em;
+}
+
+h3 {
+   font-size: 1.6em;
+   font-weight: bold;
+   color: var(--color-text-light);
+   padding-left: 0.8em;
+}
+
+h4 {
+   font-size: 1.4em;
+   font-weight: bold;
+   color: var(--color-text-light);
+   padding-left: 1.2em;
+}
+
+h5 {
+   font-size: 1.2em;
+   font-weight: bold;
+   color: var(--color-text-normal);
+   padding-left: 1.6em;
+}
+
+h6 {
+   font-size: 1em;
+   font-weight: bold;
+   color: var(--color-text-normal);
+   padding-left: 2em;
+
+}
+
+img {
+   display: block;
+   margin: 8px auto;
+   max-width: 90%;
+   max-height: 90vh;
+   // object-fit: cover;
+}
+
+a {
+   cursor: pointer;
+   color: var(--color-text-light);
+}
+
+a:hover {
+   color: var(--color-text-highlight);
+}
+
+table {
+   display: flex;
+   flex-direction: column;
+   text-align: center;
+   vertical-align: middle;
+   margin: 0 auto;
+   width: 70%;
+}
+
+thead,
+tbody {
+   display: block;
+   width: 100%;
+   height: fit-content;
+}
+
+tr {
+   display: flex;
+   justify-items: center;
+   align-items: center;
+   justify-content: space-evenly;
+   margin: 0;
+   border: 1px solid var(--color-line-normal);
+}
+
+td,
+th {
+   display: block;
+   flex: auto;
+   display: block;
+   margin: 0;
+   padding: 6px;
+   height: 100%;
+   border-left: 1px solid var(--color-line-normal);
+}
+
+td:first-child,
+th:first-child {
+   border-left: 0;
+}
+
+li {
+   list-style: inside;
+}
+
+p {
+   margin: 12px 0;
+}

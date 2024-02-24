@@ -1,0 +1,28 @@
+:root {
+
+
+   /* 文字颜色 */
+   /* 高亮文字 */
+   --color-text-highlight: rgb(255, 255, 255);
+   /* 较亮文字 */
+   --color-text-light: rgb(190, 192, 197);
+   /* 普通文字 */
+   --color-text-normal: rgb(144, 146, 150);
+   /* 较暗文字 */
+   --color-text-dark: rgb(92, 93, 96);
+   /* 深黑文字 */
+   --color-text-deepdark: rgb(33, 36, 42);
+
+
+
+      /* 高亮部分背景颜色 */
+      --color-background-highlight: #6d7c9a;
+      /* 较亮部分背景颜色 */
+      --color-background-light: #454f63;
+      /* 主要部分背景颜色 */
+      --color-background-normal: #30353f;
+      /* 较暗部分背景颜色 */
+      --color-background-dark: #262c35;
+      /* 深黑部分背景颜色 */
+      --color-background-deepdark: #171d27;
+}

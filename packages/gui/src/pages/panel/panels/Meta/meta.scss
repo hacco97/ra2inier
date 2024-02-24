@@ -1,0 +1,61 @@
+flex-input {
+   display: block;
+   height: 100%;
+   min-width: 50px;
+}
+
+flex-input[disabled=true] {
+   background-color: var(--color-background-normal);
+}
+
+$head-height: 30px;
+$line-height: 30px;
+
+// 头部
+>h1 {
+   display: flex;
+   position: absolute;
+   top: 0;
+   left: 0;
+   z-index: 1;
+   width: 100%;
+   height: $head-height;
+   line-height: $head-height;
+
+   span {
+      display: block;
+      margin: 0 $head-height*2;
+   }
+
+   .svg-icon {
+      flex: 0 0 $head-height;
+      height: $head-height;
+      padding: 0.15*$head-height;
+   }
+}
+
+// 中部
+>main {
+   padding: 10px;
+   padding-top: calc($head-height *1.2);
+   height: 100%;
+   min-height: 0;
+
+   li {
+      display: flex;
+      flex-wrap: nowrap;
+      height: $line-height;
+      line-height: $line-height;
+      margin: 4px 0;
+      overflow: hidden;
+      white-space: nowrap;
+   }
+
+   div {
+      margin: 4px 0;
+   }
+}
+
+footer {
+   height: 50%;
+}

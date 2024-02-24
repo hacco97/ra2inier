@@ -1,0 +1,29 @@
+{
+   "id": 1707669728737,
+   "seed": 1365594863888,
+   "version": 1708256442579,
+   "name": "Test01",
+   "group": "#0",
+   "scope": "VehicleTypes",
+   "entry": [
+      "Fasd\n\nasdf",
+      "Af\n\new",
+      "Sda\n\n123",
+      "Name\n\nsf",
+      "Laser\n\n82,189,158",
+      "Sight\n\n6",
+      "Emp\n\n0.45"
+   ],
+   "inline": [
+      "1",
+      "2",
+      "33大法师",
+      "324"
+   ],
+   "copy": [],
+   "detail": "及dsf",
+   "envVariable": {
+      "efqw": "afsd",
+      "sdfa": "afsd"
+   }
+}

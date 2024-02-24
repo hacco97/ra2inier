@@ -1,0 +1,1 @@
+{"id":777,"version":777, "seed": 5,"name":"Primary","brief":"指定单位的主武器","default":"null","author":"","files":["rulesmo.ini","artmo.ini"],"values":"obj(WeaponTypes)","valueParam":[{"type":"obj","exp":"obj(WeaponTypes)","objectType":"WeaponTypes","repeat":1}],"scopes":["BuildingsType","VehicleTypes","BuildingTypes"]}

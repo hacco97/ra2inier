@@ -1,0 +1,82 @@
+ body {
+    font: normal normal normal 16px/1 "MicroSoft YaHei", "仿宋", Arial, sans-serif;
+ }
+
+ * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+    color: inherit;
+    outline: none;
+    z-index: auto;
+ }
+
+ li,
+ ol,
+ ul {
+    list-style: none;
+ }
+
+ img,
+ a,
+ button,
+ input,
+ textarea {
+    all: unset;
+    vertical-align: middle;
+ }
+
+ h1,
+ h2,
+ h3,
+ h4,
+ h5,
+ h6 {
+    all: unset;
+    display: block;
+ }
+
+ article,
+ aside,
+ details,
+ figcaption,
+ figure,
+ footer,
+ header,
+ hgroup,
+ menu,
+ nav,
+ section {
+    display: block;
+ }
+
+ blockquote,
+ q {
+    quotes: none;
+ }
+
+ blockquote:before,
+ blockquote:after,
+ q:before,
+ q:after {
+    content: '';
+    content: none;
+ }
+
+ table {
+    border-collapse: collapse;
+    border-spacing: 0;
+ }
+
+ input[type=number]::-webkit-inner-spin-button,
+ input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+ }
+
+ s {
+    text-decoration: none;
+ }

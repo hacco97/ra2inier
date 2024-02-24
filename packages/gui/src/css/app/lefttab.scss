@@ -1,0 +1,18 @@
+.lefttab-label {
+   $radius: radius("normal");
+   border-radius: $radius 0 0 $radius;
+   @include fore-panel();
+   @include reactive-box(true, true, true);
+}
+
+.lefttab-panel {
+   @include back-panel(false, small);
+   @include border-box();
+   $radius: radius(big);
+   border-radius: 0 $radius $radius 0;
+}
+
+.lefttab-header {
+   @include font-size(normal);
+   @include outline-box(slim,normal,0px);
+}

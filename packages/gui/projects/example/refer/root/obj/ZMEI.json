@@ -1,0 +1,28 @@
+{
+   "id": 15002,
+   "version": 16988,
+   "seed": 3,
+   "name": "ZMEI",
+   "group": "#0",
+   "scope": "Infantry",
+   "entry": [
+      {
+         "key": "Name",
+         "values": [
+            "dsfsa",
+            "dsddd"
+         ],
+         "comment": ""
+      },
+      {
+         "key": "Came",
+         "values": [
+            "ddd",
+            "13"
+         ],
+         "comment": ""
+      }
+   ],
+   "inline": [],
+   "copy": []
+}

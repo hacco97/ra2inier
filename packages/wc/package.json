@@ -1,0 +1,17 @@
+{
+   "name": "@ra2inier/wc",
+   "version": "1.0.0",
+   "description": "",
+   "main": "index.ts",
+   "private": "true",
+   "scripts": {
+      "dev": "vite"
+   },
+   "keywords": [],
+   "author": "",
+   "devDependencies": {
+      "@types/lodash": "^4.14.202",
+      "lodash": "^4.17.21",
+      "vite": "^5.0.12"
+   }
+}

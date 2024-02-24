@@ -1,0 +1,25 @@
+{
+   "name": "@ra2inier/core",
+   "version": "1.0.0",
+   "description": "",
+   "main": "index.ts",
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+   },
+   "keywords": [],
+   "exports": {
+      "./node": "./node/index.ts",
+      ".": "./index.ts",
+      "./boot": "./boot.ts"
+   },
+   "author": "",
+   "dependencies": {
+      "inversify": "^6.0.2",
+      "lodash": "^4.17.21",
+      "reflect-metadata": "^0.1.13",
+      "@ra2inier/core": "workspace:./"
+   },
+   "devDependencies": {
+      "@types/lodash-es": "^4.17.11"
+   }
+}

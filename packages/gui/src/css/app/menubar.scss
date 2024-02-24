@@ -1,0 +1,34 @@
+.menubar {
+   @include normal-panel();
+   @include outline-box(slim, normal, 0px);
+}
+
+.menubar-item {
+   @include normal-panel();
+   @include reactive-box();
+}
+
+.menubar-subitem {
+   @include fore-panel();
+   @include reactive-box(true, false);
+}
+
+.menubar-sublist {
+   @include fore-panel();
+   @include plane-radius(normal);
+}
+
+.menu-title {
+   @include font-size(big);
+}
+
+.close-btn:hover {
+   background-color: info-color(error);
+}
+
+.svg-icon {
+   > * {
+      @include normal-panel();
+      @include reactive-box(true, false);
+   }
+}

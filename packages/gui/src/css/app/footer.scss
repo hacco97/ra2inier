@@ -1,0 +1,4 @@
+.footer {
+   @include normal-panel();
+   @include outline-box(slim, normal, 0px);
+}

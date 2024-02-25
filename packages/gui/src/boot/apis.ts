@@ -1,9 +1,7 @@
 import MyWorker from '@/worker?worker';
 import { Logger } from '@ra2inier/core';
 
-const CHANNEL_TO = import.meta.env.VITE_MAIN_PARTITION + '-exec'
-const CHANNEL_BACK = CHANNEL_TO + '-back'
-
+// 初始化日志和端口
 let log: Logger
 let port: MessagePort
 
@@ -13,7 +11,6 @@ export function registerLog(logObject: Logger) {
 
 // 使用send和on模拟的异步请求api
 const requestMap: Record<string, Function> = {}
-
 
 /**
  * 向主进程发起请求并执行指定命令
@@ -50,12 +47,22 @@ export function exec<T>(command: string, options: RequestOptions = {}): Promise<
       }, options.timeout ?? 60_000)
    })
 }
-eApi.on(CHANNEL_BACK, (event, id, res) => {
-   if (requestMap[id]) {
-      requestMap[id](res)
-      delete requestMap[id]
-   }
+
+// 监听建立交流端口
+window.addEventListener('message', (ev) => {
+   if (ev.data !== 'establish-port-pass') return
+   port = ev.ports[0]
+   port.addEventListener('message', (ev) => {
+      const { id, res } = ev.data
+      if (requestMap[id]) {
+         requestMap[id](res)
+         delete requestMap[id]
+      }
+   })
+   port.start()
+   clearQueue()
 })
+
 
 // 同步controller API 初始加载延时逻辑
 var CONTROLL_READY = false
@@ -65,8 +72,6 @@ const clearQueue = () => {
    execQueue.forEach(f => f())
    execQueue.splice(0)
 }
-eApi.on('service-ready', clearQueue)
-setTimeout(clearQueue, 2000)
 
 export const on = window.eApi.on
 export const send = window.eApi.send
@@ -129,10 +134,10 @@ worker.addEventListener('message', async (ev) => {
 })
 
 
-
 window.addEventListener('message', (ev) => {
-   // console.log(ev)
-   if (ev.data !== 'establish-port-pass') return
-   port = ev.ports[0]
-   // worker.postMessage('give you port', trans)
+   if (ev.data !== 'establish-port-worker-pass') return
+   if (ev.ports[0]) {
+      const trans = [ev.ports[0]]
+      worker.postMessage('give you port', trans)
+   }
 })

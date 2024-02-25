@@ -1,6 +1,8 @@
 <script lang='ts' setup>
 import { ref, shallowReactive } from 'vue';
 
+import { exec } from '@/boot/apis';
+
 const user = {
    name: 'zs',
    age: 18
@@ -20,12 +22,12 @@ interface MouseEvent extends globalThis.MouseEvent {
 function onTestClick(e: MouseEvent) {
    list[0].age++
    console.log(list[0])
-   e.lover = 'zs'
 }
 
 function onTest2Click(e: MouseEvent) {
-   console.log(e.lover)
+ 
 }
+
 </script>
 
 

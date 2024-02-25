@@ -1,7 +1,8 @@
-import { BrowserWindow, shell, ipcMain, app } from "electron"
-import { escapePath } from "@ra2inier/core/node"
-import { addWindow, deleteAllWindows } from "~/windows"
-import config, { windowSize } from "~/boot/config"
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import config, { windowSize } from '~/boot/config';
+import { addWindow, deleteAllWindows } from '~/windows';
+
+import { escapePath } from '@ra2inier/core/node';
 
 const url = config.DEV_URL
 const mainWindowName = config.MAIN_WINDOW_NAME
@@ -37,10 +38,7 @@ export function createMainWindow() {
 
 // 加载服务处理函数
 function useServices(win: BrowserWindow) {
-   import('./ioc.boot').then((ioc) => {
-      ioc.init()
-      win.webContents.send('service-ready')
-   })
+   import('./ioc.boot').then((ioc) => { ioc.init() })
 }
 
 

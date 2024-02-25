@@ -1,13 +1,19 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 window.addEventListener('load', async () => {
-   ipcRenderer.send('establish-port')
+   console.log(123)
+
+   ipcRenderer.send('establish-renderer-port')
+   ipcRenderer.send('establish-worker-port')
 })
 
-ipcRenderer.on('establish-port-response', async (event) => {
+ipcRenderer.on('establish-renderer-port-response', async (event) => {
    window.postMessage('establish-port-pass', '*', event.ports)
 })
 
+ipcRenderer.on('establish-worker-port-response', async (event) => {
+   window.postMessage('establish-port-worker-pass', '*', event.ports)
+})
 
 contextBridge.exposeInMainWorld('eApi', {
    exec(command: string, ...args: any[]) {

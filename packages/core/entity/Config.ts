@@ -25,6 +25,9 @@ export class ClientConfig {
    // 在提示框被关闭时自动确认提示框的内容
    PROMPT_SUBMIT_ON_CLOSE = false
 
+   // 构建输出文件夹
+   OUTPUT_DIR = './out'
+
    // 窗口大小
    readonly WINDOW_SIZE: string = ''
 }

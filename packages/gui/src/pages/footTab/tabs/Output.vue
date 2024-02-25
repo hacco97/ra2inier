@@ -1,10 +1,10 @@
 <script lang='ts' setup>
-import { inject, ref, Ref } from 'vue';
+import { computed, inject, ref, Ref } from 'vue';
 
 import playSvg from '@/asset/icons/compile.svg?raw';
 import openDirSvg from '@/asset/icons/openDir.svg?raw';
 import { FootTabType, useFootSelect } from '@/states/footTabList';
-import { openDir, useConfig } from '@/stores/config';
+import { openDir, setConfig, useConfig } from '@/stores/config';
 import { build } from '@/stores/projectStore';
 import { FlexInput, LazyButton } from '@ra2inier/wc';
 
@@ -15,10 +15,14 @@ function onOutputClick() {
    build()
 }
 
-const outDir = ref('packages/gui/src/pages/footTab/tabs/Output.vue')
+const outDir = computed({
+   get() { return config.OUTPUT_DIR ?? "" },
+   set(val: string) { setConfig('OUTPUT_DIR', val) }
+})
 
 async function onOpenPathClick() {
-   outDir.value = (await openDir()) || outDir.value
+   const path = await openDir()
+   path && (outDir.value = path)
 }
 
 // foottab的自定义按钮逻辑

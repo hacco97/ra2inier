@@ -22,7 +22,13 @@ setTimeout(loadConfig, 200)
 
 export function useConfig() {
    if (!config.value && !loaded) loadConfig()
-   return config
+   return <Readonly<Config>>config
+}
+
+export function setConfig(key: string, value: string) {
+   exec('config/set', { key, value }).then((res) => {
+      if (res.status) { config[key] = value }
+   })
 }
 
 export const IS_DEV = import.meta.env.DEV

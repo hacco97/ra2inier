@@ -1,7 +1,8 @@
-import fs from 'node:fs'
-import { resolve } from 'node:path'
-import { escapePath, readJson, writeJson } from '@ra2inier/core/node'
-import { ClientConfig, Config, WindowSize, fromRaw } from '@ra2inier/core'
+import fs from 'node:fs';
+import { resolve } from 'node:path';
+
+import { ClientConfig, Config, fromRaw, WindowSize } from '@ra2inier/core';
+import { escapePath, readJson, writeJson } from '@ra2inier/core/node';
 
 const CONFIG_PATH = escapePath('config.json')
 // const CONFIG_PATH = escapePath(process.env['APPDATA'] ?? '', './ra2 inier', 'config.json')
@@ -14,6 +15,8 @@ const defaultConfig = {
    PROJECT_PATH: '',
    // 窗口大小状态
    WINDOW_SIZE: '0,0,1280,960',
+   // 默认的输出位置文件夹
+   OUTPUT_DIR: escapePath('./out'),
    // 默认的文件系统协议
    FILE_PROTOCOL: import.meta.env.VITE_PROTOCOL,
    // 默认的客户端主题位置
@@ -54,7 +57,7 @@ const config: Config = {
    setByKey: setConfigByKey,
    getClientConfig
 }
-export default config
+export default <Readonly<Config>>config
 export const windowSize = new WindowSize(config.WINDOW_SIZE)
 
 export function saveConfig() {

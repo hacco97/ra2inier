@@ -1,13 +1,6 @@
 <script lang='ts' setup>
 import { ref, shallowReactive } from 'vue';
 
-import { exec } from '@/boot/apis';
-
-const user = {
-   name: 'zs',
-   age: 18
-}
-
 const list = shallowReactive([
    { name: 'zs', age: 18 },
    { name: 'ls', age: 42 },
@@ -15,17 +8,23 @@ const list = shallowReactive([
 ])
 
 
-interface MouseEvent extends globalThis.MouseEvent {
-   lover?: string
-}
-
 function onTestClick(e: MouseEvent) {
    list[0].age++
    console.log(list[0])
 }
 
 function onTest2Click(e: MouseEvent) {
- 
+   new Promise((solve) => {
+      var a: any
+      new Promise((s) => {
+         var b: any
+         b.dd
+         s(b)
+      })
+      console.log(a.sd)
+      solve(a)
+   }).catch(e => console.log(e)
+   )
 }
 
 </script>

@@ -1,9 +1,10 @@
 import {
-  dictionary, IniObjectRo, mappers, mergeProjectVo, objects,
-  ProjectVo, WordValidity,
+  dictionary, FinalHandler, forIn, IniObjectRo, MapperRo,
+  mappers, mergeProjectVo, objects, OutputHandler, ProjectVo,
+  WordValidity,
 } from '@ra2inier/core';
 
-import { log, on } from '../boot';
+import { exec, log, on } from '../boot';
 import { checkWordHook, createCtx, mapperCtxs, matchMapper } from './build';
 import { doTranslateObject } from './object';
 
@@ -38,9 +39,8 @@ on('project/build', (buildList: string[]) => {
          results[key] = translation
       }
    }
-   console.log(results)
 
-   // 分发到mapper中
+   // 将ini对象分发到mapper中
    for (const object of objectsList) {
       const calls = matchMapper(object.scope, mappers)
       if (!calls) {
@@ -52,5 +52,53 @@ on('project/build', (buildList: string[]) => {
       }
    }
 
-   console.log(mapperCtxs)
+   console.log('dd')
+
+
+   // 调用输入器的output handler
+   forIn(mapperCtxs, (key, mapperCtx) => {
+      const handlers = mapperCtx.mapper.handlers
+      for (const ohn of mapperCtx.mapper.outputList) {
+         const oh = <OutputHandler>handlers[ohn]
+         oh(mapperCtx.data, {})
+      }
+      const final = <FinalHandler>handlers.final
+      if (!final)
+         return log.warn('输出器缺失final output handler：' + mapperCtx.mapper.name)
+      const ret = final(mapperCtx.data, {})
+
+      // 更多的处理操作
+      let data: string = ''
+      if (typeof ret === 'string') data = ret
+      else if (ret instanceof Array) {
+         const tmp: string[] = []
+         for (const line of ret) {
+            if (typeof line === 'string') tmp.push(`[${line}]`)
+            else tmp.push(`${line[0]}=${line[1]}`)
+         }
+         data = tmp.join('\n')
+      } else {
+         const tmp: string[] = []
+         for (const sectionName in ret) {
+            tmp.push(`[${sectionName}]`)
+            const section = ret[sectionName]
+            for (const key in section) {
+               tmp.push(`${key}=${section[key]}`)
+            }
+         }
+         data = tmp.join('\n')
+      }
+
+      exec('project/output', {
+         outputPath: mapperCtx.mapper.targetPath,
+         data
+      })
+   })
+
+
+})
+
+
+on('mapper/sync', (mapper: MapperRo) => {
+   mappers[mapper.key] = mapper
 })

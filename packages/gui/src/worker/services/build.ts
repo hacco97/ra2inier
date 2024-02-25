@@ -65,7 +65,7 @@ export class MapperCtx {
    constructor(mapper: MapperRo) {
       this.mapper = mapper
       const start = <StartHandler>mapper.handlers['start']
-      if (start) start(this.data)
+      if (start) start(this.data, {})
    }
 }
 
@@ -78,14 +78,16 @@ export const mapperCtxs: Record<string, MapperCtx> = {}
 export function matchMapper(scopeName: string, mappers: Record<string, MapperRo>) {
    if (scopeName in map4scopeName2mapper) return map4scopeName2mapper[scopeName]
    map4scopeName2mapper[scopeName] = []
-   forIn(mappers, (key, mapper) => {
+   forIn(mappers, (mapperKey, mapper) => {
       checkMapperHandlers(mapper)
-      const mapperCtx = mapperCtxs[key] = new MapperCtx(mapper)
-      forIn(mapper.inputList, (key, input) => {
+      if (!mapperCtxs[mapperKey])
+         mapperCtxs[mapperKey] = new MapperCtx(mapper)
+      const mapperCtx = mapperCtxs[mapperKey]
+      forIn(mapper.inputList, (scopeRules, handlerName) => {
          // 更多匹配规则
-         const ret = scopeName.match(key)
+         const ret = scopeName.match(scopeRules)
          if (ret) map4scopeName2mapper[scopeName].push((object) => {
-            mapper.handlers[input](object, mapperCtx.data)
+            mapper.handlers[handlerName](object, mapperCtx.data, {})
          })
       })
    })

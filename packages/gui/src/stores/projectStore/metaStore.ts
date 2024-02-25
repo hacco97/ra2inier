@@ -67,6 +67,7 @@ export function queryWordByNameSync(name: string) {
 
 
 export function saveMapper(mapper: MapperRo) {
+   mapper.update()
    mappers[mapper.key] = mapper
    exec('project/save-mapper', { data: mapper }).then(res => {
       if (res.status) {
@@ -75,6 +76,7 @@ export function saveMapper(mapper: MapperRo) {
          log.warn('保存"输出器"失败', res.data)
       }
    })
+   work('mapper/sync', mapper)
 }
 
 

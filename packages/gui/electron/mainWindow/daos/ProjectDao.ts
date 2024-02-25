@@ -1,10 +1,15 @@
-import { component, inject } from "~/mainWindow/ioc.config"
-import { Package, Project, ProjectVo, enhance, fromRaw, isUniqueObject } from "@ra2inier/core"
-import { escapePath, readJson } from "@ra2inier/core/node"
-import { DaoConfig } from "./DaoConfig"
-import { PackageDao } from "./PackageDao"
-import fs from 'node:fs'
+import fs from 'node:fs';
 
+import { component, inject } from '~/mainWindow/ioc.config';
+
+import {
+  enhance, fromRaw, isUniqueObject, Package, Project,
+  ProjectVo,
+} from '@ra2inier/core';
+import { escapePath, readJson, writeFile } from '@ra2inier/core/node';
+
+import { DaoConfig } from './DaoConfig';
+import { PackageDao } from './PackageDao';
 
 @component('project-dao')
 export class ProjectDao {
@@ -99,5 +104,11 @@ export class ProjectDao {
          projectVo.packages[key] = this.packageDao.readPackageByPath(pkgPath)
       }
       return projectVo
+   }
+
+   writeBuildResult(path: string, result: any) {
+      // if (fs.existsSync(path)) throw Error('目标文件已经存在')
+      writeFile(path, result)
+      return true
    }
 }

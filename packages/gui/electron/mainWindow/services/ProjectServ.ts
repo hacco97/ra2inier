@@ -1,3 +1,4 @@
+import config from '~/boot/config';
 import {
   controller, inject, mapping, param, pathVar,
   task,
@@ -7,6 +8,7 @@ import {
   Config, fromRaw, IniObject, isUniqueObject, MapperDto,
   PackageVo, ProjectVo, Scope, ScopeDto, WordDto,
 } from '@ra2inier/core';
+import { escapePath } from '@ra2inier/core/node';
 
 import { PackageDao } from '../daos/PackageDao';
 import { ProjectDao } from '../daos/ProjectDao';
@@ -71,6 +73,13 @@ export class ProjServ {
    saveProject() {
       // TODO: 保存整个项目
       return ''
+   }
+
+   @mapping('output')
+   output(@param('outputPath') path: string, @param('data') data: any) {
+      console.log(data)
+      path = escapePath(config.OUTPUT_DIR, path)
+      this.projectDao.writeBuildResult(path, data)
    }
 
    // object相关的内容

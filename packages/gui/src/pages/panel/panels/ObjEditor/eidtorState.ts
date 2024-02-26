@@ -3,7 +3,7 @@ import { computed, ref, shallowReactive, StyleValue } from 'vue';
 import { EventBus } from '@/hooks/eventBus';
 import { PanelHandler } from '@/states/panelList';
 import {
-  getWord, queryWordByNameSync, validateWord,
+  queryWordByKey, queryWordByNameSync, validateWord,
 } from '@/stores/projectStore';
 import {
   createParam, Entry, IniObjectRo, removeFrom, WordRo,
@@ -54,7 +54,7 @@ export class EntryRo {
       let tmp
       if (!!this[WORD_KEY]) {
          if (this[WORD_KEY] === NOT_FOUND) return NULL_WORD
-         tmp = getWord(this[WORD_KEY]) ?? NULL_WORD
+         tmp = queryWordByKey(this[WORD_KEY]) ?? NULL_WORD
       } else {
          // TODO: 待升级为沿项目依赖进行查找
          tmp = queryWordByNameSync(this.key)
@@ -62,7 +62,7 @@ export class EntryRo {
          if (tmp) this[WORD_KEY] = tmp.key
          else tmp = NULL_WORD
       }
-      return tmp
+      return <WordRo>tmp
    }
    get isNullWord() { return this.word === NULL_WORD }
 

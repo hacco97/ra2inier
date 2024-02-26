@@ -1,13 +1,21 @@
 import { exec, work } from '@/boot/apis';
 import {
-  dictionary, MapperRo, mappers, MarkdownRo, project,
-  ScopeRo, WordRo, WordValidity,
+  MapperRo, MarkdownRo, ScopeRo, WordRo, WordValidity,
 } from '@ra2inier/core';
 
 import useLog from '../messageStore';
+import { all, setMapper, setWord } from './boot';
 
 const log = useLog('meta-store')
 
+/**
+ * scope 逻辑
+ * **********************************************************************************************************************
+ */
+
+/**
+ * 保存scope到硬盘
+ */
 export function saveScope(scope: ScopeRo) {
    exec('project/save-scope', { data: scope }).then((res) => {
       if (res.status) {
@@ -18,20 +26,28 @@ export function saveScope(scope: ScopeRo) {
    })
 }
 
-const mainDictionary = () => project.main!.dictionary
+/**
+ * word 逻辑
+ * **********************************************************************************************************************
+ */
 
+/**
+ * 添加一个词条
+ */
 export function addWord() {
    const word = new WordRo
    const md = new MarkdownRo
    word.detail = md.key
    word.markdown = md
-   mainDictionary()[word.key] = dictionary[word.key] = word
+   setWord(word.key, word)
    return word
 }
 
+/**
+ * 保存词条到硬盘
+ */
 export function saveWord(word: WordRo) {
-   dictionary[word.key] = word
-   mainDictionary()[word.key] = dictionary[word.key] = word
+   setWord(word.key, word)
    exec('project/save-word', { data: word }).then((res) => {
       if (res.status) {
          log.info('保存"词条"成功', word.fullname)
@@ -41,11 +57,8 @@ export function saveWord(word: WordRo) {
    })
 }
 
-export function getWord(key: string): WordRo | undefined {
-   return dictionary[key]
-}
-
 export async function queryWordByName(name: string): Promise<WordRo> {
+   const dictionary = all.dictionary
    return new Promise((solve, reject) => {
       for (const key in dictionary) {
          if (dictionary[key].name === name)
@@ -57,6 +70,7 @@ export async function queryWordByName(name: string): Promise<WordRo> {
 
 export function queryWordByNameSync(name: string) {
    if (!name) return undefined
+   const dictionary = all.dictionary
    for (const key in dictionary) {
       if (dictionary[key].name === name)
          return dictionary[key]
@@ -64,29 +78,20 @@ export function queryWordByNameSync(name: string) {
    return undefined
 }
 
-
-
-export function saveMapper(mapper: MapperRo) {
-   mapper.update()
-   mappers[mapper.key] = mapper
-   exec('project/save-mapper', { data: mapper }).then(res => {
-      if (res.status) {
-         log.info('保存"输入器"成功', mapper.fullname)
-      } else {
-         log.warn('保存"输出器"失败', res.data)
-      }
-   })
-   work('mapper/sync', mapper)
+/**
+ * 从整个项目中获得word，根据key值
+ */
+export function queryWordByKey(key: string) {
+   return all.dictionary[key]
 }
 
-
-const wordValidateCache: Record<string, WordValidity> = {}
 /**
  * 校验词条
  */
+const wordValidateCache: Record<string, WordValidity> = {}
 export async function validateWord(wordKey: string, values: string[]) {
    if (wordValidateCache[wordKey]) return wordValidateCache[wordKey]
-   const word = dictionary[wordKey]
+   const word = all.dictionary[wordKey]
    if (!word) return _setCache(wordKey, new WordValidity)
    const res = await work('word/validate', { wordKey: wordKey, values })
    if (res.status) {
@@ -111,3 +116,26 @@ export async function translateWord(wordKey: string) {
    const { status, data } = await work('translate-word', { wordKey })
    return status
 }
+
+
+/**
+ * mapper 逻辑
+ * **********************************************************************************************************************
+ */
+
+/**
+ * 保存mapper到硬盘
+ */
+export function saveMapper(mapper: MapperRo) {
+
+   setMapper(mapper.key, mapper)
+   exec('project/save-mapper', { data: mapper }).then(res => {
+      if (res.status) {
+         log.info('保存"输入器"成功', mapper.fullname)
+      } else {
+         log.warn('保存"输出器"失败', res.data)
+      }
+   })
+   work('mapper/sync', mapper)
+}
+

@@ -1,10 +1,9 @@
-import { exec, listen, work } from '@/boot/apis';
-import all, {
-  fromRaw, getPackage, IniObjectRo, objects, project,
-} from '@ra2inier/core';
+import { exec, work } from '@/boot/apis';
+import { fromRaw, IniObjectRo } from '@ra2inier/core';
 
 import { useHistory } from '../history';
 import useLog from '../messageStore';
+import { project, setObject } from './boot';
 
 const log = useLog('object-store')
 
@@ -31,37 +30,6 @@ export function cloneIniObject(object: IniObjectRo) {
    return newOne
 }
 
-/**
- * 向pkg中添加一个iniOBject
- * @param name
- */
-function addObjectToPkg(name: string) {
-   const newOne = createIniObject()
-   newOne.name = name
-   objects[newOne.key] = all.main.objects[newOne.key] = newOne
-   return newOne
-}
-
-function deleteObjectFromPkg(object: IniObjectRo) {
-   const tmp = getPackage(object.package)?.objects
-   if (tmp) {
-      const toDel = tmp[object.key]
-      delete tmp[object.key]
-      delete objects[object.key]
-      return toDel
-   }
-   return undefined
-}
-
-
-/**
- * 在两个地方更新对象，全局objects仓库，全局packages
- * @param key 需要更新的对象的key值和新值
- */
-function updateObjectInPkg(key: string, obj: IniObjectRo) {
-   objects[key] && (delete objects[key])
-   all.main.objects[obj.key] = objects[obj.key] = obj
-}
 
 interface Backup {
    type: string,
@@ -85,10 +53,8 @@ export async function saveObject(object: IniObjectRo) {
    if (status && workRes.status) {
       log.info('对象保存成功', object.fullname)
       // 如果是修改对象则更新和备份旧的对象
-      const toDel = objects[object.key]
-      if (!toDel) return
-      backupObject(toDel)
-      updateObjectInPkg(toDel.key, object)
+      const toDel = setObject(object.key, object)
+      if (toDel) backupObject(toDel)
    }
    else log.warn('对象保存失败', data)
 }
@@ -100,7 +66,7 @@ export async function saveObject(object: IniObjectRo) {
 export function deleteObject(object: IniObjectRo) {
    exec<boolean>('project/delete-object/' + object.key).then((res) => {
       if (res.status) {
-         const toDel = deleteObjectFromPkg(object)
+         const toDel = setObject(object.key, undefined)
          toDel && backupObject(toDel)
          log.info('删除对象成功', object.fullname)
       } else {
@@ -108,9 +74,4 @@ export function deleteObject(object: IniObjectRo) {
       }
    })
 }
-
-listen('get-object', ({ key }) => {
-   return objects[key]
-})
-
 

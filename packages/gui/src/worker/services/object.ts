@@ -1,9 +1,9 @@
 import {
-  fromRaw, IniObject, IniObjectRo, isUniqueObject, objects,
-  objectTranslator,
+  fromRaw, IniObject, IniObjectRo, isUniqueObject, objectTranslator,
 } from '@ra2inier/core';
 
-import { on } from '../boot';
+import { on } from '../apis';
+import { objects, setObject } from '../boot';
 import { checkWordHook, createCtx, createTranslateReferWords } from './build';
 
 // 对象同步
@@ -11,7 +11,8 @@ on('object/sync', async ({ data }: { data: IniObject[] }) => {
    for (let object of data) {
       if (!isUniqueObject(object)) continue
       const tmp = fromRaw(object, IniObjectRo)
-      objects[tmp.key] = tmp
+      // objects[tmp.key] = tmp
+      setObject(tmp.key, tmp)
    }
 })
 

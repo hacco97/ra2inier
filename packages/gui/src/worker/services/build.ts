@@ -1,9 +1,10 @@
 import {
-  createMapperHandlers, createWordHooks, dictionary, Entry, forIn,
-  HookCtx, MapperRo, StartHandler, WordRo,
+  createMapperHandlers, createWordHooks, Entry, forIn, HookCtx,
+  MapperRo, StartHandler, WordRo,
 } from '@ra2inier/core';
 
-import { log } from '../boot';
+import { log } from '../apis';
+import { dictionary } from '../boot';
 
 /**
  * 创建一个hook执行的上下文对象HookCtx

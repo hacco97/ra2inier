@@ -2,13 +2,13 @@ import { computed, ref } from 'vue';
 
 import { exec, work } from '@/boot/apis';
 import {
-  copy, dictionary, forIn, mappers, mergeProjectVo,
-  objects, PackageRo, project, ProjectRo, ProjectVo,
-  scopes,
+  copy, forIn, IniObjectRo, MapperRo, PackageRo,
+  parseProjectVo, ProjectRo, ProjectVo, ScopeRo, WordRo,
 } from '@ra2inier/core';
 
 import { useConfig } from '../config';
 import useLog from '../messageStore';
+import { project } from './boot';
 
 export * from './metaStore'
 export * from './iniObjectStore'
@@ -30,7 +30,7 @@ export async function openProject(path?: string, callback?: () => {}) {
       }
 
       // 打开项目核心逻辑
-      mergeProjectVo(ipkg)
+      parseProjectVo(ipkg, project)
       // 将初始数据传递给worker
       work('project/init', ipkg)
 
@@ -68,9 +68,8 @@ let building = false
 export async function build() {
    if (building) return
    const buildList: string[] = []
-   forIn(objects, (key, object) => {
-      buildList.push(key)
-   })
+
+   // TODO: 从UI读取BuildList
 
    const res = await work<boolean>('project/build', buildList)
    if (res.status) {
@@ -108,9 +107,8 @@ export function useProject() {
 }
 const _project = computed(() => {
    loadingVersion.value
-   return project
+   return <Readonly<ProjectRo>>project
 })
-
 
 
 
@@ -124,9 +122,19 @@ export function useAll() {
 const _allResource = computed(() => {
    loadingVersion.value
    return {
-      objects,
-      scopes,
-      mappers,
-      dictionary
+      objects: mergeKey<IniObjectRo>(project.packages, 'objects'),
+      scopes: mergeKey<ScopeRo>(project.packages, 'scopes'),
+      mappers: mergeKey<MapperRo>(project.packages, 'mappers'),
+      dictionary: mergeKey<WordRo>(project.packages, 'dictionary')
    }
 })
+
+function mergeKey<T>(packages: Record<string, PackageRo>, readKey: string) {
+   const tmp: Record<string, any> = {}
+   forIn(packages, (key, pkg) => {
+      forIn(pkg[readKey], (key, obj) => {
+         tmp[key] = obj
+      })
+   })
+   return <Readonly<Record<string, T>>>tmp
+}

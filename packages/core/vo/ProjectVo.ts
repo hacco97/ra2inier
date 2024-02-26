@@ -1,8 +1,10 @@
-import {  IProject } from "../entity/Project"
-import { PackageVo } from "./PackageVo"
-
+import { IProject } from '../entity/Project';
+import { PackageVo } from './PackageVo';
 
 export interface ProjectVo extends IProject {
+   /**
+    * 主包的名字
+    */
    main: string
    packages: Record<string, PackageVo>
 

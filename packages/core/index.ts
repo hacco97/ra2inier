@@ -1,23 +1,25 @@
-import all, {
-  dictionary, forIn, fromRaw, IniObjectRo, IniObjectVo,
-  MapperRo, mappers, MapperVo, objects, PackageRo,
-  project, ProjectVo, ScopeRo, scopes, ScopeVo,
-  WordRo, WordVo,
+import {
+  createAll, forIn, fromRaw, IniObjectRo, IniObjectVo,
+  MapperRo, MapperVo, PackageRo, ProjectRo, ProjectVo,
+  ScopeRo, ScopeVo, WordRo, WordVo,
 } from './boot';
 
 export * from './boot'
 export * from './build'
 
+export type All = ReturnType<typeof createAll>
+
 
 /**
- * 将一个对象中的IniObjectVo加入到objects集合中
- */
-export function mergeObjects(objectMap: Record<string, IniObjectVo>, pkgKey: string) {
+* 将一个对象中的IniObjectVo加入到objects集合中
+*/
+export function mergeObjects(objectMap: Record<string, IniObjectVo>, pkgKey: string, objects?: Record<string, IniObjectRo>) {
    const tmp: Record<string, IniObjectRo> = {}
    for (const key in objectMap) {
       const obj = fromRaw(objectMap[key], IniObjectRo)
       obj.package = pkgKey
-      tmp[obj.key] = objects[obj.key] = obj
+      tmp[obj.key] = obj
+      objects && (objects[obj.key] = obj)
    }
    return tmp
 }
@@ -25,12 +27,13 @@ export function mergeObjects(objectMap: Record<string, IniObjectVo>, pkgKey: str
 /**
  * 将一个对象的ScopeVo加入到scopes中
  */
-export function mergeScopes(scopesVo: Record<string, ScopeVo>, pkgKey: string) {
+export function mergeScopes(scopesVo: Record<string, ScopeVo>, pkgKey: string, scopes?: Record<string, ScopeRo>) {
    const tmp: Record<string, ScopeRo> = {}
    forIn(scopesVo, (key, val) => {
       const scope = fromRaw(val, ScopeRo)
       scope.package = pkgKey
-      scopes[scope.key] = tmp[scope.key] = scope
+      tmp[scope.key] = scope
+      scopes && (scopes[scope.key] = scope)
    })
    return tmp
 }
@@ -38,12 +41,13 @@ export function mergeScopes(scopesVo: Record<string, ScopeVo>, pkgKey: string) {
 /**
  * 将一个对象的MapperVo加入到mappers中
  */
-export function mergeMappers(mappersVo: Record<string, MapperVo>, pkgKey: string) {
+export function mergeMappers(mappersVo: Record<string, MapperVo>, pkgKey: string, mappers?: Record<string, MapperRo>) {
    const tmp: Record<string, MapperRo> = {}
    forIn(mappersVo, (key, val) => {
       const mapper = fromRaw(val, MapperRo)
       mapper.package = pkgKey
-      mappers[mapper.key] = tmp[mapper.key] = mapper
+      tmp[mapper.key] = mapper
+      mappers && (mappers[mapper.key] = mapper)
    })
    return tmp
 }
@@ -51,28 +55,22 @@ export function mergeMappers(mappersVo: Record<string, MapperVo>, pkgKey: string
 /**
  * 将一个对象的Word加入到了dictionary中
  */
-export function mergeWords(words: Record<string, WordVo>, pkgKey: string) {
+export function mergeWords(words: Record<string, WordVo>, pkgKey: string, dictionary?: Record<string, WordRo>) {
    const tmp: Record<string, WordRo> = {}
    forIn(words, (key, val) => {
       const word = fromRaw(val, WordRo)
       word.package = pkgKey
-      dictionary[word.key] = tmp[word.key] = word
+      tmp[word.key] = word
+      dictionary && (dictionary[word.key] = word)
    })
    return tmp
-}
-
-export function getPackage(key: string) {
-   if (key in project.packages) {
-      return project.packages[key]
-   }
-   return undefined
 }
 
 
 /**
  * 打开项目的核心逻辑
  */
-export function mergeProjectVo(data: ProjectVo) {
+export function parseProjectVo(data: ProjectVo, project: ProjectRo) {
    // 处理后端的数据，将iniObejct Vo转化为Ro对象，
    for (const key in data.packages) {
       const vo = data.packages[key]
@@ -88,7 +86,6 @@ export function mergeProjectVo(data: ProjectVo) {
       tmp.mappers = mergeMappers(vo.mappers, pkgKey)
       project.packages[key] = tmp
    }
-   // project.packages = project.packages
    project.main = project.packages[data.main]
 }
 
@@ -99,5 +96,3 @@ export function mergeProjectVo(data: ProjectVo) {
 export function initProject() {
 
 }
-
-export default all

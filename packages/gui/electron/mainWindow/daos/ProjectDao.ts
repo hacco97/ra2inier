@@ -26,8 +26,6 @@ export class ProjectDao {
    get main() { return this.#main }
    get mainPkg() { return this.#packages ? this.#packages[this.#main] : undefined }
    get isConnected() { return !!this.#path }
-   getPkgPathByKey(pkgKey: string) { return this.#packagePathMap[pkgKey] }
-
 
    @inject('dao-config') declare config: DaoConfig
    @inject('package-dao') declare packageDao: PackageDao
@@ -81,7 +79,8 @@ export class ProjectDao {
       for (const name of fs.readdirSync(referPath)) {
          const pkgPath = escapePath(referPath, name)
          const pkg = this.packageDao.readPackageInfoByPath(pkgPath)
-         this.#packagePathMap[pkg.key] = pkgPath
+
+         this.#packagePathMap[pkg.key] = pkg.path
          packages[pkg.key] = pkg
       }
       return this.#packages = packages
@@ -100,7 +99,7 @@ export class ProjectDao {
       const pkgs = this.readPackagesList()
       projectVo.main = this.main
       for (const key in pkgs) {
-         const pkgPath = this.getPkgPathByKey(key)
+         const pkgPath = pkgs[key].path
          projectVo.packages[key] = this.packageDao.readPackageByPath(pkgPath)
       }
       return projectVo

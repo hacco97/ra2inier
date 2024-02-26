@@ -1,5 +1,11 @@
 {
-  "name": "speeder",
-  "target": "mo",
-  "last-modified": "2023-8-1"
-}
+   "name": "speeder",
+   "target": "mo",
+   "last-modified": "2023-8-1",
+   "id": 8642962,
+   "seed": 532434,
+   "version": 1691588642962,
+   "author": "xxx <33243@gmail.com> (https://dfs.xyz)",
+   "references": [],
+   "loaderVersion": "v1"
+ }

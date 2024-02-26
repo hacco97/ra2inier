@@ -6,8 +6,6 @@ import { listen, on, registerLog } from '@/boot/apis';
 import { LogLevel, Message } from '@ra2inier/core';
 
 // 消息通知模块的仓库
-let nextID = 0
-
 export const messageList = shallowReactive<Message[]>([
    {
       id: 0,
@@ -42,7 +40,7 @@ export const messageList = shallowReactive<Message[]>([
       level: LogLevel.error
    },
 ])
-
+let nextID = messageList.length
 const hooks: Record<string, Set<Function>> = {
    onMessage: new Set,
 }

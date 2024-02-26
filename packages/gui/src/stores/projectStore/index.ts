@@ -64,12 +64,20 @@ export function openNewProject() {
    })
 }
 
+/**
+ * 项目构建逻辑
+ * ***********************************************************************************************
+ */
 let building = false
+/**
+ * 构建项目
+ */
 export async function build() {
    if (building) return
    const buildList: string[] = []
 
-   // TODO: 从UI读取BuildList
+   // TODO: 从UI读取BuildList，此处暂时为全部构建
+   forIn(useAll().value.objects, (key, val) => { buildList.push(key) })
 
    const res = await work<boolean>('project/build', buildList)
    if (res.status) {
@@ -138,3 +146,4 @@ function mergeKey<T>(packages: Record<string, PackageRo>, readKey: string) {
    })
    return <Readonly<Record<string, T>>>tmp
 }
+

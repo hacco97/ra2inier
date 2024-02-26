@@ -1,13 +1,16 @@
-import { component } from "~/mainWindow/ioc.config";
-
+import { component } from '~/mainWindow/ioc.config';
 
 @component('dao-config')
 export class DaoConfig {
+
+
 
    // 项目的信息文件
    PROJECT_INFO_FILE = 'project.json'
    // package配置文件的名称
    PACKAGE_INFO_FILE = 'info.json'
+   // package全局链接地址
+   PACKAGE_LINK_BASEURL = 'library/reference'
    // package统计文件的名称
    PACKAGE_STAT_FILE = 'stat.json'
    // package下的存储IniObject对象的文件夹

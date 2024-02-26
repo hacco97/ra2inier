@@ -4,9 +4,9 @@ import { join } from 'node:path';
 import { component, final, inject, task } from '~/mainWindow/ioc.config';
 
 import {
-  enhance, forIn, fromRaw, IniObject, Mapper,
-  MapperDto, Markdown, Package, PackageVo, Scope,
-  WordDto, WordRo, WordVo,
+  Config, enhance, forIn, fromRaw, IniObject,
+  Mapper, MapperDto, Markdown, Package, PackageVo,
+  Scope, WordDto, WordRo, WordVo,
 } from '@ra2inier/core';
 import { escapePath, forDir, readJson } from '@ra2inier/core/node';
 
@@ -20,6 +20,7 @@ import { WordDao } from './WordDao';
 @component("package-dao")
 export class PackageDao {
    @inject('dao-config') declare config: DaoConfig
+   @inject('app-config') declare appConfig: Config
    @inject('scope-dao') declare scopeDao: ScopeDao
    @inject('word-dao') declare wordDao: WordDao
    @inject('markdown-dao') declare markdownDao: MarkdownDao
@@ -27,12 +28,20 @@ export class PackageDao {
    @inject('object-dao') declare objectDao: ObjectDao
 
    readPackageInfoByPath(pkgPath: string) {
-      const pkg = fromRaw(readJson(join(pkgPath, this.config.PACKAGE_INFO_FILE)), Package)
+      let pkg = fromRaw(readJson(join(pkgPath, this.config.PACKAGE_INFO_FILE)), Package)
+      if ((pkg.path += '').startsWith('~')) {
+         let path = pkg.path.replace('~', this.config.PACKAGE_LINK_BASEURL)
+         path = escapePath(this.appConfig.CWD, path)
+         pkg = fromRaw(readJson(path), Package)
+         pkg.path = path
+      } else {
+         pkg.path = pkgPath
+      }
       return pkg
    }
 
    readPackageByPath(pkgPath: string) {
-      const pkg = fromRaw(readJson(join(pkgPath, this.config.PACKAGE_INFO_FILE)), Package)
+      const pkg = this.readPackageInfoByPath(pkgPath)
       const tmp: PackageVo = enhance(pkg, {
          objects: this.readObjectsByPath(pkgPath),
          scopes: this.readScopesByPath(pkgPath),

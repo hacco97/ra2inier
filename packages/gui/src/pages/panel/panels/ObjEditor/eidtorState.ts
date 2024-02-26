@@ -184,12 +184,6 @@ export class EditorState extends EventBus {
     * 取消所有词条的选中
     */
    removeSelected() {
-      // for (let i = 0; i < this.entrys.length; ++i) {
-      //    if (this.entrys[i].selected === true) {
-      //       this.entrys.splice(i--, 1)
-      //    }
-      //    this.entrys[i].order = i
-      // }
       removeFrom(this.entrys, e => e.selected)
       this.reOrder()
    }

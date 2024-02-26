@@ -1,14 +1,7 @@
 {
-   "id": 1691588642962,
    "name": "root",
-   "version": 169152962,
-   "target": "", "seed": 5,
-   "authorList": [],
-   "author": 0,
-   "objects": {},
-   "resources": {},
-   "extras": {},
-   "references": {},
-   "scopes": {},
-   "files": {}
+   "author": "xxx <33243@gmail.com> (https://dfs.xyz)",
+   "references": [],
+   "loaderVersion": "v1",
+   "path": "~/root"
 }

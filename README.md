@@ -1,26 +1,10 @@
-# 名词解释
+# Ra2inier
 
-+ ra2 inier package   (.r2ip文件)
-是一种适用于ra2 inier读取和保存的文件类型。
-该文件包含有ra2 inier工作时所需要的数据和资源，包括游戏资源：ini代码文件、游戏模型文件、地图文件、音乐文件等各种类型的对象。
-适用范围：红色警戒2和尤里的复仇，及大多数基于此二者的游戏，具体在哪一款游戏中生效，需要由包内部的依赖文件所决定。下面细说。
+Ra2inier is an editor customized for the famous RTS game Red Alert 2 (Ra2), designed to facilitate the writing of Ra2 rule files and the development of Ra2 extension modules. This editor also provides a highly flexible solution to complete, (1) abstracting, organizing, and managing mod project files, (2) publishing mod project files, (3) continuously updating mod project files, (4) simplifying mod development workflows, and (5) supporting debugging of hot code updates, in order to free mod and ini writers from tedious tasks unrelated to code writing.
 
-项目与package同级，但是，项目多出一些辅助文件和信息，项目解析了依赖关系，而package还没有解析依赖，依赖解析，是指将package的references的package全部解析完成，而纯package包，只包含本身的信息不包含
+This editor has the following features:
 
-
-+ scope和游戏对象类型obj，在同一scope下的对象obj，属于同一种类型的游戏对象，scope是区分不同对象的标志，一个词条往往作为某种对象的一个属性，同一词条还可以用于不同的scope中或者不同类型的对象上，在不同的scope中词条或将发挥不同的功能。以MO3为例，对象类型或者说scope类型有：
-常见的有：载具VehiceTypes、
-抽象的有：
-
-
-+ 依赖。当一个对象A的某一个词条W使用另一个对象B的名字作为其值时，这时就A和B之间产生了关系，A依赖于B，关系的纽带是W。这其中最关键的点就是词条的值类型values，这个点决定了依赖关系。
-
-
-+ hooks和词条，一个词条代表了一个对象的属性，同时也代表一组函数，可以叫做hook函数，是指挥电脑干活的依据，是inier简化ini编辑的核心。正是因为hook函数把冗杂的工作，如：代码检查、代码翻译、文件填写、文件整理都帮我们做好了，使用inier进行代码编辑才会如此的简单和快速。
-
-
-+ 保留关键字： @、$
-  @用于命名冲突的解决，$自定义词条和值函数${}
-
-# 项目结构
-+ custom存储用户定制相关的内容，
+1. A friendly and beautiful operating interface. Free and customizable appearance styles.
+2. Highly reusable code capability. The engineering management approach based on "project referencing" can achieve a high level of code reuse capability by reusing and sharing engineering files.
+3. Open and sharing. Working with Github allows for project sharing and subscription by directly importing code from the Github repository.
+4. Rich additional plugins. Resource management such as icon generation and voice processing.

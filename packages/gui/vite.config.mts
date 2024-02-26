@@ -18,7 +18,9 @@ export default defineConfig(({ mode }) => {
             "@css": resolve(__dirname, './src/css/app')
          },
       },
-      build: { outDir: env.VITE_DIST, },
+      build: {
+         outDir: env.VITE_DIST,
+      },
       plugins: [
          vue({
             template: {

@@ -1,8 +1,12 @@
-import { createApp } from "vue"
-import App from './App.vue'
-import { forIn } from "@ra2inier/core"
-import directives from "./boot/directives"
-import 'default-passive-events'
+import 'default-passive-events';
+import '@ra2inier/wc';
+
+import { createApp } from 'vue';
+
+import { forIn } from '@ra2inier/core';
+
+import App from './App.vue';
+import directives from './boot/directives';
 
 const app = createApp(App)
 

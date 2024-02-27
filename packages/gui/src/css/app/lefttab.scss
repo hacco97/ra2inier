@@ -14,5 +14,21 @@
 
 .lefttab-header {
    @include font-size(normal);
-   @include outline-box(slim,normal,0px);
+   @include outline-box(slim, normal, 0px);
+}
+
+.projres-referbar {
+   @include normal-panel();
+   @include font-size(small);
+}
+
+@mixin drager-hoverable {
+   background-color: color-mix(in srgb, info-color(detail) 50%, #0000 50%);
+}
+
+.projres-drager {
+   &:hover,
+   &[dragging="true"] {
+      @include drager-hoverable();
+   }
 }

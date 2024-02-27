@@ -59,10 +59,6 @@ function onAddClick() {
       display: flex;
       vertical-align: middle;
       padding: 0 1em;
-
-      >* {
-         margin: 0 0.5ch;
-      }
    }
 
    span {

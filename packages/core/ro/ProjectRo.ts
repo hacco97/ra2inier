@@ -16,4 +16,6 @@ export class ProjectRo extends Project {
    main?: PackageRo
 
    packages: Record<string, PackageRo> = {}
+
+   get references() { return this.main ? this.main.references : [] }
 }

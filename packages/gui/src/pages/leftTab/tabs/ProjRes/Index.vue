@@ -1,9 +1,12 @@
 <script lang='ts' setup>
-import { computed } from 'vue';
-import LeftTabLayout from '../Layout.vue'
-import PkgView from './PkgView.vue'
-import { loadingVersion, mainPackage, useProject } from '@/stores/projectStore'
-import { usePanelHeight } from './panelHeight'
+import { computed, ref } from 'vue';
+
+import { loadingVersion, mainPackage, useProject } from '@/stores/projectStore';
+
+import LeftTabLayout from '../Layout.vue';
+import { usePanelHeight } from './panelHeight';
+import PkgView from './PkgView.vue';
+
 defineOptions({ name: 'ProjRes' })
 
 const project = useProject()
@@ -20,9 +23,12 @@ const packages = computed(() => {
 const {
    onReferClick,
    onDragerMousemove,
+   isReferFolded,
    isDragerPanelShowed,
    referHeightVBind
 } = usePanelHeight()
+
+
 
 </script>
 
@@ -39,10 +45,13 @@ const {
                <p class="scroll">
                   <PkgView :pkg="mainPackage" :isMain="true"></PkgView>
                </p>
+               <legend>
+                  <b @mousedown="isDragerPanelShowed = true" :class="$theme['projres-drager']"
+                     :dragging="isDragerPanelShowed"></b>
+               </legend>
                <p>
-               <h2 @click="onReferClick">
-                  <b @mousedown="isDragerPanelShowed = true"></b>
-                  <em><span>&gt;</span><span>引用</span></em>
+               <h2 @click="onReferClick" :class="$theme['projres-referbar']" class="vertical-center">
+                  <em><span class="folder" :folded="isReferFolded">&gt;</span><span>引用</span></em>
                </h2>
                <section class="scroll">
                   <PkgView v-for="pkg in packages" :pkg="pkg"></PkgView>
@@ -56,6 +65,7 @@ const {
    </LeftTabLayout>
 </template>
 
+<style scoped module="$theme" src="@css/lefttab.scss"></style>
 <style scoped lang='scss' module>
 $height: line-height(small);
 
@@ -90,11 +100,29 @@ $height: line-height(small);
       z-index: 0;
    }
 
+   legend {
+      width: 100%;
+      height: 0;
+      overflow: visible;
+      position: relative;
+
+      b {
+         display: block;
+         position: absolute;
+         z-index: 9;
+         top: -4px;
+         left: 0;
+         width: 100%;
+         height: 8px;
+         cursor: ns-resize;
+      }
+   }
+
    p:nth-child(1) {
       flex: 1;
    }
 
-   p:nth-child(2) {
+   p:nth-child(3) {
       flex: 0;
       flex-basis: v-bind(referHeightVBind);
       overflow: hidden;
@@ -108,16 +136,6 @@ $height: line-height(small);
          outline-width: 1px;
       }
 
-      b {
-         display: block;
-         position: absolute;
-         z-index: 9;
-         top: -5px;
-         left: 0;
-         width: 100%;
-         height: 10px;
-         cursor: ns-resize;
-      }
 
       section {
          height: calc(100% - $height);

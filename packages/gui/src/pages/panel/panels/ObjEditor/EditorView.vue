@@ -153,7 +153,7 @@ const columCount = computed(() => ({ columns: state.columnCount }))
                <!-- 词条编辑框 -->
                <li v-for="(entry, eid) in entrys" :key="entry.id" @click="onRowClick(eid)" :style="{ order: entry.order }">
                   <p @flex-focus="onRowFocus">
-                     <i @click="onSubFoldClick(entry)" :style="isFolded(entry.isSubFolded)">&gt;</i>
+                     <i @click="onSubFoldClick(entry)" class="folder" :folded="entry.isSubFolded">&gt;</i>
                      <span :selected="entry.selected" @auxclick="onLabelAuxClick" @click="onLabelClick($event, entry)"
                         :cursor="current === eid">
                         {{ entry.key }}

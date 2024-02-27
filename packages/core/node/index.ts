@@ -1,5 +1,5 @@
-import fs, { Dirent } from 'node:fs'
-import { resolve, dirname } from 'node:path'
+import fs, { Dirent } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 
 export function readJson(path: string) {
    try {

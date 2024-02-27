@@ -2,13 +2,13 @@ import { existsSync, readdirSync } from 'node:fs';
 
 import config from '~/boot/config';
 import {
-  controller, inject, mapping, param, pathVar,
-  task,
+   controller, inject, mapping, param, pathVar,
+   task,
 } from '~/mainWindow/ioc.config';
 
 import {
-  Config, fromRaw, IniObject, isUniqueObject, MapperDto,
-  PackageVo, ProjectVo, Scope, ScopeDto, WordDto,
+   Config, fromRaw, IniObject, isUniqueObject, MapperDto,
+   PackageVo, Project, ProjectVo, Scope, ScopeDto, WordDto,
 } from '@ra2inier/core';
 import { escapePath } from '@ra2inier/core/node';
 
@@ -81,7 +81,7 @@ export class ProjServ {
          if (dirent.length != 0) throw Error('目标目录不能为空')
       }
       this.appConfig.addProjectHistory(newProjectPath)
-
+      const project = new Project()
    }
 
    @mapping('save')

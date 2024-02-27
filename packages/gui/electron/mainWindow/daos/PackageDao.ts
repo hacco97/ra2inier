@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 import { component, final, inject, task } from '~/mainWindow/ioc.config';
 
@@ -31,8 +31,8 @@ export class PackageDao {
       let pkg = fromRaw(readJson(join(pkgPath, this.config.PACKAGE_INFO_FILE)), Package)
       if ((pkg.path += '').startsWith('~')) {
          let path = pkg.path.replace('~', this.appConfig.GLOBAL_PACKAGE_DIR)
-         path = escapePath(this.appConfig.CWD, path)
-         pkg = fromRaw(readJson(path), Package)
+         path = resolve(this.appConfig.CWD, path)
+         pkg = fromRaw(readJson(resolve(path, this.config.PACKAGE_INFO_FILE)), Package)
          pkg.path = path
       } else {
          pkg.path = pkgPath

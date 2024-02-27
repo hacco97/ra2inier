@@ -42,7 +42,7 @@ const rotateStyle = computed<StyleValue>(() => ({
    <div :class="$style.objview" v-ctxmenu>
       <h2 @click="isSubitemShowed = !isSubitemShowed" @dblclick="onTitleDbClick"
          @mouseenter="onMouseEnter(object.fullname)" class="list-item">
-         <q :style="rotateStyle">&gt;</q>
+         <q :style="rotateStyle" class="folder" :folded="!isSubitemShowed">&gt;</q>
          <span :title="object.fullname" class="vertical-center">
             <i>{{ object.name }}</i><i>.</i>
             <i>{{ object.scope }}</i>
@@ -54,7 +54,6 @@ const rotateStyle = computed<StyleValue>(() => ({
    </div>
 </template>
 
-<style scoped src="@css/proj-res.scss" module="$theme" />
 <style scoped lang='scss' module>
 $line-height: line-height(tiny);
 

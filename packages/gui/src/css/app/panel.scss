@@ -41,7 +41,7 @@
    }
 }
 
-.drager-hoverable {
+@mixin drager-hoverable {
    background-color: color-mix(in srgb, info-color(detail) 50%, #0000 50%);
 }
 
@@ -50,11 +50,11 @@
    background-color: line-color(normal);
    p:hover,
    p[dragging="true"] {
-      @extend .drager-hoverable;
+      @include drager-hoverable();
    }
 }
 
 .drager-hover:hover,
 .drager-hover[dragging="true"] {
-   @extend .drager-hoverable;
+   @include drager-hoverable();
 }

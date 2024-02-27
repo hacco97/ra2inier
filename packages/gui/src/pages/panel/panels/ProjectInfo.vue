@@ -1,15 +1,14 @@
 <script lang='ts' setup>
 import { ref, watch } from 'vue';
 
-import {
-  loadingVersion, mainPackage, ProjectInfo, useProject,
-} from '@/stores/projectStore';
+import { loadingVersion, ProjectInfo, useProject } from '@/stores/projectStore';
 
 defineOptions({ name: 'ProjectInfo' })
 const project = useProject()
 
 
 const info = ref(new ProjectInfo(project.value))
+
 watch(loadingVersion, () => {
    info.value = new ProjectInfo(project.value)
 })
@@ -19,20 +18,20 @@ watch(loadingVersion, () => {
 
 <template>
    <div :class="$style['project-info']">
-      <li><span>项目名称：</span><span>{{ info.name }}</span></li>
-      <li><span>项目作者：</span><span>{{ info.author }}</span></li>
-      <li><span>目标环境：</span><span>{{ info.target }}</span></li>
-      <li><span>引用：</span><span>{{ info.references }}</span></li>
-      <li><span>环境变量：</span></li>
+      <li class="line"><span>项目名称：</span><span>{{ info.name }}</span></li>
+      <li class="line"><span>项目作者：</span><span>{{ info.author }}</span></li>
+      <li class="line"><span>目标环境：</span><span>{{ info.target }}</span></li>
+      <li><span>引用：</span><pre>{{ info.references }}</pre></li>
+      <li class="line"><span>环境变量：</span></li>
    </div>
 </template>
 
 <style lang='scss' module scoped>
 .project-info {
-    padding: 1em 0;
+   padding: 1em 0;
 
-    li{
+   li {
       padding: 0 1em;
-    }
+   }
 }
 </style>

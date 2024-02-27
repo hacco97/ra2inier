@@ -123,11 +123,13 @@ let nextID = 999
  * 添加一个新的页面，需要传入页面所需的必要参数
  */
 export function addPanel(param: PanelParam) {
+   // 查看是否已经相同的panel，判定的依据是两个页面的data和panelType是否相同，
+   // 如果相同则聚焦该panel,不再添加新的panel
    const target = panelList.find((val) => {
       let d1, d2
       if (!(val.param && (d1 = val.param.data) && (d2 = param.data))) return false
       let a = val.param.type === param.type && d1 === d2
-      if (d1.key === d2.key) a = true
+      if (d1.key && d1.key === d2.key) a = true
       return a
    })
    if (target) {

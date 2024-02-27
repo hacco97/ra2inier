@@ -185,3 +185,16 @@
    line-height: 2em;
    width: 100%;
 }
+
+.folder {
+   display: inline-block;
+   height: 100%;
+   aspect-ratio: 1;
+   @include font-family(code);
+   transition: rotate 0.3s ease;
+   @extend .text-center;
+
+   &[folded="false"] {
+      rotate: 90deg;
+   }
+}

@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 export function usePanelHeight() {
    const isDragerPanelShowed = ref(false)
    const referHeight = ref(0)
+   const isReferFolded = computed(() => referHeight.value < 10)
    const referHeightVBind = computed(() => referHeight.value + 'px')
    let referHeightMemo = 300
    const HEIGHT_THREDHOLD = 100
@@ -24,6 +25,7 @@ export function usePanelHeight() {
 
    return {
       isDragerPanelShowed,
+      isReferFolded,
       referHeightVBind,
       onDragerMousemove,
       onReferClick

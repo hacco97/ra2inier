@@ -19,7 +19,6 @@ export class ProjectDao {
    // 主包的键值
    #main = ''
    // 包key值：包的文件路径
-   #packagePathMap: Record<string, string> = {}
    #packages?: Record<string, Package>
 
    get path() { return this.#path }
@@ -37,7 +36,6 @@ export class ProjectDao {
       this.#path = projectPath
       this.#main = ''
       this.#packages = undefined
-      this.#packagePathMap = {}
       return true
    }
 
@@ -67,24 +65,34 @@ export class ProjectDao {
       if (this.#packages) return this.#packages
       if (!this.isConnected) throw Error('需要先打开项目，才能获得packages')
       const projectPath = this.#path
-      const packages: Record<string, Package> = {}
-      // 读取packages目录
-      const referPath = escapePath(projectPath, this.config.REFERENCE_DIR)
       // 读取主包
       const mainPkg = this.packageDao.readPackageInfoByPath(projectPath)
       this.#main = mainPkg.key
-      packages[mainPkg.key] = mainPkg
-      this.#packagePathMap[mainPkg.key] = projectPath
+      const references = this.resolveReferences(projectPath)
+      const set = new Set(mainPkg.references.map((ref) => ref.split('\n')[0]))
+      // forIn(references, (key) => {
+      //    if (set.has(key)) return
+      //    delete references[key]
+      // })
+      return this.#packages = {
+         [mainPkg.key]: mainPkg,
+         ...references
+      }
+   }
+
+   resolveReferences(pkgPath: string) {
+      // 读取packages目录
+      const referPath = escapePath(pkgPath, this.config.REFERENCE_DIR)
       // 读取引用的包
+      const references: Record<string, Package> = {}
       for (const name of fs.readdirSync(referPath)) {
          const pkgPath = escapePath(referPath, name)
          const pkg = this.packageDao.readPackageInfoByPath(pkgPath)
-
-         this.#packagePathMap[pkg.key] = pkg.path
-         packages[pkg.key] = pkg
+         references[pkg.key] = pkg
       }
-      return this.#packages = packages
+      return references
    }
+
 
    resolveInfoToVo(project: Project): ProjectVo {
       const projectVo: ProjectVo = enhance(project, {
@@ -92,7 +100,7 @@ export class ProjectDao {
          path: this.path,
          workspace: '',
          main: this.main,
-         packages: {}
+         packages: {},
       })
       // 读取并装载每个package的属性
 

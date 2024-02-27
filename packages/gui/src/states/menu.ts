@@ -34,7 +34,7 @@ export const menuList: ListItem[] = [
                addPanel({
                   label: '新建项目',
                   type: PanelType.NewProject,
-                  data: ''
+                  data: 'NewProject'
                })
             }
          },
@@ -63,7 +63,7 @@ export const menuList: ListItem[] = [
                addPanel({
                   label: '项目设置',
                   type: PanelType.ProjectInfo,
-                  data: ''
+                  data: 'ProjectInfo'
                })
             }
          },

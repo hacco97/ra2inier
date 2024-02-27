@@ -16,7 +16,8 @@ export enum PanelType {
    Mappers = "MapperEditor",
    DEBUG = 'Debug',
    Setting = 'Setting',
-   API = "API"
+   API = "API",
+   NewProject = 'NewProject'
 }
 
 /**

@@ -1,3 +1,5 @@
+import { existsSync, readdirSync } from 'node:fs';
+
 import config from '~/boot/config';
 import {
   controller, inject, mapping, param, pathVar,
@@ -66,7 +68,20 @@ export class ProjServ {
       this.appConfig.setByKey('PROJECT_PATH', path)
       if (!this.projectDao.isConnected) this.projectDao.connectToProject(path)
       const project = this.projectDao.readProjectInfo(path)
+      this.appConfig.addProjectHistory(projectPath)
       return this.#projectCacheMap[path] = this.projectDao.resolveInfoToVo(project)
+   }
+
+   @mapping('new')
+   newProject(@param('path') newProjectPath: string) {
+      console.log(newProjectPath)
+      const isExist = existsSync(newProjectPath)
+      if (isExist) {
+         const dirent = readdirSync(newProjectPath)
+         if (dirent.length != 0) throw Error('目标目录不能为空')
+      }
+      this.appConfig.addProjectHistory(newProjectPath)
+
    }
 
    @mapping('save')

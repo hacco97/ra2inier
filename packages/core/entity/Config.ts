@@ -6,71 +6,98 @@ export interface ClientConfig {
    saveConfig(): void
    setByKey(key: string, val: any): void
    getClientConfig(): Record<string, string>
+   addProjectHistory(history: string): string
    [x: string]: any
 }
 
 export class ClientConfig {
-   // 当前的主题名称
+   /**
+    * 当前的主题名称
+    */
    THEME = ''
-
-   // 开启GPU加速  yes  or  no
+   /**
+    * 开启GPU加速  yes  or  no
+    */
    GPU = ''
-
-   // 当前的项目位置
+   /**
+    * 当前的项目位置
+    */
    PROJECT_PATH: string = ''
-
-   // 自动保存
+   /**
+    * 项目的自动保存时间间隔
+    */
    PROJECT_AUTO_SAVE_INTERVAL = 5 * 60 * 1000
-
-   // 在提示框被关闭时自动确认提示框的内容
+   /**
+    * 在提示框被关闭时自动确认提示框的内容
+    */
    PROMPT_SUBMIT_ON_CLOSE = false
-
-   // 构建输出文件夹
+   /**
+    * 构建输出文件夹
+    */
    OUTPUT_DIR = './out'
-
-   // 窗口大小
+   /**
+    * 窗口大小，用于记录上次工作的窗口大小
+    */
    readonly WINDOW_SIZE: string = ''
+   /**
+    * 近期打开过的历史项目，最多保存8个
+    */
+   PROJECT_HISTORY: string[] = []
+   /**
+    * 默认的新建项目位置
+    */
+   DEFAULT_PROJECT_DIR: string = ''
 }
 
 // 程序后端的设置
 export class Config extends ClientConfig {
-   // 当前程序的启动位置
+   /**
+    * 当前程序的启动位置
+    */
    declare CWD: string
-
-   // 文件系统协议
+   /**
+    * 文件系统协议
+    */
    declare FILE_PROTOCOL: string
-
-   // 客户端主题位置
+   /**
+    * 客户端主题文件夹
+    */
    declare THEME_DIR: string
-
-   // 日志文件位置
+   /**
+    * 日志文件文件夹位置
+    */
    declare LOG_FILE_DIR: string
-
-   // 全局字典的位置
-   declare GLOBAL_DICT_DIR: string
-
-   // 全局第三方可执行文件的位置
+   /**
+    * 全局第三方可执行文件的位置
+    */
    declare GLOBAL_ADDONS_DIR: string
-
-   // 全局包的位置
+   /**
+    * 全局包的位置
+    */
    declare GLOBAL_PACKAGE_DIR: string
-
-   // 全局教程文件的位置
+   /**
+    * 全局教程文件的位置
+    */
    declare GLOBAL_TUTORIAL_DIR: string
-
-   // 主窗口名字
+   /**
+    * 主窗口名字
+    */
    declare MAIN_WINDOW_NAME: string
-
-   // 开发环境
+   /**
+    * 开发环境标识
+    */
    declare IS_DEV: boolean
-
-   //
+   /**
+    * 开发服务器URL
+    */
    declare DEV_URL: string
-
-   // 程序的配置信息会每过一段时间自动保存
+   /**
+    * 程序的配置信息会每过一段时间自动保存
+    */
    declare CONFIG_AUTOSAVE_INTERVAL: number
-
-
+   /**
+    * vue开发工具目录
+    */
    declare VITE_VUE_DEVTOOLS: string
 }
 

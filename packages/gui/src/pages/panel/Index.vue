@@ -11,6 +11,7 @@ import Debug from './panels/Debug.vue';
 import MapperEditor from './panels/Meta/MapperEditor.vue';
 import ScopeEditor from './panels/Meta/ScopeEditor.vue';
 import WordViewer from './panels/Meta/WordViewer.vue';
+import NewProject from './panels/NewProject.vue';
 import None from './panels/None.vue';
 import ObjEditor from './panels/ObjEditor/Index.vue';
 import ProjectInfo from './panels/ProjectInfo.vue';
@@ -21,7 +22,7 @@ defineOptions({
    name: 'Panel',
    components: {
       PanelLayout, Welcome, Debug, API, ProjectInfo, ObjEditor,
-      None, ScopeEditor, WordViewer, MapperEditor, Setting
+      None, ScopeEditor, WordViewer, MapperEditor, Setting, NewProject
    },
 })
 

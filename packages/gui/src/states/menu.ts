@@ -1,8 +1,8 @@
-
+import { exec, send } from '@/boot/apis';
 // 菜单栏
-import { useProject, openNewProject } from "@/stores/projectStore"
-import { PanelParam, PanelType, addPanel } from "./panelList"
-import { exec, send } from "@/boot/apis"
+import { openNewProject, useProject } from '@/stores/projectStore';
+
+import { addPanel, PanelParam, PanelType } from './panelList';
 
 const project = useProject()
 
@@ -29,7 +29,14 @@ export const menuList: ListItem[] = [
       sub: [
          {
             id: 0,
-            label: '新建项目'
+            label: '新建项目',
+            exec() {
+               addPanel({
+                  label: '新建项目',
+                  type: PanelType.NewProject,
+                  data: ''
+               })
+            }
          },
          {
             id: 1,
@@ -174,10 +181,12 @@ export const menuList: ListItem[] = [
          {
             id: 6,
             label: 'debug',
-            exec() { addPanel({
-               type:PanelType.DEBUG,
-               label:'DEBUG'
-            }) },
+            exec() {
+               addPanel({
+                  type: PanelType.DEBUG,
+                  label: 'DEBUG'
+               })
+            },
          },
       ]
 

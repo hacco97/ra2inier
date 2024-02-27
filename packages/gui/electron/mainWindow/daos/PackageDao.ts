@@ -30,7 +30,7 @@ export class PackageDao {
    readPackageInfoByPath(pkgPath: string) {
       let pkg = fromRaw(readJson(join(pkgPath, this.config.PACKAGE_INFO_FILE)), Package)
       if ((pkg.path += '').startsWith('~')) {
-         let path = pkg.path.replace('~', this.config.PACKAGE_LINK_BASEURL)
+         let path = pkg.path.replace('~', this.appConfig.GLOBAL_PACKAGE_DIR)
          path = escapePath(this.appConfig.CWD, path)
          pkg = fromRaw(readJson(path), Package)
          pkg.path = path

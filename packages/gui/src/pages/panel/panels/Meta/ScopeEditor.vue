@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import { provide, ref, shallowReactive } from 'vue';
+import { provide, ref } from 'vue';
 
 import editSvg from '@/asset/icons/edit.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
@@ -9,7 +9,9 @@ import TextBox from '@/components/TextBox.vue';
 import { PanelParam } from '@/states/panelList';
 import { saveScope } from '@/stores/projectStore/metaStore';
 import { ScopeRo } from '@ra2inier/core';
-import { LazyButton } from '@ra2inier/wc';
+import { FlexInput, LazyButton } from '@ra2inier/wc';
+
+import HeaderLayout from '../HeaderLayout.vue';
 
 defineOptions({ name: 'ScopeEditor' })
 const props = defineProps<{ param: PanelParam }>()
@@ -38,26 +40,26 @@ provide('toSave', disabled)
 
 
 <template>
-   <div class="scope-editor scroll">
-      <!-- 头部标题 -->
-      <h1 class="ol-n">
-         <h2><span>{{ scope.name }}</span></h2>
-         <lazy-button>
-            <div v-svgicon="saveSvg" @click="onSaveClick" v-if="!disabled"></div>
-            <div v-svgicon="editSvg" @click="onEditClick" v-else></div>
-         </lazy-button>
-      </h1>
-
-      <main>
+   <HeaderLayout>
+      <template #header>
+         <h2 :class="[$theme.header, $style.scope]" class="panel-header">
+            <span>{{ scope.name }}</span>
+            <lazy-button class="fore-button">
+               <div v-svgicon="saveSvg" @click="onSaveClick" v-if="!disabled"></div>
+               <div v-svgicon="editSvg" @click="onEditClick" v-else></div>
+            </lazy-button>
+         </h2>
+      </template>
+      <template #default>
          <!-- 中部info内容 -->
-         <ul>
+         <ul :class="$style.scope">
             <li>
                <span class="required">类型名称</span><span>::</span>
-               <flex-input class="rd c-bg-l" v-model="scope.name" :disabled="disabled" @change="onNameChange"></flex-input>
+               <flex-input v-model="scope.name" :disabled="disabled" @change="onNameChange" />
             </li>
             <li>
                <span>类型概要</span><span>::</span>
-               <flex-input class="rd c-bg-l" v-model="scope.brief" :disabled="disabled"></flex-input>
+               <flex-input v-model="scope.brief" :disabled="disabled" />
             </li>
             <div>
                <span class="required">输出文件</span><span>::</span>
@@ -78,16 +80,28 @@ provide('toSave', disabled)
                <TextBox v-model:text="scope.detail" :disabled="disabled" />
             </span>
          </div>
-         <footer></footer>
-      </main>
-   </div>
+      </template>
+   </HeaderLayout>
 </template>
 
-<style scoped lang='scss'>
-.scope-editor {
+<style src="./meta.scss" scoped />
+<style src="@css/meta-panel.scss" scoped module="$theme" />
+<style scoped lang='scss' module>
+h2.scope {
+   display: flex;
    height: 100%;
-   position: relative;
-   z-index: auto;
-   @import "./meta.scss";
+   width: 100%;
+   align-items: center;
+
+   lazy-button {
+      height: 100%;
+      aspect-ratio: 1;
+   }
+
+   >* {
+      margin: 0 1ch
+   }
 }
+
+.scope {}
 </style>

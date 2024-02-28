@@ -8,7 +8,7 @@ import { IS_DEV } from '@/stores/config';
 export enum PanelType {
    Tutorial = "Tutorial",
    WordViewer = "WordViewer",
-   ObjEditor = "ObjEditor",
+   ObjectEditor = "ObjectEditor",
    Welcome = "Welcome",
    ProjectInfo = "ProjectInfo",
    None = "None",

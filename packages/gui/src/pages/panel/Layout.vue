@@ -30,7 +30,7 @@ function onFullScreenClick() {
    <div :class="[$style.panel, $theme['panel-view']]" id="panel">
       <!-- 左半边 -->
       <section :class="$style.left" :style="{ flexBasis: dragWidth }">
-         <nav :class="$theme['panel-nav']" class="panelnav">
+         <nav :class="$theme['panel-nav']" class="panel-nav">
             <h2 class="scrollx clearfix" v-scrollx>
                <ul>
                   <slot name="nav-1" :position="true"></slot>
@@ -59,7 +59,7 @@ function onFullScreenClick() {
 
       <!-- 右半边 -->
       <section :class="$style.right" v-show="rightIsShowed">
-         <nav :class="$theme['panel-nav']" class="panelnav">
+         <nav :class="$theme['panel-nav']" class="panel-nav">
             <h2 class="scrollx clearfix" v-scrollx>
                <ul>
                   <slot name="nav-2" :position="false"></slot>

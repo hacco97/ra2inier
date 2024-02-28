@@ -37,7 +37,7 @@ function openObjectPanel(object: IniObjectRo) {
    const opened = cloneIniObject(object)
    addPanel({
       label: opened.name,
-      type: PanelType.ObjEditor,
+      type: PanelType.ObjectEditor,
       data: opened,
       handler: {
          onClose(data: IniObjectRo) { this.onSave?.(data) },

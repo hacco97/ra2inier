@@ -98,8 +98,6 @@ on('project/build', (buildList: string[]) => {
          data
       })
    })
-
-
 })
 
 

@@ -35,7 +35,7 @@ function onNameChange() { }
 <template>
    <div class="mapper-editor scroll">
       <!-- 头部标题 -->
-      <h1 class="ol-n">
+      <h1>
          <h2><span>{{ mapper.name }}</span></h2>
          <lazy-button>
             <div v-svgicon="saveSvg" @click="onSaveClick" v-if="!disabled"></div>
@@ -47,11 +47,11 @@ function onNameChange() { }
          <ul>
             <li>
                <span class="required">名称</span><em>::</em>
-               <flex-input class="c-bg-l rd" :disabled="disabled" v-model="mapper.name"></flex-input>
+               <flex-input :disabled="disabled" v-model="mapper.name"></flex-input>
             </li>
             <li>
                <span title="相对路径——相对于输出文件夹的位置" class="required">输出路径</span><em>::</em>
-               <flex-input class="c-bg-l rd" :disabled="disabled" v-model="mapper.targetPath"></flex-input>
+               <flex-input :disabled="disabled" v-model="mapper.targetPath"></flex-input>
             </li>
             <div>
                <span>详情</span><span>::</span>

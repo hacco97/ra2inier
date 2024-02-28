@@ -13,7 +13,7 @@ import ScopeEditor from './panels/Meta/ScopeEditor.vue';
 import WordViewer from './panels/Meta/WordViewer.vue';
 import NewProject from './panels/NewProject.vue';
 import None from './panels/None.vue';
-import ObjEditor from './panels/ObjEditor/Index.vue';
+import ObjectEditor from './panels/ObjectEditor/Index.vue';
 import ProjectInfo from './panels/ProjectInfo.vue';
 import Setting from './panels/Setting.vue';
 import Welcome from './panels/Welcome.vue';
@@ -21,7 +21,7 @@ import Welcome from './panels/Welcome.vue';
 defineOptions({
    name: 'Panel',
    components: {
-      PanelLayout, Welcome, Debug, API, ProjectInfo, ObjEditor,
+      PanelLayout, Welcome, Debug, API, ProjectInfo, ObjectEditor,
       None, ScopeEditor, WordViewer, MapperEditor, Setting, NewProject
    },
 })
@@ -80,7 +80,7 @@ function getMainSlotName(tab: PanelTab) {
 <template>
    <PanelLayout>
       <template v-for="panel in curPanel" v-slot:[getNavSlotName(panel)]="slotProps" :key="panel.id">
-         <ul class="panelnav" :class="[$style.navbox]">
+         <ul class="panel-nav" :class="[$style.navbox]">
             <li v-for="item in panelList" :key="item.id" :style="{ order: item.order }" draggable="true"
                @dragstart="tabDragStart($event, item)" @dragover.prevent @drop.stop="tabDragDrop($event, item)">
                <div v-if="item.position == slotProps.position && item.id > 0" :class="$theme['nav-label']"

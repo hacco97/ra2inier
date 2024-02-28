@@ -112,7 +112,7 @@ export class EntryRo {
 
 
 const COLUMN_COUNT = Symbol()
-// 管理单个objEditor的数据
+// 管理单个ObjectEditor的数据
 export class EditorState extends EventBus {
    // 源对象数据
    data: IniObjectRo

@@ -133,7 +133,6 @@ $height: line-height(small);
          z-index: 5;
          height: $height;
          line-height: $height;
-         outline-width: 1px;
       }
 
 

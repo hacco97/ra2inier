@@ -1,3 +1,8 @@
+
+$head-height: 30px;
+$line-height: 30px;
+
+
 flex-input {
    display: block;
    height: 100%;
@@ -7,9 +12,6 @@ flex-input {
 flex-input[disabled=true] {
    background-color: var(--color-background-normal);
 }
-
-$head-height: 30px;
-$line-height: 30px;
 
 // 头部
 >h1 {
@@ -25,12 +27,6 @@ $line-height: 30px;
    span {
       display: block;
       margin: 0 $head-height*2;
-   }
-
-   .svg-icon {
-      flex: 0 0 $head-height;
-      height: $head-height;
-      padding: 0.15*$head-height;
    }
 }
 
@@ -54,8 +50,4 @@ $line-height: 30px;
    div {
       margin: 4px 0;
    }
-}
-
-footer {
-   height: 50%;
 }

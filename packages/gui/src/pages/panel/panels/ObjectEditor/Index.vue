@@ -14,7 +14,7 @@ import { FlexInput, LazyButton } from '@ra2inier/wc';
 import EditorView from './EditorView.vue';
 import { EditorState } from './eidtorState';
 
-defineOptions({ name: 'ObjEditor' })
+defineOptions({ name: 'ObjectEditor' })
 const props = defineProps<{ param: PanelParam }>()
 const param = props.param
 const state = shallowReactive(
@@ -55,7 +55,7 @@ function onCheckClick() {
 
 
 <template>
-   <div id="obj-editor" :class="$style.editor" tabindex="-1">
+   <div id="object-editor" :class="$style.editor" tabindex="-1">
       <!-- 头部 -->
       <h1 class="scrollx header" v-scrollx>
          <ul>

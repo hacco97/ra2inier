@@ -146,8 +146,7 @@
 
 /* 右下边栏 */
 #foottab {
-   background-color: rgba(72, 80, 95, 0.244);
-   /* backdrop-filter: blur(2px); */
+   background-color: rgba(70, 80, 90, 0.25);
 }
 
 #home[GPU=yes] #foottab {
@@ -158,17 +157,23 @@
 #panel {}
 
 /* 主界面导航条 */
-.panelnav {}
+.panel-nav {}
 
 /* 主界面头部 */
-.panel-header {}
+.panel-header {
+   background-color: rgba(70, 80, 90, 0.25);
+}
+
+#home[GPU=yes] .panel-header {
+   backdrop-filter: blur(2px);
+}
 
 /* 右下边栏导航条 */
 .footnav {}
 
 
 /* 对象编辑器 */
-#obj-editor {
+#object-editor {
    --line-height: 26px;
    --textbox-radius: 13px;
    --color-bg-1: rgba(56, 86, 117, 0.167);
@@ -183,15 +188,15 @@
    --color-t-5: rgba(237, 244, 167, 0.9);
 }
 
-#obj-editor .header {
-   background-color: rgba(72, 80, 95, 0.244);
+#object-editor .header {
+   background-color: rgba(70, 80, 90, 0.25);
 }
 
-#home[GPU=yes] #obj-editor .header {
+#home[GPU=yes] #object-editor .header {
    backdrop-filter: blur(2px);
 }
 
-#obj-editor .header::after {
+#object-editor .header::after {
    content: '';
    position: absolute;
    bottom: 0;

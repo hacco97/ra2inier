@@ -62,17 +62,16 @@ $line-height: line-height(tiny);
    white-space: nowrap;
 
    h2 {
-      padding-left: 1em;
+      padding-left: align-size(large);
 
 
-      * {
+      span {
          display: inline-block;
          height: 100%;
          text-align: center;
       }
 
       q {
-         width: $line-height;
          text-align: center;
          transition: rotate 0.5s ease;
       }

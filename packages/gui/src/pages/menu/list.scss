@@ -1,4 +1,4 @@
-$height: size(menu);
+$height: layout-size(menu);
 $item-height: line-height(small);
 $item-width: 50px;
 
@@ -59,7 +59,7 @@ $item-width: 50px;
             em {
                display: inline-block;
                height: $item-height;
-               padding-left: 1em;
+               padding-left: align-size(large);
                height: fit-content;
             }
 

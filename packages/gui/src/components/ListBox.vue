@@ -66,89 +66,77 @@ const vNkeymap = useKeyMap({
 </script>
 
 <template>
-   <div class="scrollx" v-scrolls>
-      <ul :class="[clazz, 'clearfix', $style['list-box']]">
-         <span>[</span>
-         <span v-for="(item, order) in data" :key="order">
-            <i v-focus="order" :disabled="disabled" v-text="item.val" :contenteditable="!disabled"
-               @focus="focus.setCurrent(order)" @blur="onBlur($event, order)" v-keymap="order" :tabindex="tabindex"></i>
-            <b :isLast="order == data.length - 1">,</b>
-         </span>
-         <span v-if="!disabled">
-            &nbsp;+&nbsp;<em v-focus="data.length" :disabled="disabled" v-nkeymap :contenteditable="!disabled" ref="theNew"
-               :tabindex="tabindex"></em>
-         </span>
-         <span>]</span>
-      </ul>
-   </div>
+   <ul :class="[clazz, $style['list-box']]">
+      <span>[</span>
+      <span v-for="(item, order) in data" :key="order">
+         <i v-keymap="order" v-focus="order" :disabled="disabled" v-text="item.val" :contenteditable="!disabled"
+            @focus="focus.setCurrent(order)" @blur="onBlur($event, order)" :tabindex="tabindex"
+            :class="[$style.input, $theme.input]"></i>
+         <b :isLast="order == data.length - 1">,</b>
+      </span>
+      <span v-if="!disabled">
+         <em>+</em>
+         <s v-nkeymap v-focus="data.length" :disabled="disabled" :contenteditable="!disabled" ref="theNew"
+            :tabindex="tabindex" :class="[$style.input, $theme.input]"></s>
+      </span>
+      <span>]</span>
+   </ul>
 </template>
 
-<style scoped lang='scss' module>
-$height: var(--line-height);
+<style scoped lang="scss" module="$theme">
+.input {
+   @include plane-radius(normal);
+   @include plane-color(normal);
 
-.list-box {
-   min-width: fit-content;
-
-   span {
-      float: left;
-      vertical-align: middle;
-      height: $height;
-      width: fit-content;
-      line-height: $height;
-      margin: 5px 0;
-      padding: 0 3px;
-      overflow: visible;
+   &[disabled=true] {
+      user-select: text;
+      background-color: inherit;
    }
 
-   i,
-   em {
+   &:focus {
+      filter: brightness(1.3);
+   }
+}
+</style>
+<style scoped lang='scss' module>
+$height: line-height(small);
+$min-width: 60px;
+
+.list-box {
+   display: flex;
+   flex-wrap: wrap;
+   vertical-align: middle;
+   user-select: text;
+
+   span {
+      height: $height;
+      line-height: $height;
+      margin-right: align-size(normal);
+   }
+
+   .input {
       display: inline-block;
       position: relative;
       z-index: auto;
-      min-width: 80px;
       height: 100%;
-      padding: 0 1.2em;
-      overflow: visible;
+      min-width: $min-width;
+      padding: 0 align-size(normal);
       text-align: center;
-      vertical-align: middle;
+
 
       &[disabled=true] {
-         background-color: var(--color-background-normal);
-         user-select: text;
+         min-width: fit-content;
+         padding: 0;
       }
-   }
-
-   i:focus,
-   em:focus {
-      color: var(--color-text-highlight);
    }
 
    b {
       display: inline-block;
       height: $height;
-      vertical-align: middle;
-   }
 
-   b[isLast=true] {
-      display: none;
-   }
-
-   i::after {
-      // content: '\26A0';
-      // content: '\2714';
-      position: absolute;
-      z-index: auto;
-      right: 5px;
-      top: -7px;
-      color: var(--color-info);
-      font-size: var(--font-size-small);
-   }
-
-   h4,
-   h5 {
-      float: left;
-      height: $height;
-      line-height: $height;
+      &[isLast=true] {
+         display: none;
+      }
    }
 
 }

@@ -84,8 +84,8 @@ const { isMasked } = useMask()
 
 <style scoped src="@css/panel.scss" module="$theme" />
 <style scoped lang="scss" module>
-$header-height: size(menu);
-$footer-height: size(footer);
+$header-height: layout-size(menu);
+$footer-height: layout-size(footer);
 
 .home {
    display: flex;

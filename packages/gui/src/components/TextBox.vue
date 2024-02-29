@@ -1,7 +1,9 @@
 <script lang='ts' setup>
-import { onBeforeUnmount, ref } from 'vue'
-import { focusAnElement } from '@/hooks/focus'
+import { onBeforeUnmount, ref } from 'vue';
+
+import { focusAnElement } from '@/hooks/focus';
 import { useKeyMap } from '@/hooks/keymap';
+
 defineOptions({ name: 'TextBox' })
 interface Prop {
    text?: string,
@@ -48,7 +50,7 @@ const vKeymap = useKeyMap({
 }
 
 .scrollx {
-   padding: 1em;
+   padding: align-size(large);
    width: 100%;
 
    &[disabled=true] {
@@ -60,7 +62,7 @@ const vKeymap = useKeyMap({
    display: block;
    padding: 0;
    margin: 0;
-   min-height: 1em;
+   min-height: align-size(large);
    width: 100%;
    min-width: fit-content;
 

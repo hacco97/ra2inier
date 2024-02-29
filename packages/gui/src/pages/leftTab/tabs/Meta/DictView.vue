@@ -37,7 +37,7 @@ const vCtxmenu = useCtxMenu({
 
 
 <template>
-   <div class="left-dict" v-ctxmenu>
+   <div :class="$style.dict" v-ctxmenu>
       <h2>Word::词条类型</h2>
       <ul>
          <li v-for="(word, key) in dictionary" :key="key" @dblclick="onOpenClick(word)" class="c-h-n list-item">
@@ -50,18 +50,17 @@ const vCtxmenu = useCtxMenu({
    </div>
 </template>
 
-<style scoped lang='scss'>
-$padding-left: 1em;
-$height: 25px;
+<style scoped lang='scss' module>
+$padding-left: align-size(large);
+$height: line-height(small);
 
-.left-dict {
+.dict {
    li {
       padding-left: $padding-left;
-
-
    }
 
    h2 {
+      padding-left: $padding-left;
       height: $height;
       line-height: $height;
    }

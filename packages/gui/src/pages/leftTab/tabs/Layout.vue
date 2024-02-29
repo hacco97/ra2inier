@@ -31,7 +31,7 @@ $header-height: line-height(normal);
 
    >h2 {
       height: $header-height;
-      padding-left: 1em;
+      padding-left: align-size(large);
 
       >div {
          display: flex;

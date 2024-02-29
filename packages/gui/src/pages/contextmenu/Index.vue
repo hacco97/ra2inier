@@ -46,13 +46,13 @@ document.body.addEventListener('click', (e: MouseEvent) => {
    @include z-index(ctxmenu);
    height: fit-content;
    width: fit-content;
-   padding: 1em 0;
+   padding: align-size(large) 0;
    max-width: 20em;
    overflow-x: auto;
    overflow-y: hidden;
 
    li {
-      padding: 0.5ch 1em;
+      padding: align-size(small) align-size(large);
    }
 }
 
@@ -71,10 +71,10 @@ document.body.addEventListener('click', (e: MouseEvent) => {
       display: block;
       position: absolute;
       @include z-index(mask);
-      right: 1em;
-      top: 1em;
-      width: 3ch;
-      height: 3ch;
+      right: align-size(large);
+      top: align-size(large);
+      width: align-size(larger);
+      height: align-size(larger);
    }
 }
 

@@ -57,7 +57,7 @@ const mounted = <Ref<boolean>>inject('foottab-mounted')
       display: block;
       height: 100%;
       aspect-ratio: 1;
-      margin: 0 3px;
+      margin: 0 align-size(tiny);
 
       background-color: red;
    }

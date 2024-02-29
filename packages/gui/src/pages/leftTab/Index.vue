@@ -101,7 +101,7 @@ function onTabDragDrop(e: DragEvent, tab: LeftTab) {
 
 <style src="@css/lefttab.scss" scoped module="$theme" />
 <style lang='scss' scoped module>
-$width: size(lefttab);
+$width: layout-size(lefttab);
 
 .lefttab {
    height: 100%;
@@ -123,7 +123,7 @@ $width: size(lefttab);
       }
 
       >section {
-         height: calc($width - size(menu));
+         height: calc($width - layout-size(menu));
       }
 
       li {

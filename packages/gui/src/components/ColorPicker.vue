@@ -1,11 +1,12 @@
 <script lang='ts' setup>
-import { computed, onMounted, ref, watch } from 'vue';
-import { reactive } from 'vue';
-import { NumberInput } from '@ra2inier/wc'
-import { HsvColor, RgbColor, hsv2rgb, rgb2hsv } from './ColorPickerUtils'
-import { useKeyMap } from '@/hooks/keymap'
-import { useFocus } from '@/hooks/focus'
-import submitSvg from '@/asset/icons/submit.svg?raw'
+import { computed, onMounted, reactive, ref, watch } from 'vue';
+
+import submitSvg from '@/asset/icons/submit.svg?raw';
+import { useFocus } from '@/hooks/focus';
+import { useKeyMap } from '@/hooks/keymap';
+import { NumberInput } from '@ra2inier/wc';
+
+import { hsv2rgb, HsvColor, rgb2hsv, RgbColor } from './ColorPickerUtils';
 
 const props = defineProps<{ color: RgbColor }>()
 const emit = defineEmits(['submit'])
@@ -159,7 +160,6 @@ const selected = ref(false)
          <number-input tabindex="-1" v-focus="1" v-model.lazy="rgb.red" @change="onRgbChange" min="0" max="255" />
          <number-input tabindex="-1" v-focus="2" v-model.lazy="rgb.green" @change="onRgbChange" min="0" max="255" />
          <number-input tabindex="-1" v-focus="3" v-model.lazy="rgb.blue" @change="onRgbChange" min="0" max="255" />
-         <!-- <button class="rd ol-n">确认</button> -->
          <p tabindex="-1" v-focus="4" class="normal-label" v-svgicon="submitSvg" @click="onSubmit"
             @keydown.enter="onSubmit" :selected="selected" @focus="selected = true" @blur="selected = false"></p>
       </ul>
@@ -225,7 +225,7 @@ $line-height: line-height(normal);
             display: block;
             width: 14px;
             height: 14px;
-            border: 3px solid aqua;
+            border: align-size(tiny) solid aqua;
             border-radius: 7px;
             transform: translate(-50%, -50%);
             filter: invert(100%) brightness(1.6);
@@ -240,8 +240,6 @@ $line-height: line-height(normal);
          display: block;
          width: calc(100% + 20px);
          height: calc(100% + 20px);
-
-         /* background-color: hsla(213, 100%, 50%); */
       }
    }
 
@@ -291,8 +289,6 @@ $line-height: line-height(normal);
             width: calc(100% + 20px);
             height: calc(100% + 20px);
             pointer-events: all;
-
-            /* background-color: bisque; */
          }
 
          b {
@@ -303,10 +299,7 @@ $line-height: line-height(normal);
             outline: 2px solid black;
             background-color: white;
 
-            &::before
-
-            /* &::after  */
-               {
+            &::before {
                content: '';
                display: block;
                position: absolute;
@@ -324,12 +317,6 @@ $line-height: line-height(normal);
                border-top: 7px solid var(--hue-color);
                border-bottom: 7px solid transparent;
             }
-
-            /* &::after {
-               bottom: -9px;
-               border-bottom: 7px solid var(--hue-color);
-               border-top: 7px solid transparent;
-            } */
          }
       }
 
@@ -362,7 +349,6 @@ $line-height: line-height(normal);
          min-width: 0;
          max-width: 60px;
          height: 100%;
-         /* outline: 2px solid green; */
       }
    }
 }

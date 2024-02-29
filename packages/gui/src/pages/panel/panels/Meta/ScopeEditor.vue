@@ -9,7 +9,7 @@ import TextBox from '@/components/TextBox.vue';
 import { PanelParam } from '@/states/panelList';
 import { saveScope } from '@/stores/projectStore/metaStore';
 import { ScopeRo } from '@ra2inier/core';
-import { FlexInput, LazyButton } from '@ra2inier/wc';
+import { FlexArea, FlexInput, LazyButton } from '@ra2inier/wc';
 
 import HeaderLayout from '../HeaderLayout.vue';
 
@@ -51,42 +51,41 @@ provide('toSave', disabled)
          </h2>
       </template>
       <template #default>
-         <!-- 中部info内容 -->
-         <ul :class="$style.scope">
-            <li>
-               <span class="required">类型名称</span><span>::</span>
-               <flex-input v-model="scope.name" :disabled="disabled" @change="onNameChange" />
-            </li>
-            <li>
-               <span>类型概要</span><span>::</span>
-               <flex-input v-model="scope.brief" :disabled="disabled" />
-            </li>
-            <div>
-               <span class="required">输出文件</span><span>::</span>
-               <span>
+         <main :class="[$style.scope, $theme.main]">
+            <!-- 中部info内容 -->
+            <ul>
+               <h2>
+                  <span class="required">类型名称*</span><span>：</span>
+                  <flex-input v-model="scope.name" :disabled="disabled" @change="onNameChange" />
+               </h2>
+               <h2>
+                  <span>类型概要</span><span>：</span>
+                  <flex-input v-model="scope.brief" :disabled="disabled" />
+               </h2>
+               <h2><span class="required">输出文件*</span><span>：</span></h2>
+               <li>
                   <ListBox :list="scope.files" :disabled="disabled" />
-               </span>
-            </div>
-            <div>
-               <span>适用环境</span><span>::</span><span>
+               </li>
+               <h2><span>适用环境</span><span>：</span><span></span></h2>
+               <li>
                   <MapBox :map="scope.env" :disabled="disabled" />
-               </span>
-            </div>
-         </ul>
-         <!-- 底部详细内容 -->
-         <div>
-            <span>详细介绍</span><span>::</span>
-            <span>
-               <TextBox v-model:text="scope.detail" :disabled="disabled" />
-            </span>
-         </div>
+               </li>
+            </ul>
+            <!-- 底部详细内容 -->
+            <h2><span>详细介绍</span><span>：</span></h2>
+            <li>
+               <flex-area v-model.lazy="scope.detail" :disabled="disabled"></flex-area>
+            </li>
+         </main>
       </template>
    </HeaderLayout>
 </template>
 
-<style src="./meta.scss" scoped />
 <style src="@css/meta-panel.scss" scoped module="$theme" />
 <style scoped lang='scss' module>
+$height: line-height(small);
+$align: align-size(normal);
+
 h2.scope {
    display: flex;
    height: 100%;
@@ -99,9 +98,43 @@ h2.scope {
    }
 
    >* {
-      margin: 0 1ch
+      margin: 0 $align
    }
 }
 
-.scope {}
+main.scope {
+
+   li,
+   h2 {
+      display: flex;
+      flex-wrap: nowrap;
+      padding: 0 $align;
+      min-height: $height;
+      line-height: $height;
+      overflow: hidden;
+      white-space: nowrap;
+   }
+
+   h2 {
+      margin-top: $align;
+   }
+
+   flex-area {
+      width: 100%;
+      padding: 0 $align;
+
+      &[disabled=true] {
+         padding: 0;
+      }
+   }
+
+   flex-input {
+      padding: 0 $align;
+
+      &[disabled=true] {
+         padding: 0;
+      }
+   }
+
+}
 </style>

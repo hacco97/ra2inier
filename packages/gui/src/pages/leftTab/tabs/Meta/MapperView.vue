@@ -30,7 +30,7 @@ const vCtxmenu = useCtxMenu({
 
 
 <template>
-   <div class="local-mapperview" v-ctxmenu>
+   <div :class="$style.mapper" v-ctxmenu>
       <h2>Mapper::文件类型</h2>
       <ul>
          <li class="list-item c-h-n" v-for="(mapper, key) in mappers" @dblclick="onOpenMapper(mapper)" :key="key">
@@ -40,10 +40,15 @@ const vCtxmenu = useCtxMenu({
    </div>
 </template>
 
-<style scoped lang='scss'>
-$height: 25px;
+<style scoped lang='scss' module>
+$padding-left: align-size(large);
+$height: line-height(small);
 
-.local-mapperview {
+.mapper {
+   li {
+      padding-left: $padding-left;
+   }
+
    h2 {
       height: $height;
       line-height: $height;

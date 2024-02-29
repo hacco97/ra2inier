@@ -11,6 +11,7 @@ import { projectName } from '@/stores/projectStore';
 import { fromRaw } from '@ra2inier/core';
 import { FlexInput, LazyButton } from '@ra2inier/wc';
 
+import HeaderLayout from '../HeaderLayout.vue';
 import EditorView from './EditorView.vue';
 import { EditorState } from './eidtorState';
 
@@ -55,41 +56,47 @@ function onCheckClick() {
 
 
 <template>
-   <div id="object-editor" :class="$style.editor" tabindex="-1">
-      <!-- 头部 -->
-      <h1 class="scrollx header" v-scrollx>
-         <ul>
-            <h2>
-               <em>./</em><span>{{ pName }}</span><em>/</em>
-               <i></i><flex-input v-model.lazy.trim="data.name" @change="onNameChange" placeholder="OBJECT" />
-               <em>.</em>
-               <em><flex-input v-model.lazy.trim="data.scope" placeholder="NullTypes" /></em><i></i>
-               <em>/</em><i @click="fi3?.focus()"></i>
-               <em><flex-input ref="fi3" v-model.lazy.trim="data.scope" placeholder="root" /></em>
-            </h2>
-            <label @click="fi3?.focus()"></label>
-            <label></label>
-            <aside :class="$style.buttons">
-               <lazy-button @click="onSaveClick">
-                  <s title="保存(Ctrl + S)" v-svgicon="saveSvg" class="fore-button"></s>
-               </lazy-button>
-               <lazy-button @click="onCheckClick">
-                  <s title="检查(Ctrl + A)" v-svgicon="checkSvg" class="fore-button"></s>
-               </lazy-button>
-               <s @click="onCommentInsert" title="注释(Ctrl + /)" padding="20%" v-svgicon="commentSvg"
-                  class="fore-button"></s>
-               <s title="分栏" padding="15%" v-svgicon="columnSvg" class="fore-button" :column="state.columnCount"
-                  :class="$style.column" @click="onColumnClick"></s>
-               <em></em>
-               <lazy-button @click="ondeleteClick">
-                  <s title="删除(Delete)" v-svgicon="delSvg" class="fore-button"></s>
-               </lazy-button>
-            </aside>
-         </ul>
-      </h1>
-      <!-- 编辑视图 -->
-      <EditorView :state="state" />
-   </div>
+   <HeaderLayout>
+      <template #header>
+         <div :class="$style.editor" tabindex="-1">
+            <!-- 头部 -->
+            <h1 class="scrollx panel-header" v-scrollx>
+               <ul>
+                  <h2>
+                     <em>./</em><span>{{ pName }}</span><em>/</em>
+                     <i></i><flex-input v-model.lazy.trim="data.name" @change="onNameChange" placeholder="OBJECT" />
+                     <em>.</em>
+                     <em><flex-input v-model.lazy.trim="data.scope" placeholder="NullTypes" /></em><i></i>
+                     <em>/</em><i @click="fi3?.focus()"></i>
+                     <em><flex-input ref="fi3" v-model.lazy.trim="data.scope" placeholder="root" /></em>
+                  </h2>
+                  <label @click="fi3?.focus()"></label>
+                  <label></label>
+                  <aside :class="$style.buttons">
+                     <lazy-button @click="onSaveClick">
+                        <s title="保存(Ctrl + S)" v-svgicon="saveSvg" class="fore-button"></s>
+                     </lazy-button>
+                     <lazy-button @click="onCheckClick">
+                        <s title="检查(Ctrl + A)" v-svgicon="checkSvg" class="fore-button"></s>
+                     </lazy-button>
+                     <s @click="onCommentInsert" title="注释(Ctrl + /)" padding="20%" v-svgicon="commentSvg"
+                        class="fore-button"></s>
+                     <s title="分栏" padding="15%" v-svgicon="columnSvg" class="fore-button" :column="state.columnCount"
+                        :class="$style.column" @click="onColumnClick"></s>
+                     <em></em>
+                     <lazy-button @click="ondeleteClick">
+                        <s title="删除(Delete)" v-svgicon="delSvg" class="fore-button"></s>
+                     </lazy-button>
+                  </aside>
+               </ul>
+            </h1>
+         </div>
+      </template>
+      <template #default>
+         <!-- 编辑视图 -->
+         <EditorView :state="state" />
+      </template>
+   </HeaderLayout>
 </template>
 
 <style scoped lang='scss' module >
@@ -117,7 +124,7 @@ $height: line-height(normal);
          display: flex;
          flex-wrap: nowrap;
          height: 100%;
-         margin-left: 2em;
+         margin-left: align-size(normal);
          align-items: center;
       }
 
@@ -126,7 +133,7 @@ $height: line-height(normal);
       }
 
       label {
-         width: 30px;
+         width: align-size(larger);
          height: 100%;
       }
 
@@ -137,7 +144,7 @@ $height: line-height(normal);
       }
 
       i {
-         width: 1ch;
+         width: align-size(normal);
          height: 100%;
       }
 
@@ -158,7 +165,7 @@ $height: line-height(normal);
 
 .buttons {
    em {
-      width: 1em;
+      width: align-size(large);
       height: 100%;
    }
 
@@ -166,7 +173,7 @@ $height: line-height(normal);
       display: block;
       height: 100%;
       aspect-ratio: 1;
-      margin: 0 3px;
+      margin: 0 align-size(tiny);
    }
 }
 
@@ -178,9 +185,9 @@ $height: line-height(normal);
    content: attr(column);
    position: absolute;
    top: 0;
-   right: -1ch;
-   width: 1em;
-   height: 1em;
+   right: - align-size(normal);
+   width: align-size(large);
+   height: align-size(large);
    text-align: center;
    border-radius: 50px;
    @include selection()

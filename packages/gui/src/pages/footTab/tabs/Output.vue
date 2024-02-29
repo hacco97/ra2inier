@@ -48,7 +48,7 @@ const mounted = <Ref<boolean>>inject('foottab-mounted')
       </li>
    </div>
    <Teleport v-if="mounted" to="#foottab-tools" :disabled="selected.type !== FootTabType.Output">
-      <lazy-button class="fore-button" style="margin: 0 3px;" @click="onOutputClick">
+      <lazy-button class="fore-button" style="margin: 0 align-size(tiny);" @click="onOutputClick">
          <s v-svgicon="playSvg"></s>
       </lazy-button>
    </Teleport>
@@ -58,14 +58,14 @@ const mounted = <Ref<boolean>>inject('foottab-mounted')
 $height: line-height(normal);
 
 .output {
-   padding: 1em 0;
+   padding: align-size(large) 0;
 
    li {
       display: flex;
       align-items: center;
       height: $height;
       line-height: $height;
-      padding: 0 1em;
+      padding: 0 align-size(large);
 
       span {
          float: left;
@@ -76,7 +76,7 @@ $height: line-height(normal);
    flex-input {
       height: 100%;
       line-height: 100%;
-      padding: 0 1ch;
+      padding: 0 align-size(normal);
    }
 
    s {

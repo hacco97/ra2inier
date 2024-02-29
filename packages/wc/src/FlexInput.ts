@@ -102,6 +102,8 @@ export class FlexInput extends HTMLElement implements WebComponent {
          this.value = nv
       } else if (name === 'placeholder') {
          this.#input.placeholder = nv
+      } else if (name === 'disabled') {
+         this.#input.disabled = !!nv
       }
    }
 }

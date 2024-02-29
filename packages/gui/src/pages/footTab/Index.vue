@@ -133,7 +133,7 @@ onMounted(() => { mounted.value = true })
 
 <style scoped src="@css/foottab.scss" module="$theme" />
 <style scoped lang="scss" module>
-$height: size(foottab);
+$height: layout-size(foottab);
 
 .foottab {
    height: 100%;
@@ -151,14 +151,14 @@ $height: size(foottab);
          >div {
             position: relative;
             flex: 0 0 auto;
-            margin: 0 3px;
+            margin: 0 align-size(tiny);
 
             s {
                position: absolute;
                display: block;
-               top: 3px;
-               right: 0.5ch;
-               height: 1em;
+               top: align-size(tiny);
+               right: align-size(small);
+               height: align-size(large);
                aspect-ratio: 1;
                text-align: center;
             }
@@ -169,7 +169,7 @@ $height: size(foottab);
             align-items: center;
             height: 100%;
 
-            padding: 0 1ch;
+            padding: 0 align-size(normal);
             overflow: hidden;
 
             >span {
@@ -191,7 +191,7 @@ $height: size(foottab);
             /* flex: 1 0 0; */
             height: 100%;
             aspect-ratio: 1;
-            margin: 0 3px;
+            margin: 0 align-size(tiny);
             order: 10;
          }
       }

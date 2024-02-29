@@ -18,15 +18,6 @@
       "**/.hg": true,
       "**/CVS": true,
       "**/.DS_Store": true,
-      "**/Thumbs.db": true,
-      ".git": true,
-      "node_modules": true,
-      "packages/core/node_modules": true,
-      "packages/core/package-lock.json": true,
-      "packages/doc/node_modules": true,
-      "packages/gui/node_modules": true,
-      "packages/test/node_modules": true,
-      "packages/wc/node_modules": true,
-      "packages/dev/node_modules": true
+      "**/Thumbs.db": true
    }
 }

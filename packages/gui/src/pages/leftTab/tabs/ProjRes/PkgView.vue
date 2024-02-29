@@ -97,7 +97,7 @@ $line-height: line-height(tiny);
       justify-content: space-between;
       flex-wrap: nowrap;
       height: $header-height;
-      padding-left: 1em;
+      padding-left: align-size(large);
    }
 
    h2 {

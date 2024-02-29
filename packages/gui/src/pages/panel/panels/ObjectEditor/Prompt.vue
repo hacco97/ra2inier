@@ -167,11 +167,11 @@ const isKnownWord = computed(() =>
 
    h2 {
       >* {
-         margin: 3px 0;
+         margin: align-size(tiny) 0;
       }
 
       h3 {
-         padding: 3px 1em;
+         padding: align-size(tiny) align-size(large);
       }
 
       hr {
@@ -206,8 +206,8 @@ const isKnownWord = computed(() =>
 
 .number {
    display: flex;
-   padding: 0.5ch 1ch;
-   margin: 0.5ch;
+   padding: align-size(small) align-size(normal);
+   margin: align-size(small);
    text-align: center;
    align-items: center;
    height: 3em;

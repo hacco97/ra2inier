@@ -129,8 +129,8 @@ const columCount = computed(() => ({ columns: state.columnCount }))
 
 <template>
    <!-- 中部内容 -->
-   <main :class="$style.main">
-      <section class="scroll" tabindex="-1">
+   <main :class="$style.main" id="object-editor">
+      <section tabindex="-1">
          <ol>
             <!-- 提示框 -->
             <nav v-show="promptState.isShowed">
@@ -181,7 +181,6 @@ const columCount = computed(() => ({ columns: state.columnCount }))
                </li>
             </ul>
          </ol>
-         <footer></footer>
       </section>
    </main>
 </template>
@@ -196,7 +195,7 @@ const columCount = computed(() => ({ columns: state.columnCount }))
 </style>
 
 <style scoped lang='scss' module>
-$height: 30px;
+$height: align-size(larger);
 
 .main {
    position: relative;
@@ -207,7 +206,6 @@ $height: 30px;
 
    section {
       height: 100%;
-      padding-top: 1.2* $height;
    }
 
    ol {
@@ -219,10 +217,6 @@ $height: 30px;
    ul {
       columns: 1;
       column-fill: balance;
-   }
-
-   footer {
-      height: max(400px, 40%);
    }
 
    nav {
@@ -249,8 +243,7 @@ $height: 30px;
    flex-area {
       width: 100%;
       height: fit-content;
-      padding: 1ch;
-      outline-width: 1px;
+      padding: align-size(normal);
    }
 
    @import './editor-view.scss';

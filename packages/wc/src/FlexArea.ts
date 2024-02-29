@@ -1,5 +1,6 @@
-import { WebComponent } from './WebComponent'
-import { css } from './cssUtils'
+import { css } from './cssUtils';
+import { WebComponent } from './WebComponent';
+
 const styleSheet = css`
    :host {
       display: inline-block;
@@ -75,8 +76,9 @@ export class FlexArea extends HTMLElement implements WebComponent {
       this.updatePlaceholder()
    }
 
+   get disabled() { return this.#pre.contentEditable !== 'true' ? 'true' : 'false' }
    set disabled(val: string) {
-      this.setAttribute('disabled', val === 'true' ? 'true' : 'false')
+      this.setAttribute('disabled', val)
       this.#pre.contentEditable = !val + ''
    }
 
@@ -114,7 +116,7 @@ export class FlexArea extends HTMLElement implements WebComponent {
       if (name === 'text') {
          this.value = nv
       } else if (name === 'disabled') {
-         this.disabled = nv
+         this.#pre.contentEditable = !nv + ''
       } else if (name === 'placeholder') {
          this.placeholder = nv
       }

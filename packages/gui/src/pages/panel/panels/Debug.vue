@@ -53,11 +53,11 @@ div {
    }
 
    li {
-      padding: 1ch;
+      padding: align-size(normal);
    }
 
    span {
-      padding: 1em;
+      padding: align-size(large);
    }
 }
 </style>

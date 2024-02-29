@@ -1,6 +1,7 @@
 <script lang='ts' setup>
 import { useCtxMenu } from '@/states/ctxMenu';
 import { addPanel, PanelType } from '@/states/panelList';
+import { useProject } from '@/stores/projectStore';
 import { ScopeRo } from '@ra2inier/core';
 
 // const scopes: Record<string, ScopeRo> = inject('scopes') ?? {}
@@ -12,6 +13,12 @@ function onOpenClick(scope: ScopeRo) {
       type: PanelType.ScopeEditor,
       data: scope
    })
+}
+
+const project = useProject()
+
+function queryPkgNameByKey(key: string) {
+   return project.value.packages[key].name
 }
 
 // function onCtxOpenClick() {
@@ -54,9 +61,8 @@ const vCtxmenu = useCtxMenu({})
    <div class="local-scopeview" v-ctxmenu>
       <h2>Scope::对象类型</h2>
       <ul>
-         <li class="list-item c-h-n" v-for="(scope, key) of scopes"
-            :key="key" @dblclick="onOpenClick(scope)">
-            <span>+</span> <span> {{ scope.name }}</span>
+         <li class="list-item c-h-n" v-for="(scope, key) of scopes" :key="key" @dblclick="onOpenClick(scope)">
+            <span>{{ queryPkgNameByKey(scope.package) }}</span><span>&gt;</span><span>{{ scope.name }}</span>
          </li>
       </ul>
    </div>

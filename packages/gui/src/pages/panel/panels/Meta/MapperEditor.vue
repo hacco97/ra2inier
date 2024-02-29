@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import { ref, shallowReactive } from 'vue';
+import { ref } from 'vue';
 
 import editSvg from '@/asset/icons/edit.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';

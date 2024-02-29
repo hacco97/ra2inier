@@ -1,4 +1,4 @@
-$padding: 1ch;
+$padding: align-size(normal);
 
 li {
    /* 不能在这层新建层叠上下文，cursor逻辑的行为依赖于这个要求 */
@@ -23,7 +23,7 @@ li {
       flex-wrap: wrap;
       width: 100%;
       max-width: 100%;
-      margin: 3px 0;
+      margin: align-size(tiny) 0;
       padding: 0 $padding;
       min-height: 1lh;
       line-height: var(--line-height);
@@ -34,7 +34,7 @@ li {
    }
 
    pre {
-      margin: 3px;
+      margin: align-size(tiny);
       padding: 0 $padding;
    }
 
@@ -67,7 +67,7 @@ li {
          content: ">";
          position: absolute;
          top: 0;
-         left: 1ch;
+         left: align-size(normal);
       }
    }
 
@@ -78,7 +78,7 @@ li {
       height: 1lh;
       min-width: 80px;
       max-width: 100%;
-      padding: 0 1em;
+      padding: 0 align-size(large);
       text-align: center;
       border-radius: var(--textbox-radius);
       background-color: var(--color-bg-4);

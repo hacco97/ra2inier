@@ -52,13 +52,13 @@ function onAddClick() {
    height: 100%;
 
    main {
-      padding: 1em 0;
+      padding: align-size(large) 0;
    }
 
    li {
       display: flex;
       vertical-align: middle;
-      padding: 0 1em;
+      padding: 0 align-size(large);
    }
 
    span {
@@ -66,7 +66,7 @@ function onAddClick() {
    }
 
    flex-input {
-      min-height: 1em;
+      min-height: align-size(large);
       text-decoration: underline;
    }
 

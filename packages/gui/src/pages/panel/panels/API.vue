@@ -51,7 +51,7 @@ function onKeydown(e: KeyboardEvent, command: string) {
    }
 
    input {
-      padding: 3px 5px;
+      padding: align-size(tiny) 5px;
    }
 
    button:hover {

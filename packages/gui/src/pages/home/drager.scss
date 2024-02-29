@@ -19,7 +19,6 @@
       height: 100%;
       width: 400px;
       transform: translateX(-50%);
-      // background-color: aquamarine;
    }
 }
 
@@ -43,6 +42,5 @@
    position: absolute;
    @include z-index(foottab);
    inset: 0;
-   // background-color: purple;
    cursor: ns-resize;
 }

@@ -75,7 +75,7 @@ const vKeymap = useKeyMap({
       height: fit-content;
       min-height: 10em;
       min-width: 8em;
-      padding: 1em 0;
+      padding: align-size(large) 0;
 
       background-color: aqua;
    }
@@ -85,7 +85,7 @@ const vKeymap = useKeyMap({
    }
 
    li {
-      padding: 3px 1em;
+      padding: align-size(tiny) align-size(large);
 
       &:hover {
          background-color: var(--color-bg-3);

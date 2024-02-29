@@ -86,7 +86,7 @@ function getMainSlotName(tab: PanelTab) {
                <div v-if="item.position == slotProps.position && item.id > 0" :class="$theme['nav-label']"
                   :selected="panel.id === item.id" @click="selectTab(item)">
                   <b>{{ item.param.label }}</b>
-                  <s @click="tabClose($event, item.id)" v-svgicon="closeSvg" class="fore-button"></s>
+                  <s @click="tabClose($event, item.id)" v-svgicon="closeSvg" :class="$theme['nav-close']"></s>
                </div>
             </li>
          </ul>
@@ -101,8 +101,8 @@ function getMainSlotName(tab: PanelTab) {
 
 <style src="@css/panel.scss" scoped module="$theme" />
 <style lang='scss' scoped module>
-$height: size(panelnav);
-$buttun-size: clamp(14px, calc($height * 0.7), 30px);
+$height: layout-size(panelnav);
+$buttun-size: clamp(14px, calc($height * 0.7), align-size(larger));
 
 .navbox {
    display: flex;
@@ -112,7 +112,7 @@ $buttun-size: clamp(14px, calc($height * 0.7), 30px);
    >li {
       min-width: fit-content;
       height: 100%;
-      margin-left: 3px;
+      margin-left: align-size(tiny);
       overflow: hidden;
 
       >div {
@@ -120,12 +120,12 @@ $buttun-size: clamp(14px, calc($height * 0.7), 30px);
          align-items: center;
          width: fit-content;
          height: $height;
-         padding: 0 1ch;
+         padding: 0 align-size(normal);
       }
 
       b {
          display: block;
-         margin: 0 5px;
+         margin: 0 align-size(small);
          width: fit-content;
       }
 

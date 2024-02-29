@@ -135,7 +135,7 @@ $head-height: 30px;
 $line-height: 30px;
 
 .local-text-editor {
-   padding: 1em;
+   padding: align-size(large);
 
    ul {
       display: flex;

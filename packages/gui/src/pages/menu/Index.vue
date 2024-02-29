@@ -1,16 +1,17 @@
 <script lang='ts' setup>
-import { computed, ref } from 'vue'
-import { menuList as list, invokeMenuOption } from '@/states/menu'
-import { useScroller } from './scroll'
-import { send, on } from '@/boot/apis'
-import FileBox from './menuItem/FileBox.vue'
-import CheckBox from './menuItem/CheckBox.vue'
-import { projectName, useProject } from '@/stores/projectStore'
-import minSvg from '@/asset/icons/min.svg?raw'
-import toggleSvg from '@/asset/icons/toggle.svg?raw'
-import toggle2Svg from '@/asset/icons/toggle2.svg?raw'
-import closeSvg from '@/asset/icons/close.svg?raw'
+import { computed, ref } from 'vue';
 
+import closeSvg from '@/asset/icons/close.svg?raw';
+import minSvg from '@/asset/icons/min.svg?raw';
+import toggleSvg from '@/asset/icons/toggle.svg?raw';
+import toggle2Svg from '@/asset/icons/toggle2.svg?raw';
+import { on, send } from '@/boot/apis';
+import { invokeMenuOption, menuList as list } from '@/states/menu';
+import { projectName, useProject } from '@/stores/projectStore';
+
+import CheckBox from './menuItem/CheckBox.vue';
+import FileBox from './menuItem/FileBox.vue';
+import { useScroller } from './scroll';
 
 defineOptions({
    name: 'Menu',
@@ -126,8 +127,8 @@ on('unmaximize', () => {
 
 <style src="@css/menubar.scss" scoped module="$theme" />
 <style scoped module="$layout" lang="scss">
-$height: size(menu);
-$icon-length: size(lefttab);
+$height: layout-size(menu);
+$icon-length: layout-size(lefttab);
 /* $icon-offset: -10px; */
 
 .menubar {
@@ -158,7 +159,7 @@ $icon-length: size(lefttab);
       q {
          display: inline-block;
          height: $height;
-         padding: 0 1ch;
+         padding: 0 align-size(normal);
       }
 
       s {

@@ -1,7 +1,5 @@
-
-$head-height: 30px;
-$line-height: 30px;
-
+$head-height: align-size(larger);
+$line-height: align-size(larger);
 
 flex-input {
    display: block;
@@ -9,12 +7,12 @@ flex-input {
    min-width: 50px;
 }
 
-flex-input[disabled=true] {
+flex-input[disabled="true"] {
    background-color: var(--color-background-normal);
 }
 
 // 头部
->h1 {
+> h1 {
    display: flex;
    position: absolute;
    top: 0;
@@ -26,14 +24,14 @@ flex-input[disabled=true] {
 
    span {
       display: block;
-      margin: 0 $head-height*2;
+      margin: 0 $head-height * 2;
    }
 }
 
 // 中部
->main {
+> main {
    padding: 10px;
-   padding-top: calc($head-height *1.2);
+   padding-top: calc($head-height * 1.2);
    height: 100%;
    min-height: 0;
 
@@ -42,12 +40,12 @@ flex-input[disabled=true] {
       flex-wrap: nowrap;
       height: $line-height;
       line-height: $line-height;
-      margin: 4px 0;
+      margin: align-size(small) 0;
       overflow: hidden;
       white-space: nowrap;
    }
 
    div {
-      margin: 4px 0;
+      margin: align-size(small) 0;
    }
 }

@@ -13,7 +13,7 @@
       <!-- 中部info内容 -->
       <main class="scroll">
          <slot></slot>
-         <footer></footer>
+         <footer tabindex="-1"></footer>
       </main>
    </div>
 </template>
@@ -28,7 +28,7 @@ $height: line-height(normal);
 
    h1 {
       position: absolute;
-      z-index: 1;
+      @include z-index(nav);
       height: $height;
       width: 100%;
    }

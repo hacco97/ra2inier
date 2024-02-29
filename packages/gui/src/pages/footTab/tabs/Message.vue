@@ -1,6 +1,7 @@
 <script lang='ts' setup>
-import { messageList } from '@/stores/messageStore'
-import { setMessageBadge } from '@/states/footTabList'
+import { setMessageBadge } from '@/states/footTabList';
+import { messageList } from '@/stores/messageStore';
+
 defineOptions({ name: 'Message' })
 setMessageBadge(messageList.length)
 </script>
@@ -21,10 +22,10 @@ setMessageBadge(messageList.length)
 .message {
    overflow: auto;
    height: 100%;
-   padding: 1em 0;
+   padding: align-size(large) 0;
 
    li {
-      padding: 1ch 1em;
+      padding: align-size(normal) align-size(large);
    }
 
    b {
@@ -35,7 +36,7 @@ setMessageBadge(messageList.length)
       content: '';
       position: absolute;
       top: 40%;
-      right: -1ch;
+      right: -align-size(normal);
       height: 30%;
       aspect-ratio: 1;
       /* background-color: red; */

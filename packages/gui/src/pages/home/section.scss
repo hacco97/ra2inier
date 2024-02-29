@@ -1,4 +1,4 @@
-$height: size(foottab);
+$height: layout-size(foottab);
 
 > section {
    position: relative;
@@ -13,7 +13,7 @@ $height: size(foottab);
       flex: 0 1 250px;
       position: relative;
       @include z-index(lefttab);
-      min-width: size(lefttab);
+      min-width: layout-size(lefttab);
    }
 
    // 中间面板

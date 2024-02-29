@@ -10,7 +10,7 @@
 
 .menubar-subitem {
    @include fore-panel();
-   @include reactive-box(true, false);
+   @include reactive-box(true, true, true);
 }
 
 .menubar-sublist {

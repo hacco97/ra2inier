@@ -11,8 +11,8 @@ defineOptions({ name: 'TaskQueue' })
    flex-direction: column;
 
    li {
-      width: 30px;
-      height: 30px;
+      width: align-size(larger);
+      height: align-size(larger);
    }
 }
 </style>

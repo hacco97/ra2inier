@@ -79,7 +79,7 @@ function onFullScreenClick() {
 
 <style src="@css/panel.scss" scoped module="$theme" />
 <style scoped lang='scss' module>
-$height: size(panelnav);
+$height: layout-size(panelnav);
 
 .left {
    flex: 0 1 100%;
@@ -132,12 +132,12 @@ $height: size(panelnav);
          align-items: center;
          min-width: fit-content;
          height: 100%;
-         padding: 0 1ch;
+         padding: 0 align-size(normal);
 
          s {
             height: 100%;
             aspect-ratio: 1;
-            margin: 0 3px;
+            margin: 0 align-size(tiny);
          }
       }
    }

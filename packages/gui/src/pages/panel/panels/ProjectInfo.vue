@@ -28,10 +28,10 @@ watch(loadingVersion, () => {
 
 <style lang='scss' module scoped>
 .project-info {
-   padding: 1em 0;
+   padding: align-size(large) 0;
 
    li {
-      padding: 0 1em;
+      padding: 0 align-size(large);
    }
 }
 </style>

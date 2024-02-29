@@ -24,15 +24,14 @@
       bottom: -1px;
       display: block;
       width: 100%;
-      height: line-width(slim);
-      background-color: line-color(normal);
+      border-top: 1px solid line-color(normal);
    }
 }
 
 .nav-close {
-   @include fore-panel();
-   @include reactive-box(true, false, false);
-   @include plane-radius(normal);
+   @include fore-panel(true);
+   @include reactive-box();
+   background-color: inherit;
 }
 
 .panelnav-btn {

@@ -22,10 +22,10 @@ const config = useConfig()
 
 <style scoped lang='scss' module>
 .setting {
-   padding: 1em 0;
+   padding: align-size(large) 0;
 
    li {
-      padding: 0 1em;
+      padding: 0 align-size(large);
    }
 
    footer {
@@ -33,7 +33,7 @@ const config = useConfig()
    }
 
    select {
-      padding: 0 1em;
+      padding: 0 align-size(large);
       @include normal-panel(normal);
    }
 }

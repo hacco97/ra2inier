@@ -12,40 +12,37 @@ const styleSheet = css`
       user-select: none;
    }
 
-   div {
-      position: relative;
-      z-index: auto;
-      width: 100%;
-      height: 100%;
-   }
-
    *::selection {
       color: var(--selection-color);
       background-color: var(--selection-background-color);
    }
 
-   pre {
-      margin: 0;
-      width: 100%;
+   div {
+      position: relative;
+   }
+
+   p {
+      width: 2px;
       height: 100%;
-      outline: 0;
+      margin: 0;
+      visibility: hidden;
+   }
+
+   textarea {
+      all: unset;
+      position: absolute;
+      margin: 0;
+      height: 100%;
+      width: 100%;
       min-width: fit-content;
       min-height: 1em;
       font: inherit;
-      user-select: all;
+      resize: none;
+      white-space: pre-wrap;
    }
 
-   pre::after {
-      content: var(--flex-area-placeholder);
-      position: absolute;
-      z-index: auto;
-      inset: 0;
-   }
-
-   span {
-      display: block;
-      height: 0;
-      overflow: hidden;
+   textarea::-webkit-scrollbar {
+      width: 0;
    }
 `
 
@@ -53,33 +50,19 @@ const styleSheet = css`
  * 能够弹性伸缩的多行文本输入框
  */
 export class FlexArea extends HTMLElement implements WebComponent {
-   #pre: HTMLPreElement
-   #span: HTMLElement
-   #placeholder = ''
+   #textarea: HTMLTextAreaElement
+   #p: HTMLElement
 
-   get placeholder() { return this.#placeholder }
-   set placeholder(val: string) {
-      if (!val) return
-      this.#placeholder = val
-      this.#span.innerText = val
-      this.updatePlaceholder()
-   }
+   get placeholder() { return this.#textarea.placeholder }
+   set placeholder(val: string) { this.#textarea.placeholder = val }
 
-   updatePlaceholder() {
-      const tmp = this.value === '' ? `'${this.#placeholder}'` : ''
-      this.#pre.style.setProperty('--flex-area-placeholder', tmp)
-   }
+   get value() { return this.#textarea.textContent! }
+   set value(val: string) { this.#textarea.textContent = val }
 
-   get value() { return this.#pre.innerText }
-   set value(val: string) {
-      this.#pre.innerText = val
-      this.updatePlaceholder()
-   }
-
-   get disabled() { return this.#pre.contentEditable !== 'true' ? 'true' : 'false' }
-   set disabled(val: string) {
-      this.setAttribute('disabled', val)
-      this.#pre.contentEditable = !val + ''
+   get disabled() { return this.#textarea.disabled }
+   set disabled(val: boolean) {
+      this.setAttribute('disabled', val + '')
+      this.#textarea.disabled = val
    }
 
    constructor() {
@@ -87,22 +70,28 @@ export class FlexArea extends HTMLElement implements WebComponent {
       const shadow = this.attachShadow({ mode: 'open', delegatesFocus: true })
       shadow.innerHTML = `
       <div>
-         <pre part="pre" contenteditable="true"></pre>
-         <span></span>
+      <textarea part="pre"></textarea>
+      <p></p>
       </div>
       `
-      const pre = this.#pre = shadow.querySelector('pre')!
-      this.#span = shadow.querySelector('span')!
+
+      const textarea = this.#textarea = shadow.querySelector('textarea')!
+      const p = this.#p = shadow.querySelector('p')!
       let memory = ''
-      pre.addEventListener('input', (e) => this.updatePlaceholder())
-      pre.addEventListener('keydown', (e: KeyboardEvent) => {
+      const update = (e: Event) => {
+         this.#p.style.height = '1em'
+         this.#p.style.height = this.#textarea.scrollHeight + 'px'
+      }
+      textarea.addEventListener('input', update)
+      textarea.addEventListener('paste', update)
+      textarea.addEventListener('keydown', (e: KeyboardEvent) => {
+         update(e)
          if (e.key === 'Enter' && memory !== this.value) {
             memory = this.value
             this.dispatchEvent(new CustomEvent('change', { bubbles: false }))
          }
       })
-      pre.addEventListener('blur', () => {
-         this.updatePlaceholder()
+      textarea.addEventListener('blur', () => {
          if (memory !== this.value) {
             memory = this.value
             this.dispatchEvent(new CustomEvent('change', { bubbles: false }))
@@ -116,14 +105,17 @@ export class FlexArea extends HTMLElement implements WebComponent {
       if (name === 'text') {
          this.value = nv
       } else if (name === 'disabled') {
-         this.#pre.contentEditable = !nv + ''
+         this.#textarea.disabled = nv !== 'true'
       } else if (name === 'placeholder') {
          this.placeholder = nv
       }
    }
 
-   connectedCallback() {
-      setTimeout(() => this.updatePlaceholder())
+   connectedCallback(): void {
+      setTimeout(() => {
+         this.#p.style.height = '1em'
+         this.#p.style.height = this.#textarea.scrollHeight + 'px'
+      })
    }
 }
 

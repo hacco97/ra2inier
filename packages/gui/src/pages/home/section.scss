@@ -26,7 +26,6 @@ $height: layout-size(foottab);
       width: 100%;
       overflow: hidden;
 
-      // 在此之上，panel面板
       > article {
          position: relative;
          height: 100%;
@@ -34,7 +33,6 @@ $height: layout-size(foottab);
          min-width: 0;
       }
 
-      // 在此之上，下边栏的index
       > aside {
          position: absolute;
          @include z-index(foottab);

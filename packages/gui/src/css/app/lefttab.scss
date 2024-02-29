@@ -20,6 +20,25 @@
 .projres-referbar {
    @include normal-panel();
    @include font-size(small);
+   position: relative;
+
+   &::before,
+   &::after {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      width: 100%;
+      height: 1px;
+      border-bottom: 1px solid line-color(normal);
+   }
+
+   &::before {
+      top: 0;
+   }
+
+   &::after {
+      bottom: -1px;
+   }
 }
 
 @mixin drager-hoverable {

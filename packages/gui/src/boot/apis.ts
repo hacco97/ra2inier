@@ -1,3 +1,4 @@
+import { EventBus } from '@/hooks/eventBus';
 import MyWorker from '@/worker?worker';
 import { Logger } from '@ra2inier/core';
 
@@ -23,7 +24,6 @@ export function exec<T>(command: string, options: RequestOptions = {}): Promise<
          try {
             const tmp = options.data
             if (tmp && tmp.toDto) options.data = tmp.toDto()
-            // eApi.send(CHANNEL_TO, id, command, options)
             port.postMessage({ id, command, options })
          }
          catch (error) {
@@ -133,7 +133,6 @@ worker.addEventListener('message', async (ev) => {
    }
 })
 
-
 window.addEventListener('message', (ev) => {
    if (ev.data !== 'establish-port-worker-pass') return
    if (ev.ports[0]) {
@@ -141,3 +140,9 @@ window.addEventListener('message', (ev) => {
       worker.postMessage('give you port', trans)
    }
 })
+
+
+
+// ******************* Event bus，全局事件订阅逻辑 **********************
+
+export const eventBus = new EventBus

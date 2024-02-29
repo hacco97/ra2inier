@@ -84,7 +84,7 @@ function onValBlur(e: Event, order: number) {
    <ul :class="[clazz, $style.mapbox, $theme.mapbox]">
       <b>{</b>
       <template v-for="(item, order) in data" :key="order">
-         <span>
+         <span :class="$theme.box">
             <i v-focus="2 * order" :disabled="disabled" v-text="item.key" :contenteditable="!disabled"
                @focus="setCurrent(2 * order)" @blur="onKeyBlur($event, order)" v-keymap="{ order, keyOrVal: true }"
                :tabindex="tabindex"></i>
@@ -97,7 +97,7 @@ function onValBlur(e: Event, order: number) {
       </template>
       <b></b>
       <span v-if="!disabled">+</span>
-      <b v-if="!disabled">
+      <b v-if="!disabled" :class="$theme.box">
          <s v-focus="2 * data.length" :disabled="disabled" :contenteditable="!disabled" ref="newKey"
             @focus="setCurrent(data.length * 2)" v-nkeymap="'key'" :tabindex="tabindex"></s>
          <hr>
@@ -113,7 +113,6 @@ function onValBlur(e: Event, order: number) {
 
    i,
    s {
-      @include plane-radius(normal);
       @include plane-color(normal);
 
       &:focus {
@@ -129,6 +128,11 @@ function onValBlur(e: Event, order: number) {
    hr {
       background-color: line-color(normal);
    }
+}
+
+.box {
+   @include plane-radius(normal);
+   overflow: hidden;
 }
 </style>
 <style scoped lang='scss' module>
@@ -166,7 +170,6 @@ $min-width: 60px;
 
    hr {
       height: 1px;
-      margin: 0 align-size(tiny);
    }
 }
 </style>

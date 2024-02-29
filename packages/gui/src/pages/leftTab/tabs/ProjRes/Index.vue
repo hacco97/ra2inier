@@ -50,7 +50,7 @@ const {
                      :dragging="isDragerPanelShowed"></b>
                </legend>
                <p>
-               <h2 @click="onReferClick" :class="$theme['projres-referbar']" class="vertical-center">
+               <h2 @click="onReferClick" :class="$theme['projres-referbar']">
                   <em><span class="folder" :folded="isReferFolded">&gt;</span><span>引用</span></em>
                </h2>
                <section class="scroll">
@@ -129,12 +129,12 @@ $height: line-height(small);
       min-height: $height;
 
       h2 {
-         position: relative;
+         display: flex;
+         align-items: center;
          z-index: 5;
          height: $height;
          line-height: $height;
       }
-
 
       section {
          height: calc(100% - $height);

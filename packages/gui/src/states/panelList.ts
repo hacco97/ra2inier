@@ -1,5 +1,6 @@
 import { shallowReactive } from 'vue';
 
+import { eventBus } from '@/boot/apis';
 import { IS_DEV } from '@/stores/config';
 
 /**
@@ -82,6 +83,14 @@ const NONE = [
 
 export const panelList = shallowReactive<PanelTab[]>([initLeftPanel])
 export const curPanel = shallowReactive<PanelTab[]>([initLeftPanel, NONE[1]])
+
+function initPanel() {
+   panelList.splice(0)
+   panelList[0] = initLeftPanel
+   curPanel[0] = initLeftPanel
+   curPanel[1] = NONE[1]
+}
+eventBus.on('project-loaded', initPanel)
 
 export function selectTab(tab: PanelTab) {
    const position = tab.position ? 0 : 1

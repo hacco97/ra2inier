@@ -2,13 +2,14 @@ import { existsSync, readdirSync } from 'node:fs';
 
 import config from '~/boot/config';
 import {
-   controller, inject, mapping, param, pathVar,
-   task,
+  controller, inject, mapping, param, pathVar,
+  task,
 } from '~/mainWindow/ioc.config';
 
 import {
-   Config, fromRaw, IniObject, isUniqueObject, MapperDto,
-   PackageVo, Project, ProjectVo, Scope, ScopeDto, WordDto,
+  Config, fromRaw, IniObject, isUniqueObject, MapperDto,
+  PackageVo, Project, ProjectVo, Scope, ScopeDto,
+  WordDto,
 } from '@ra2inier/core';
 import { escapePath } from '@ra2inier/core/node';
 
@@ -66,7 +67,7 @@ export class ProjServ {
       if (path in this.#projectCacheMap) return this.#projectCacheMap[path]
       if (!this.projectDao.checkPath(path)) throw Error('该项目路径可能是错误的：' + path)
       this.appConfig.setByKey('PROJECT_PATH', path)
-      if (!this.projectDao.isConnected) this.projectDao.connectToProject(path)
+      this.projectDao.connectToProject(path)
       const project = this.projectDao.readProjectInfo(path)
       this.appConfig.addProjectHistory(projectPath)
       return this.#projectCacheMap[path] = this.projectDao.resolveInfoToVo(project)

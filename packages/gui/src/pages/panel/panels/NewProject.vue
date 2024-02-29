@@ -6,6 +6,8 @@ import openDirSvg from '@/asset/icons/openDir.svg?raw';
 import { openDir, useConfig } from '@/stores/config';
 import { FlexInput, LazyButton } from '@ra2inier/wc';
 
+import ReferView from './ReferView.vue';
+
 const defaultPath = useConfig().DEFAULT_PROJECT_DIR + '\\new_project'
 const name = ref('new_project')
 const dir = ref(defaultPath)
@@ -20,9 +22,6 @@ function onAddClick() {
    console.log('add click')
 
 }
-
-
-
 </script>
 
 
@@ -43,22 +42,27 @@ function onAddClick() {
                <s v-svgicon="newSvg" padding="13%"></s>
             </lazy-button>
          </li>
+         <li>
+            <ReferView />
+         </li>
       </main>
    </div>
 </template>
 
 <style module scoped lang='scss'>
+$align: align-size(large);
+
 .new-project {
    height: 100%;
 
    main {
-      padding: align-size(large) 0;
+      padding: $align 0;
    }
 
    li {
       display: flex;
       vertical-align: middle;
-      padding: 0 align-size(large);
+      padding: 0 $align;
    }
 
    span {
@@ -66,7 +70,7 @@ function onAddClick() {
    }
 
    flex-input {
-      min-height: align-size(large);
+      min-height: $align;
       text-decoration: underline;
    }
 

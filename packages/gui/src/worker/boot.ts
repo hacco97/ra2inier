@@ -40,3 +40,15 @@ export function setMapper(key: string, mapper: MapperRo) {
    // @ts-ignore
    mappers[key] = mapper
 }
+
+
+export function clearAll() {
+   // @ts-ignore
+   for (const key in objects) delete objects[key]
+   // @ts-ignore
+   for (const key in scopes) delete scopes[key]
+   // @ts-ignore
+   for (const key in mappers) delete mappers[key]
+   // @ts-ignore
+   for (const key in dictionary) delete dictionary[key]
+}

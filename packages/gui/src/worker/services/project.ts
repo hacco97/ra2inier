@@ -5,12 +5,16 @@ import {
 } from '@ra2inier/core';
 
 import { exec, log, on } from '../apis';
-import { dictionary, mappers, objects, scopes, setMapper } from '../boot';
+import {
+  clearAll, dictionary, mappers, objects, scopes,
+  setMapper,
+} from '../boot';
 import { checkWordHook, createCtx, mapperCtxs, matchMapper } from './build';
 import { doTranslateObject } from './object';
 
 // 项目初始化
 on('project/init', (project: ProjectVo) => {
+   clearAll()
    forIn(project.packages, (pkgKey, packageVo) => {
       mergeObjects(packageVo.objects, pkgKey, objects)
       mergeScopes(packageVo.scopes, pkgKey, scopes)

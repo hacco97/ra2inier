@@ -93,7 +93,5 @@ listen('send-log', ({ msg, level, remark }) => {
 })
 
 export function readAll() {
-   for (let msg of messageList) {
-      msg.read = true
-   }
+   for (let msg of messageList) { msg.read = true }
 }

@@ -12,7 +12,7 @@
    <script type="module" src="index.ts"></script>
    <style lang="scss">
       body {
-         padding: 500px;
+         padding: 100px;
       }
 
       main {
@@ -46,16 +46,28 @@
       }
 
 
-      article::after{
+      article::after {
          content: '';
          display: inline-block;
          height: 100%;
          width: 0;
          vertical-align: middle;
       }
+
+      div {
+         width: 600px;
+         height: 500px;
+         background-color: aqua;
+         font-size: 0;
+      }
+
+      flex-area {
+         font-size: 1rem;
+         background-color: antiquewhite;
+      }
    </style>
 
-   <main>
+   <!-- <main>
       <section>
          <li>
             <article>
@@ -63,12 +75,13 @@
             </article>
          </li>
       </section>
-   </main>
+   </main> -->
 
    <div>
       <!-- <flex-input text="dddddd阿萨德" contenteditable="true"></flex-input> -->
       <!-- <number-input max="255" min="-10" precision="0"></number-input> -->
-      <!-- <flex-area onchange="onChange(event)" text="dddddd阿萨德" placeholder="cxviausyi"></flex-area> -->
+      <flex-area onchange="onChange(event)" text="dddddd阿萨德" placeholder="cxviausyi"></flex-area>
+      <textarea placeholder="fasdfasdfasdf" disabled="true"></textarea>
       <!-- <lazy-button onclick="console.log('click')">
          <div>dsaf</div>
       </lazy-button> -->

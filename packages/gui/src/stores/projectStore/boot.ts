@@ -1,4 +1,6 @@
-import { createProject, IniObjectRo, MapperRo, WordRo } from '@ra2inier/core';
+import {
+  copy, createProject, IniObjectRo, MapperRo, WordRo,
+} from '@ra2inier/core';
 
 export const project = createProject()
 
@@ -42,4 +44,9 @@ export function setWord(key: string, word?: WordRo) {
    } else {
       project.main!.dictionary[key] = word
    }
+}
+
+
+export function clearAll() {
+   copy(createProject(), project)
 }

@@ -105,6 +105,7 @@ onMounted(() => { mounted.value = true })
    <div id="foottab" :class="$style.foottab" @focusout="onFocusout" @focusin="footTabSize.active = true" tabindex="-1">
       <nav class="scrollx" :class="$theme['foottab-nav']" v-scrollx>
          <ul :class="$theme['foottab-nav-label']">
+            <b></b>
             <div v-for="tab in footTabList" @click="onTabClick(tab)" draggable="true" :key="tab.id"
                @drop="onTabDrop($event, tab)" @dragstart="onTabDragStart($event, tab)" @dragover.prevent
                :style="{ order: tab.order }">
@@ -147,6 +148,10 @@ $height: layout-size(foottab);
          z-index: auto;
          height: 100%;
          overflow: visible;
+
+         >b{
+            width: align-size(tiny);
+         }
 
          >div {
             position: relative;

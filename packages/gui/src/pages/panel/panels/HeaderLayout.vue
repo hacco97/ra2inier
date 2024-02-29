@@ -28,7 +28,7 @@ $height: line-height(normal);
 
    h1 {
       position: absolute;
-      @include z-index(nav);
+      @include z-index(panelnav);
       height: $height;
       width: 100%;
    }

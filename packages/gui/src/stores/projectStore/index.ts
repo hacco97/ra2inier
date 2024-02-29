@@ -1,14 +1,14 @@
 import { computed, ref } from 'vue';
 
-import { exec, work } from '@/boot/apis';
+import { eventBus, exec, work } from '@/boot/apis';
 import {
-  copy, forIn, IniObjectRo, MapperRo, PackageRo,
-  parseProjectVo, ProjectRo, ProjectVo, ScopeRo, WordRo,
+  forIn, IniObjectRo, MapperRo, PackageRo, parseProjectVo,
+  ProjectRo, ProjectVo, ScopeRo, WordRo,
 } from '@ra2inier/core';
 
 import { useConfig } from '../config';
 import useLog from '../messageStore';
-import { project } from './boot';
+import { clearAll, project } from './boot';
 
 export * from './metaStore'
 export * from './iniObjectStore'
@@ -33,6 +33,7 @@ export async function openProject(path?: string, callback?: () => {}) {
       parseProjectVo(ipkg, project)
       // 将初始数据传递给worker
       work('project/init', ipkg)
+      eventBus.emit('project-loaded')
 
       // 结束
       loadingVersion.value++
@@ -46,7 +47,7 @@ export async function reloadProject(path: string) {
    await exec<boolean>('project/check-path/' + path).then((res) => {
       if (res.data && res.status) {
          project.loaded = false
-         copy(new ProjectRo, project)
+         clearAll()
          openProject(path)
       } else {
          log.warn('项目路径不正确', path)

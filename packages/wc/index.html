@@ -12,80 +12,42 @@
    <script type="module" src="index.ts"></script>
    <style lang="scss">
       body {
-         padding: 100px;
-      }
-
-      main {
-         position: relative;
-         height: 300px;
-         width: 400px;
-         background-color: aqua;
-
-         padding: 20px;
-      }
-
-      section {
-         width: 100%;
-         height: 100%;
-         background-color: blue;
-      }
-
-      li {
-         list-style: none;
-         position: relative;
-      }
-
-      article {
-         vertical-align: middle;
-         text-align: center;
-         width: 100%;
-         height: 100px;
-         margin: 0 auto;
-         font-size: 20px;
-         background-color: red;
-      }
-
-
-      article::after {
-         content: '';
-         display: inline-block;
-         height: 100%;
-         width: 0;
-         vertical-align: middle;
+         padding: 200px;
       }
 
       div {
-         width: 600px;
-         height: 500px;
+         width: 300px;
+         height: 300px;
          background-color: aqua;
          font-size: 0;
       }
 
-      flex-area {
+      li {
+         list-style-type: none;
+         width: fit-content;
+         height: 20px;
+         background-color: red;
          font-size: 1rem;
-         background-color: antiquewhite;
+      }
+
+      popup-box {
+         height: fit-content;
       }
    </style>
-
-   <!-- <main>
-      <section>
-         <li>
-            <article>
-               asdviuo
-            </article>
-         </li>
-      </section>
-   </main> -->
 
    <div>
       <!-- <flex-input text="dddddd阿萨德" contenteditable="true"></flex-input> -->
       <!-- <number-input max="255" min="-10" precision="0"></number-input> -->
-      <flex-area onchange="onChange(event)" text="dddddd阿萨德" placeholder="cxviausyi"></flex-area>
-      <textarea placeholder="fasdfasdfasdf" disabled="true"></textarea>
+      <!-- <flex-area onchange="onChange(event)" text="dddddd阿萨德" placeholder="cxviausyi"></flex-area>
+      <textarea placeholder="fasdfasdfasdf" disabled="true"></textarea> -->
       <!-- <lazy-button onclick="console.log('click')">
          <div>dsaf</div>
       </lazy-button> -->
       <!-- <svg-icon></svg-icon> -->
+      <popup-box>
+         <li>fasdf</li>
+         <li slot="pop">pdsfasdfasdfasdfasdfasdfasdfop</li>
+      </popup-box>
    </div>
 </body>
 

@@ -82,9 +82,10 @@ export async function build() {
 
    const res = await work<boolean>('project/build', buildList)
    if (res.status) {
-      console.log('构建成功')
+      log.info('构建成功')
    } else {
-      console.log('构建失败', res.data)
+      log.warn('构建失败', res.data)
+      console.debug(res.data)
    }
 }
 

@@ -110,7 +110,7 @@ $height: line-height(small);
          display: block;
          position: absolute;
          z-index: 9;
-         top: -4px;
+         top: -3px;
          left: 0;
          width: 100%;
          height: 8px;

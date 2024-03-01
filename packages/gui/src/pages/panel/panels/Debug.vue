@@ -1,6 +1,8 @@
 <script lang='ts' setup>
 import { ref, shallowReactive } from 'vue';
 
+import { PopupBox } from '@ra2inier/wc';
+
 const list = shallowReactive([
    { name: 'zs', age: 18 },
    { name: 'ls', age: 42 },
@@ -27,16 +29,27 @@ function onTest2Click(e: MouseEvent) {
    )
 }
 
+
+function onHiClick(e: Event) {
+   console.log(e)
+   e.stopPropagation()
+
+}
 </script>
 
 
 <template>
    <div class="text-center" @click="onTest2Click">
-      <button @click="onTestClick">test</button>
-      <li v-for="item in list">
-         <span>{{ item.name }}</span>
-         <span>{{ item.age }}</span>
-      </li>
+      <popup-box position="rb">
+         <button @click="onTestClick">test</button>
+         <p slot="pop">
+            <li v-for="item in list">
+               <span>{{ item.name }}</span>
+               <span>{{ item.age }}</span>
+            </li>
+            <button @click="onHiClick">hello</button>
+         </p>
+      </popup-box>
    </div>
 </template>
 
@@ -54,6 +67,8 @@ div {
 
    li {
       padding: align-size(normal);
+
+      background-color: palegoldenrod;
    }
 
    span {

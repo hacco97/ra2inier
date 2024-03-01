@@ -60,7 +60,7 @@ function onCheckClick() {
       <template #header>
          <div :class="$style.editor" tabindex="-1">
             <!-- 头部 -->
-            <h1 class="scrollx panel-header" v-scrollx>
+            <h1 class="scrollx" v-scrollx>
                <ul>
                   <h2>
                      <em>./</em><span>{{ pName }}</span><em>/</em>

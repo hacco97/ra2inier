@@ -5,11 +5,12 @@ import editSvg from '@/asset/icons/edit.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
 import ListBox from '@/components/ListBox.vue';
 import MapBox from '@/components/MapBox.vue';
-import TextBox from '@/components/TextBox.vue';
 import { PanelParam } from '@/states/panelList';
 import { saveMapper } from '@/stores/projectStore/metaStore';
 import { MapperRo } from '@ra2inier/core';
-import { LazyButton } from '@ra2inier/wc';
+import { FlexArea, FlexInput, LazyButton } from '@ra2inier/wc';
+
+import HeaderLayout from '../HeaderLayout.vue';
 
 defineOptions({ name: 'MapperEditor' })
 const props = defineProps<{ param: PanelParam }>()
@@ -33,61 +34,54 @@ function onNameChange() { }
 
 
 <template>
-   <div class="mapper-editor scroll">
-      <!-- 头部标题 -->
-      <h1>
-         <h2><span>{{ mapper.name }}</span></h2>
-         <lazy-button>
-            <div v-svgicon="saveSvg" @click="onSaveClick" v-if="!disabled"></div>
-            <div v-svgicon="editSvg" @click="onEditClick" v-else></div>
-         </lazy-button>
-      </h1>
-      <main>
+   <HeaderLayout>
+      <template #header>
+         <h2 :class="[$theme.header, $style.header]">
+            <span>{{ mapper.name }}</span>
+            <lazy-button class="fore-button">
+               <div v-svgicon="saveSvg" @click="onSaveClick" v-if="!disabled"></div>
+               <div v-svgicon="editSvg" @click="onEditClick" v-else></div>
+            </lazy-button>
+         </h2>
+      </template>
+      <template #default>
          <!-- 中部info内容 -->
-         <ul>
-            <li>
-               <span class="required">名称</span><em>::</em>
+         <ul :class="[$style.main, $theme.main]">
+            <h2>
+               <span class="required">输出器名称</span><em>：</em>
                <flex-input :disabled="disabled" v-model="mapper.name"></flex-input>
-            </li>
-            <li>
-               <span title="相对路径——相对于输出文件夹的位置" class="required">输出路径</span><em>::</em>
+            </h2>
+            <h2>
+               <span title="相对路径——相对于输出文件夹的位置" class="required">输出路径</span><em>：</em>
                <flex-input :disabled="disabled" v-model="mapper.targetPath"></flex-input>
+            </h2>
+            <h2><span>备注</span><span>：</span></h2>
+            <li>
+               <flex-area :disabled="disabled" v-model.lazy="mapper.detail"></flex-area>
             </li>
-            <div>
-               <span>详情</span><span>::</span>
-               <span>
-                  <TextBox :disabled="disabled" v-model:text="mapper.detail" />
-               </span>
-            </div>
-            <div>
-               <span class="required">handlerScript</span><span>::</span>
-               <span>
-                  <TextBox :disabled="disabled" v-model:text="mapper.handlerScript" />
-               </span>
-            </div>
-            <div>
-               <span class="required">输入handler函数</span><span>::</span>
-               <span>
-                  <MapBox :disabled="disabled" :map="mapper.inputList" />
-               </span>
-            </div>
-            <div>
-               <span class="required">输出handler函数</span><span>::</span>
-               <span>
-                  <ListBox :disabled="disabled" :list="mapper.outputList" />
-               </span>
-            </div>
+            <h2>
+               <span class="required">分发规则</span><span>：</span>
+            </h2>
+            <li>
+               <MapBox :disabled="disabled" :map="mapper.inputList" />
+            </li>
+            <h2>
+               <span class="required">输出顺序</span><span>：</span>
+            </h2>
+            <li>
+               <ListBox :disabled="disabled" :list="mapper.outputList" />
+            </li>
+            <h2>
+               <span class="required">输出器脚本</span><span>：</span>
+            </h2>
+            <li>
+               <flex-area :disabled="disabled" v-model.lazy="mapper.handlerScript"></flex-area>
+            </li>
+
          </ul>
-      </main>
-      <footer></footer>
-   </div>
+      </template>
+   </HeaderLayout>
 </template>
 
-<style scoped lang='scss'>
-.mapper-editor {
-   height: 100%;
-   position: relative;
-   z-index: auto;
-   @import "./meta.scss";
-}
-</style>
+<style src="@css/meta-panel.scss" scoped module="$theme" />
+<style scoped src="./meta-layout.scss" module></style>

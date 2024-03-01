@@ -10,10 +10,9 @@ function translate(values, ctx) {
 
 }
 
-
 function adjust(entrys, ctx) {
-
-
+   console.log(23)
+   console.log('vcx')
 }
 
 

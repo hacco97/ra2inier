@@ -3,8 +3,14 @@ import { ToDto } from './index';
 import { MarkdownRo } from './MarkdownRo';
 
 export class WordRo extends Word implements ToDto {
+   /**
+    * markdown文件的键值
+    */
    detail: string = ''
    dir: string = ''
+   /**
+    * markdown文件本体
+    */
    markdown?: MarkdownRo
 
    declare package: string

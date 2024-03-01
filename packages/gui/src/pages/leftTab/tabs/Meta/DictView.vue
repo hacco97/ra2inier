@@ -2,17 +2,19 @@
 import { useCtxMenu } from '@/states/ctxMenu';
 import { addPanel, PanelType } from '@/states/panelList';
 import { addWord } from '@/stores/projectStore';
-import { WordRo } from '@ra2inier/core';
+import { copy, WordRo } from '@ra2inier/core';
 
 defineOptions({ name: 'DictView' })
 
 const props = defineProps<{ dictionary: Record<string, WordRo> }>()
 
 function onOpenClick(word: WordRo) {
+   const newWord = new WordRo
+   copy(word, newWord)
    addPanel({
       label: word.name,
       type: PanelType.WordViewer,
-      data: word
+      data: newWord
    })
 }
 

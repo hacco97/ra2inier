@@ -1,0 +1,54 @@
+$height: line-height(small);
+$align: align-size(normal);
+
+.header {
+   display: flex;
+   height: 100%;
+   width: 100%;
+   align-items: center;
+
+   lazy-button {
+      height: 100%;
+      aspect-ratio: 1;
+   }
+
+   > * {
+      margin: 0 align-size(large);
+   }
+}
+
+.main {
+   li,
+   h2 {
+      display: flex;
+      flex-wrap: nowrap;
+      padding: 0 $align;
+      min-height: $height;
+      line-height: $height;
+      overflow: hidden;
+      white-space: nowrap;
+   }
+
+   h2 {
+      margin-top: $align;
+   }
+
+   flex-area {
+      width: 100%;
+      padding: 0 $align;
+
+      &[disabled="true"] {
+         padding: 0;
+      }
+   }
+
+   flex-input {
+      padding: 0 $align;
+      min-width: 50px;
+      min-height: 1em;
+
+      &[disabled="true"] {
+         padding: 0;
+      }
+   }
+}

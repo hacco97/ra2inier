@@ -1,27 +1,29 @@
 <script lang='ts' setup>
-import { onBeforeUnmount, ref, watch } from 'vue';
+import { onBeforeUnmount, reactive, ref, shallowReactive, watch } from 'vue';
 
 import markDownIt from 'markdown-it';
 
-import { forIn, MarkdownRo } from '@ra2inier/core';
+import addImgSvg from '@/asset/icons/addImage.svg?raw';
+import closeSvg from '@/asset/icons/close.svg?raw';
+import openSvg from '@/asset/icons/openDir.svg?raw';
+import { copy, forIn, MarkdownRo } from '@ra2inier/core';
+import { FlexArea, LazyButton } from '@ra2inier/wc';
 
-import TextBox from './TextBox.vue';
+interface Prop {
+   markdown: MarkdownRo,
+   disabled: Boolean,
+}
+const props = defineProps<Prop>()
 
-defineOptions({ name: 'Markdown' })
 const maskdownit = new markDownIt({
    breaks: true,
    linkify: true
 })
-
-const props = defineProps({
-   data: { type: MarkdownRo, required: true },
-   disabled: { type: Boolean, default: true }
-})
+const data = shallowReactive(props.markdown)
 
 // 渲染逻辑
 const imgLinkLike = /(?<=!\[.*\]\()((?!http).+)(?=\))/g
 const substr = (sub: string) => {
-   const data = props.data
    for (const name in data.urls) {
       if (sub.trim() === name)
          return data.urls[name]
@@ -34,18 +36,20 @@ function parseMd(markdoen: MarkdownRo) {
    return maskdownit.render(hot)
 }
 
-watch(() => props.data, () => {
-   const data = props.data
-   if (!data) return
+watch(() => props.markdown, () => {
+   copy(data, props.markdown)
    forIn(data.images, (key, buf) => {
       data.urls[key] = URL.createObjectURL(new Blob([buf], { type: 'image' }))
    })
    data.md = parseMd(data)
 }, { immediate: true })
 
+function value() { return data }
+defineExpose({ value })
+
 // 在组件销毁时释放图片资源
 onBeforeUnmount(() => {
-   forIn(props.data.urls, (Key, url) => {
+   forIn(data.urls, (Key, url) => {
       URL.revokeObjectURL(url)
    })
 })
@@ -56,22 +60,23 @@ const fileInput = ref<HTMLInputElement>()
 function onAddImageClick() {
    fileInput.value?.click()
 }
-
 async function onFileChange(e: Event) {
    const { files } = e.target as HTMLInputElement
-   const data = props.data
    if (!files) return
    let file: File, id = 0
+   const urls = { ...data.urls }
+   const images = { ...data.images }
    while (file = files[id++]) {
       if (!(file.name in data.images)) {
-         data.images[file.name] = new Uint8Array(await file.arrayBuffer())
-         data.urls[file.name] = URL.createObjectURL(file)
+         images[file.name] = new Uint8Array(await file.arrayBuffer())
+         urls[file.name] = URL.createObjectURL(file)
       }
    }
+   data.urls = urls
+   data.images = images
 }
 
 function onDeleteClick(name: string) {
-   const data = props.data
    delete data.images[name]
    URL.revokeObjectURL(data.urls[name])
    delete data.urls[name]
@@ -85,7 +90,6 @@ function onImageClick(name: string) {
 // 渲染的缓存机制
 let prev: string
 watch(() => props.disabled, () => {
-   const data = props.data
    if (props.disabled && !(prev == data.raw)) {
       prev = data.raw
       data.md = parseMd(data)
@@ -96,29 +100,31 @@ watch(() => props.disabled, () => {
 
 
 <template>
-   <div class="local-text-editor">
+   <div :class="$style.editor">
       <!-- markdown渲染器 -->
-      <div v-show="disabled">
-         <div class="markdown" v-html="data.md ? data.md : 'NO MARKDOWN'" mdarea></div>
-      </div>
+      <template v-if="disabled">
+         <div class="markdown" v-html="data.md || 'NO MARKDOWN'" mdarea></div>
+      </template>
       <!-- 图片选择 -->
-      <section v-show="!disabled">
-         <h2 class="file-box c-bg-l rd" @click="onAddImageClick">
-            <span>添加本地图片</span><input tabindex="-1" ref="fileInput" @change="onFileChange" accept="image/*" multiple
-               type="file">
-         </h2>
-
+      <template v-else>
+         <nav :class="$style['file-box']" @click="onAddImageClick">
+            <lazy-button class="fore-button" title="从本地中添加图片">
+               <div v-svgicon="addImgSvg" padding="15%"></div>
+            </lazy-button>
+            <input tabindex="-1" ref="fileInput" @change="onFileChange" accept="image/*" multiple type="file">
+         </nav>
          <ul v-scrolls class="scrollxb">
             <li v-for="(url, name) in data.urls" :key="name">
-               <h3 class="list-item" :title="name">
-                  <i>{{ name }}</i>
-               </h3>
-               <div><img @click="onImageClick(name)" :src="url" title="单击复制文件名" alt="#"></div>
-               <b v-svgicon="'icons/close.svg'" @click="onDeleteClick(name)" class="c-bg-l c-t-l c-h-l rd"></b>
+               <h3 :title="name"><i>{{ name }}</i></h3>
+               <h4></h4>
+               <div><img @click="onImageClick(name)" :src="url" :title="'单击复制文件名：' + name" alt="#"></div>
+               <b v-svgicon="closeSvg" class="fore-button" @click="onDeleteClick(name)"></b>
             </li>
          </ul>
-      </section>
-      <TextBox v-model:text="data.raw" v-show="!disabled" :disabled="disabled" />
+         <h2>
+            <flex-area v-model.lazy="data.raw" placeholder="添加markdown文本"></flex-area>
+         </h2>
+      </template>
    </div>
 </template>
 
@@ -130,60 +136,82 @@ div.markdown[mdarea] {
 }
 </style>
 
-<style lang="scss" scoped>
-$head-height: 30px;
-$line-height: 30px;
+<style lang="scss" scoped module>
+$height: line-height(normal);
 
-.local-text-editor {
-   padding: align-size(large);
+.file-box {
+   display: flex;
+   align-items: center;
+   line-height: $height;
+   cursor: default;
+
+   span {
+      height: 100%;
+      padding: 0 align-size(small);
+   }
+
+   input {
+      height: 0px;
+      width: 0px;
+   }
+}
+
+.editor {
+   display: block;
+   width: 100%;
+
+   h2 {
+      margin-top: align-size(large);
+   }
 
    ul {
       display: flex;
       flex-wrap: nowrap;
       width: 100%;
+   }
 
-      li {
-         position: relative;
-         overflow: hidden;
-         min-width: fit-content;
+   li {
+      position: relative;
+      overflow: hidden;
+      min-width: fit-content;
 
-         h3 {
-            position: absolute;
-            top: 0;
-            left: 0;
-            padding-left: 0px;
-            margin-right: $line-height;
-         }
-
-         b {
-            position: absolute;
-            right: 0;
-            top: 0;
-            z-index: 2;
-            height: 0.7* $line-height;
-            width: 0.7* $line-height;
-            padding: $line-height*0.1;
-         }
+      h3 {
+         position: absolute;
       }
 
-      img {
-         display: block;
-         margin-top: 1.5em;
-         height: 20em;
-         max-height: 200px;
+      h4 {
+         width: 1em;
+         height: 1em;
+      }
+
+      b {
+         position: absolute;
+         right: 0;
+         top: 0;
+         z-index: 2;
+         height: 0.7 * $height;
+         width: 0.7 * $height;
       }
    }
 
-   .file-box {
-      display: inline-block;
-      line-height: $line-height;
-      padding: 0 16px;
-      cursor: default;
+   lazy-button {
+      height: $height;
 
-      input {
-         height: 0px;
-         width: 0px;
+      div {
+         height: $height;
+         aspect-ratio: 1;
       }
+   }
+
+   img {
+      display: block;
+      height: 20em;
+      max-height: 200px;
+   }
+
+   flex-area {
+      width: 100%;
+      padding: 0 align-size(small);
    }
 }
 </style>

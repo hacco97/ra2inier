@@ -12,18 +12,11 @@ function start(data) {
 
 
 function final(data) {
-
-
-   console.log(data)
-
-
    return [
      ['name','zs'],
      ['age',12]
    ]
 }
-
-
 
 
 function vehicleIHandler(object, data) {
@@ -39,7 +32,6 @@ function infantryIHandler(result, data) {
 
 function buildingIHandler(object, data) {
    console.log('building')
-
 }
 
 
@@ -48,7 +40,6 @@ function generalOHandler(object, data) {
 
 }
 
-
 function register(data) {
    console.log('register working')
 
@@ -56,6 +47,7 @@ function register(data) {
       data.register.InfantryTypes.push(key)
    }
 
-   console.log(data)
 
+   console.log(data)
+   console.log(data)
 }

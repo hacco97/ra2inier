@@ -5,8 +5,6 @@ const styleSheet = css`
    :host {
       display: inline-block;
       box-sizing: border-box;
-      width: fit-content;
-      height: 100%;
       text-align: left;
       cursor: text;
       user-select: none;
@@ -26,12 +24,14 @@ const styleSheet = css`
       height: 100%;
       margin: 0;
       visibility: hidden;
+      min-height: 1em;
    }
 
    textarea {
       all: unset;
       position: absolute;
       margin: 0;
+      padding: 0;
       height: 100%;
       width: 100%;
       min-width: fit-content;
@@ -39,6 +39,7 @@ const styleSheet = css`
       font: inherit;
       resize: none;
       white-space: pre-wrap;
+      overflow: hidden;
    }
 
    textarea::-webkit-scrollbar {
@@ -56,8 +57,11 @@ export class FlexArea extends HTMLElement implements WebComponent {
    get placeholder() { return this.#textarea.placeholder }
    set placeholder(val: string) { this.#textarea.placeholder = val }
 
-   get value() { return this.#textarea.textContent! }
-   set value(val: string) { this.#textarea.textContent = val }
+   get value() { return this.#textarea.value }
+   set value(val: string) {
+      this.#textarea.value = val
+      this.updateHeight()
+   }
 
    get disabled() { return this.#textarea.disabled }
    set disabled(val: boolean) {
@@ -77,25 +81,30 @@ export class FlexArea extends HTMLElement implements WebComponent {
 
       const textarea = this.#textarea = shadow.querySelector('textarea')!
       const p = this.#p = shadow.querySelector('p')!
-      let memory = ''
       const update = (e: Event) => {
-         this.#p.style.height = '1em'
-         this.#p.style.height = this.#textarea.scrollHeight + 'px'
+         textarea.style.height = '1em'
+         p.style.height = textarea.style.height = textarea.scrollHeight + 'px'
       }
-      textarea.addEventListener('input', update)
       textarea.addEventListener('paste', update)
+      textarea.addEventListener('input', update)
+      function insert(str: string) {
+         const i = Math.min(textarea.selectionStart, textarea.selectionEnd)
+         const j = Math.max(textarea.selectionStart, textarea.selectionEnd)
+         textarea.setRangeText(str, i, j)
+         textarea.setSelectionRange(i + str.length, i + str.length)
+      }
       textarea.addEventListener('keydown', (e: KeyboardEvent) => {
-         update(e)
-         if (e.key === 'Enter' && memory !== this.value) {
-            memory = this.value
-            this.dispatchEvent(new CustomEvent('change', { bubbles: false }))
+         if (e.key === 'Tab') {
+            insert('   ')
+            e.preventDefault()
+         } else if (e.key === 'Enter') {
+            insert('\n')
+            e.preventDefault()
+            update(e)
          }
       })
-      textarea.addEventListener('blur', () => {
-         if (memory !== this.value) {
-            memory = this.value
-            this.dispatchEvent(new CustomEvent('change', { bubbles: false }))
-         }
+      textarea.addEventListener('change', () => {
+         this.dispatchEvent(new CustomEvent('change', { detail: this.#textarea.value }))
       })
       shadow.adoptedStyleSheets.push(styleSheet)
    }
@@ -111,10 +120,14 @@ export class FlexArea extends HTMLElement implements WebComponent {
       }
    }
 
-   connectedCallback(): void {
+   private updateHeight() {
+      this.#textarea.style.height = '1em'
+      this.#p.style.height = this.#textarea.style.height = this.#textarea.scrollHeight + 'px'
+   }
+
+   connectedCallback() {
       setTimeout(() => {
-         this.#p.style.height = '1em'
-         this.#p.style.height = this.#textarea.scrollHeight + 'px'
+         this.updateHeight()
       })
    }
 }

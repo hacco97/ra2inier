@@ -167,7 +167,7 @@ const columCount = computed(() => ({ columns: state.columnCount }))
                   <article v-show="entry.validitys.length > 0">
                      <h3 v-for="validity in entry.validitys">{{ validity.msg }}</h3>
                   </article>
-                  <flex-area class="scroll" v-show="!entry.isSubFolded" v-model.lazy="entry.comment"
+                  <flex-area v-show="!entry.isSubFolded" v-model.lazy="entry.comment"
                      placeholder="添加备注"></flex-area>
                </li>
 
@@ -201,7 +201,6 @@ $height: align-size(larger);
    position: relative;
    z-index: var(--z-index-main);
    min-height: 0;
-   height: 100%;
    color: var(--color-t-1);
 
    section {

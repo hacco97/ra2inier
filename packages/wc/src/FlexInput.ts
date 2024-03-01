@@ -22,7 +22,7 @@ export const styleSheet = css`
    }
 
    span {
-      display: block;
+      display: inline-block;
       width: fit-content;
       height: 100%;
       white-space: pre;

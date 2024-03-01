@@ -51,7 +51,7 @@ export function useToRaw(template: Record<string, any>, deep: boolean) {
 // 浅拷贝
 export function copy(from: Record<string, any>, to: Record<string, any>) {
    let tmp
-   for (const key in to) {
+   for (const key in from) {
       if (tmp = from[key])
          to[key] = tmp
    }

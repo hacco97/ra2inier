@@ -6,7 +6,7 @@
 <template>
    <div :class="$style.panel">
       <!-- 头部标题 -->
-      <h1>
+      <h1 class="panel-header">
          <slot name="header"></slot>
       </h1>
 
@@ -39,7 +39,7 @@ $height: line-height(normal);
 
 
    footer {
-      height: max(40%, 400px);
+      height: clamp(400px, 30%, 600px);
    }
 }
 </style>

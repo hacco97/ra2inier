@@ -5,7 +5,6 @@ import editSvg from '@/asset/icons/edit.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
 import ListBox from '@/components/ListBox.vue';
 import MapBox from '@/components/MapBox.vue';
-import TextBox from '@/components/TextBox.vue';
 import { PanelParam } from '@/states/panelList';
 import { saveScope } from '@/stores/projectStore/metaStore';
 import { ScopeRo } from '@ra2inier/core';
@@ -42,7 +41,7 @@ provide('toSave', disabled)
 <template>
    <HeaderLayout>
       <template #header>
-         <h2 :class="[$theme.header, $style.scope]" class="panel-header">
+         <h2 :class="[$theme.header, $style.header]">
             <span>{{ scope.name }}</span>
             <lazy-button class="fore-button">
                <div v-svgicon="saveSvg" @click="onSaveClick" v-if="!disabled"></div>
@@ -51,7 +50,7 @@ provide('toSave', disabled)
          </h2>
       </template>
       <template #default>
-         <main :class="[$style.scope, $theme.main]">
+         <main :class="[$style.main, $theme.main]">
             <!-- 中部info内容 -->
             <ul>
                <h2>
@@ -82,59 +81,4 @@ provide('toSave', disabled)
 </template>
 
 <style src="@css/meta-panel.scss" scoped module="$theme" />
-<style scoped lang='scss' module>
-$height: line-height(small);
-$align: align-size(normal);
-
-h2.scope {
-   display: flex;
-   height: 100%;
-   width: 100%;
-   align-items: center;
-
-   lazy-button {
-      height: 100%;
-      aspect-ratio: 1;
-   }
-
-   >* {
-      margin: 0 $align
-   }
-}
-
-main.scope {
-
-   li,
-   h2 {
-      display: flex;
-      flex-wrap: nowrap;
-      padding: 0 $align;
-      min-height: $height;
-      line-height: $height;
-      overflow: hidden;
-      white-space: nowrap;
-   }
-
-   h2 {
-      margin-top: $align;
-   }
-
-   flex-area {
-      width: 100%;
-      padding: 0 $align;
-
-      &[disabled=true] {
-         padding: 0;
-      }
-   }
-
-   flex-input {
-      padding: 0 $align;
-
-      &[disabled=true] {
-         padding: 0;
-      }
-   }
-
-}
-</style>
+<style src="./meta-layout.scss" scoped module></style>

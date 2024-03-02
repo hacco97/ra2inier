@@ -62,7 +62,7 @@ $line-height: line-height(tiny);
    white-space: nowrap;
 
    h2 {
-      padding-left: align-size(large);
+      padding-left: align-size(normal);
 
 
       span {

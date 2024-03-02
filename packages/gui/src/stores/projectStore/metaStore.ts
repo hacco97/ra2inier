@@ -4,7 +4,7 @@ import {
 } from '@ra2inier/core';
 
 import useLog from '../messageStore';
-import { all, setMapper, setWord } from './boot';
+import { all, mainKey, setMapper, setScope, setWord } from './boot';
 
 const log = useLog('meta-store')
 
@@ -27,6 +27,18 @@ export function saveScope(scope: ScopeRo) {
 }
 
 /**
+ * 添加一个scope
+ */
+export function addScope(name = Math.random() + '') {
+   const scope = new ScopeRo
+   scope.name = name
+   scope.package = mainKey()
+   setScope(scope.key, scope)
+   return scope
+}
+
+
+/**
  * word 逻辑
  * **********************************************************************************************************************
  */
@@ -34,11 +46,13 @@ export function saveScope(scope: ScopeRo) {
 /**
  * 添加一个词条
  */
-export function addWord() {
+export function addWord(name = Math.random() + '') {
    const word = new WordRo
    const md = new MarkdownRo
    word.detail = md.key
    word.markdown = md
+   word.name = name
+   word.package = mainKey()
    setWord(word.key, word)
    return word
 }
@@ -127,7 +141,6 @@ export async function translateWord(wordKey: string) {
  * 保存mapper到硬盘
  */
 export function saveMapper(mapper: MapperRo) {
-
    setMapper(mapper.key, mapper)
    exec('project/save-mapper', { data: mapper }).then(res => {
       if (res.status) {
@@ -139,3 +152,13 @@ export function saveMapper(mapper: MapperRo) {
    work('mapper/sync', mapper)
 }
 
+/**
+ * 添加一个mapper
+ */
+export function addMapper(name = 'NEW_MAPPER') {
+   const mapper = new MapperRo
+   mapper.name = name
+   mapper.package = mainKey()
+   setMapper(mapper.key, mapper)
+   return mapper
+}

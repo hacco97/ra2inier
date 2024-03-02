@@ -72,7 +72,7 @@ const vNkeymap = useKeyMap({
          <i v-keymap="order" v-focus="order" :disabled="disabled" v-text="item.val" :contenteditable="!disabled"
             @focus="focus.setCurrent(order)" @blur="onBlur($event, order)" :tabindex="tabindex"
             :class="[$style.input, $theme.input]"></i>
-         <b :isLast="order == data.length - 1">,</b>
+         <b>{{ order == data.length - 1 ? '' : ',' }}</b>
       </span>
       <span v-if="!disabled">
          <em>+</em>
@@ -133,10 +133,8 @@ $min-width: 60px;
    b {
       display: inline-block;
       height: $height;
-
-      &[isLast=true] {
-         display: none;
-      }
+      width: fit-content;
+      vertical-align: top;
    }
 
 }

@@ -6,6 +6,7 @@ import fullSvg from '@/asset/icons/full.svg?raw';
 import leftArrowSvg from '@/asset/icons/leftArrows.svg?raw';
 import rightArrowSvg from '@/asset/icons/rightArrows.svg?raw';
 import { useMask } from '@/states/layout';
+import { colseAllTabs } from '@/states/panelList';
 
 defineOptions({ name: 'PanelLayout' })
 
@@ -23,6 +24,10 @@ function onFullScreenClick() {
    show()
 }
 
+function onCloseAll(pos: 'left' | 'right') {
+   colseAllTabs(pos)
+}
+
 </script>
 
 
@@ -38,8 +43,9 @@ function onFullScreenClick() {
             </h2>
             <p :class="$theme['panelnav-btn']">
                <s padding="20%" v-svgicon="fullSvg" @click="onFullScreenClick"></s>
-               <s padding="20%" v-svgicon="closeAllSvg"></s>
-               <s padding="20%" v-svgicon="rightArrowSvg" v-if="rightIsShowed" @click="rightIsShowed = false; dragWidth = '100%'"></s>
+               <s padding="20%" v-svgicon="closeAllSvg" @click="onCloseAll('left')"></s>
+               <s padding="20%" v-svgicon="rightArrowSvg" v-if="rightIsShowed"
+                  @click="rightIsShowed = false; dragWidth = '100%'"></s>
                <s padding="15%" v-svgicon="leftArrowSvg" v-else @click="rightIsShowed = true"></s>
             </p>
          </nav>

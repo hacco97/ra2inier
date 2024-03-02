@@ -1,12 +1,11 @@
 <script lang='ts' setup>
-import { provide, ref } from 'vue';
+import { provide, ref, shallowReactive } from 'vue';
 
 import editSvg from '@/asset/icons/edit.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
 import ListBox from '@/components/ListBox.vue';
 import MapBox from '@/components/MapBox.vue';
 import { PanelParam } from '@/states/panelList';
-import { saveScope } from '@/stores/projectStore/metaStore';
 import { ScopeRo } from '@ra2inier/core';
 import { FlexArea, FlexInput, LazyButton } from '@ra2inier/wc';
 
@@ -14,26 +13,24 @@ import HeaderLayout from '../HeaderLayout.vue';
 
 defineOptions({ name: 'ScopeEditor' })
 const props = defineProps<{ param: PanelParam }>()
-
-
-const scope: ScopeRo = props.param.data!
-const panelParam = props.param
+const scope: ScopeRo = shallowReactive(props.param.data!)
+const param = props.param
 const disabled = ref(true)
 
+function submit() {
+   param.data = scope
+}
+param.on('before-closed', submit)
+
 function onNameChange() {
-   panelParam.label = scope.name
+   param.label = scope.name
 }
 
 function onSaveClick() {
    disabled.value = true
-   setTimeout(() => saveScope(scope), 50)
+   submit()
+   param.emit('save', scope)
 }
-
-function onEditClick() {
-   disabled.value = false
-}
-
-provide('toSave', disabled)
 
 </script>
 
@@ -43,9 +40,9 @@ provide('toSave', disabled)
       <template #header>
          <h2 :class="[$theme.header, $style.header]">
             <span>{{ scope.name }}</span>
-            <lazy-button class="fore-button">
+            <lazy-button class="fore-button" v-if="!param.readonly">
                <div v-svgicon="saveSvg" @click="onSaveClick" v-if="!disabled"></div>
-               <div v-svgicon="editSvg" @click="onEditClick" v-else></div>
+               <div v-svgicon="editSvg" @click="disabled = false" v-else></div>
             </lazy-button>
          </h2>
       </template>
@@ -55,11 +52,11 @@ provide('toSave', disabled)
             <ul>
                <h2>
                   <span class="required">类型名称*</span><span>：</span>
-                  <flex-input v-model="scope.name" :disabled="disabled" @change="onNameChange" />
+                  <flex-input v-model.lazy="scope.name" :disabled="disabled" @change="onNameChange" />
                </h2>
                <h2>
                   <span>类型概要</span><span>：</span>
-                  <flex-input v-model="scope.brief" :disabled="disabled" />
+                  <flex-input v-model.lazy="scope.brief" :disabled="disabled" />
                </h2>
                <h2><span class="required">输出文件*</span><span>：</span></h2>
                <li>

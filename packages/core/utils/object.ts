@@ -38,7 +38,7 @@ export function toRaw<T extends Record<string, any>>
    return tmp as T
 }
 
-export function toRawArray(arr: any[]) {
+function toRawArray(arr: any[]) {
    if (arr[0] instanceof Object)
       return arr.map((val) => toRaw(val))
    else return arr.slice()
@@ -48,8 +48,10 @@ export function useToRaw(template: Record<string, any>, deep: boolean) {
    return <T extends Record<string, any>>(object: T) => toRaw(object, template, deep)
 }
 
-// 浅拷贝
-export function copy(from: Record<string, any>, to: Record<string, any>) {
+/**
+ * 浅拷贝，将from中的属性拷贝至to中，适用于对象引用不可以改变时，代替{...}语法
+ */
+export function copy(from: any, to: any) {
    let tmp
    for (const key in from) {
       if (tmp = from[key])
@@ -58,7 +60,22 @@ export function copy(from: Record<string, any>, to: Record<string, any>) {
    return to
 }
 
-// 添加属性并且进行转换
+/**
+ * 带类型的克隆
+ */
+export function cloneTyped<T extends Constructor<InstanceType<T>>>
+   (object: any, constructor: T) {
+   const temp = new constructor
+   const newOne = toRaw(object)
+   console.log(newOne)
+
+   copy(newOne, temp)
+   return temp
+}
+
+/**
+ * 为一个对象添加属性并且进行TS层面的类型转换
+ */
 export function enhance<T extends Record<string, any>>(object: Record<string, any>, addons: Record<string, any>) {
    for (const key in addons) {
       if (addons[key] !== undefined)
@@ -67,23 +84,30 @@ export function enhance<T extends Record<string, any>>(object: Record<string, an
    return object as T
 }
 
+/**
+ * 从一个对象排除某些键值并且进行TS层面的类型转换
+ */
+export function exclude<T extends Record<string, any>>(object: Record<string, any>, keys: string[]) {
+   for (let key of keys) delete object[key]
+   return object as T
+}
+
+/**
+ * 遍历一个平对象
+ */
 export function forIn<T>(object: Record<string, T>, cb: (key: string, val: T) => void) {
    for (const key in object) {
       cb(key, object[key])
    }
 }
 
-
+/**
+ * 从一个删除一个key值
+ */
 export function delKey(object: Record<string, any>, key: string) {
-   object[key] = undefined
+   delete object[key]
 }
 
-export function exclude(object: Record<string, any>, keys: string[]) {
-   const newOne: Record<string, any> = {}
-   forIn(object, (key, val) => newOne[key] = val)
-   for (let key of keys) delete newOne[key]
-   return newOne
-}
 
 export function date() {
    const date = new Date

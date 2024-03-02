@@ -2,7 +2,7 @@
 import { shallowReactive, watch } from 'vue';
 
 import addSvg from '@/asset/icons/add.svg?raw';
-import { addPanel, PanelType } from '@/states/panelList';
+import { addPanel, PanelParam, PanelType } from '@/states/panelList';
 import {
   cloneIniObject, createIniObject, saveObject,
 } from '@/stores/projectStore';
@@ -35,19 +35,19 @@ function addNewObjectToView(object: IniObjectRo) {
 
 function openObjectPanel(object: IniObjectRo) {
    const opened = cloneIniObject(object)
-   addPanel({
+   const p: PanelParam = new PanelParam({
       label: opened.name,
       type: PanelType.ObjectEditor,
       data: opened,
-      handler: {
-         onClose(data: IniObjectRo) { this.onSave?.(data) },
-         onSave(object: IniObjectRo) {
-            const tmp = cloneIniObject(object)
-            saveObject(tmp)
-            addNewObjectToView(tmp)
-         }
-      }
    })
+   function onSave(object: IniObjectRo) {
+      const tmp = cloneIniObject(object)
+      saveObject(tmp)
+      addNewObjectToView(tmp)
+   }
+   p.on('closed', onSave)
+   p.on('save', onSave)
+   addPanel(p)
 }
 
 function onAddClick() {
@@ -97,7 +97,7 @@ $line-height: line-height(tiny);
       justify-content: space-between;
       flex-wrap: nowrap;
       height: $header-height;
-      padding-left: align-size(large);
+      padding-left: align-size(normal);
    }
 
    h2 {

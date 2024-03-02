@@ -1,13 +1,12 @@
 import { computed, ref, shallowReactive, StyleValue } from 'vue';
 
 import { EventBus } from '@/hooks/eventBus';
-import { PanelHandler } from '@/states/panelList';
 import {
   queryWordByKey, queryWordByNameSync, validateWord,
 } from '@/stores/projectStore';
 import {
-  createParam, Entry, IniObjectRo, removeFrom, WordRo,
-  WordValidity,
+  cloneTyped, createParam, Entry, IniObjectRo, removeFrom,
+  WordRo, WordValidity,
 } from '@ra2inier/core';
 
 // 常量定义
@@ -116,7 +115,6 @@ const COLUMN_COUNT = Symbol()
 export class EditorState extends EventBus {
    // 源对象数据
    data: IniObjectRo
-   handler: PanelHandler
    // 词条数据
    entrys = shallowReactive<EntryRo[]>([])
    get(id: number) {
@@ -125,7 +123,9 @@ export class EditorState extends EventBus {
    // 新词条输入框的文字值
    theNew = ''
    // 对象详情
-   detail = '';
+   detail = ''
+   // 当前子对象
+   currentChild = '';
 
    // 分栏数目
    [COLUMN_COUNT] = 1
@@ -136,7 +136,7 @@ export class EditorState extends EventBus {
       this[COLUMN_COUNT] = val
    }
 
-   constructor(object: IniObjectRo, handler: PanelHandler) {
+   constructor(object: IniObjectRo) {
       super()
       const word: IniObjectRo = this.data = object
       for (let i = 0, len = word.entry.length; i < len; ++i) {
@@ -146,7 +146,6 @@ export class EditorState extends EventBus {
          // tmp.wordKey
       }
       this.detail = object.detail
-      this.handler = handler
       this.reOrder()
    }
 
@@ -216,10 +215,12 @@ export class EditorState extends EventBus {
    /**
     * 最终保存和提交数据的函数
     */
-   save() {
+   value() {
       // 拷贝数据到原对象中
       if (!this.data) return
-      const entry: Entry[] = []
+      const ret = cloneTyped(this.data, IniObjectRo)
+      ret.entry = []
+      ret.detail = this.detail
       let tmp: Entry
       for (let word of this.entrys) {
          tmp = {
@@ -227,14 +228,9 @@ export class EditorState extends EventBus {
             values: word.values
          }
          word.comment && (tmp.comment = word.comment)
-         entry.push(tmp)
+         ret.entry.push(tmp)
       }
-      this.data.entry = entry
-      this.data.detail = this.detail
-
-      // 执行保存命令
-      // saveObject(this.data)
-      this.handler.onSave!(this.data)
+      return ret
    }
 
    async validateWordById(id: number) {

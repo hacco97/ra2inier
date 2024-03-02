@@ -1,5 +1,6 @@
 import {
-  copy, createProject, IniObjectRo, MapperRo, WordRo,
+  copy, createProject, IniObjectRo, MapperRo, ScopeRo,
+  WordRo,
 } from '@ra2inier/core';
 
 export const project = createProject()
@@ -46,7 +47,21 @@ export function setWord(key: string, word?: WordRo) {
    }
 }
 
+/**
+ * 修改主包中的scope
+ */
+export function setScope(key: string, scope?: ScopeRo) {
+   if (!scope) {
+      delete project.main!.dictionary[key]
+   } else {
+      project.main!.scopes[key] = scope
+   }
+}
 
 export function clearAll() {
    copy(createProject(), project)
+}
+
+export function mainKey() {
+   return project.main ? project.main.key : ''
 }

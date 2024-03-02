@@ -20,7 +20,7 @@ export class DaoConfig {
    // dict word info文件
    WORD_INFO_FILE = 'info.json'
    WORD_DETAIL_FILE = 'detail.md'
-   WORD_HOOK_FILE = 'hook.mjs'
+   WORD_HOOK_FILE = 'hook.js'
    // 项目mapper的位置
    MAPPER_DIR = 'meta'
    MAPPER_FILE = 'mappers.json'

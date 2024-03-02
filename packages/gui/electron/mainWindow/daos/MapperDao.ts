@@ -20,7 +20,7 @@ export class MapperDao {
          for (let mapper of file) {
             if (!isUniqueObject(mapper)) continue
             const tmp = fromRaw(mapper, Mapper)
-            tmp.handlerScript = readFile(resolve(dir, tmp.key + '.mjs'))
+            tmp.handlerScript = readFile(resolve(dir, tmp.key + '.js'))
             mappers[tmp.key] = tmp
          }
       return mappers
@@ -31,7 +31,7 @@ export class MapperDao {
       let t: any
       forIn(mappers, (key, mapper) => {
          t = fromRaw(mapper, Mapper)
-         writeFile(resolve(mapperDir, key + '.mjs'), mapper.handlerScript)
+         writeFile(resolve(mapperDir, key + '.js'), mapper.handlerScript)
          t.handlerScript = undefined
          tmp.push(t)
       })

@@ -1,6 +1,7 @@
 import { shallowReactive } from 'vue';
 
 import { eventBus } from '@/boot/apis';
+import { EventBus } from '@/hooks/eventBus';
 import { IS_DEV } from '@/stores/config';
 
 /**
@@ -24,7 +25,7 @@ export enum PanelType {
 /**
  * 用以创建一个新的页面所需的参数
  */
-export class PanelParam {
+export class PanelParam extends EventBus {
    /**
     * 页面的标签名称
     */
@@ -36,19 +37,17 @@ export class PanelParam {
    /**
     * 传递给页面组件数据
     */
-   data?: any
-   /**
-    * 可选的提供给页面组件用以调用的回调函数
-    * onSave提供给页面组件用以保存数据的回调函数
-    * onClose会在页面被关闭时调用，data参数会被传入
-    */
-   handler?: PanelHandler
-}
+   data: any
 
-export interface PanelHandler {
-   onClose?: Function,
-   onSave?: Function,
-   [s: string]: Function | undefined
+   readonly: boolean = false
+
+   constructor(init: Partial<PanelParam>) {
+      super()
+      this.data = init.data || ''
+      this.label = init.label || 'NEW_LABEL'
+      this.type = init.type || PanelType.Welcome
+      this.readonly = !!init.readonly
+   }
 }
 
 export interface PanelTab {
@@ -62,22 +61,22 @@ const initLeftPanel: PanelTab = {
    id: 1,
    order: 0,
    position: true,
-   param: new PanelParam
+   param: new PanelParam({ label: PanelType.Welcome })
 }
 initLeftPanel.param.type = IS_DEV ? PanelType.API : PanelType.Welcome
 
-const NONE = [
+const NONE: PanelTab[] = [
    {
       id: -1,
       order: -1,
       position: true,
-      param: { label: '', type: PanelType.None }
+      param: new PanelParam({ label: PanelType.None, type: PanelType.None }),
    },
    {
       id: -2,
       order: -2,
       position: false,
-      param: { label: '', type: PanelType.None }
+      param: new PanelParam({ label: PanelType.None, type: PanelType.None })
    }
 ]
 
@@ -106,11 +105,13 @@ export function selectTabByID(id: number) {
  * 关闭所给定id值的panel
  */
 export function closeTab(id: number) {
-   let rm: any = {}
+   // @ts-ignore
+   let rm: PanelTab = {}
    for (let i = 0; 0 < panelList.length; ++i) {
       if (id === panelList[i].id) {
          rm = panelList.splice(i, 1)[0]
-         if (rm.param.onClose) rm.param.onClose(rm.param.data)
+         rm.param.emit('before-closed', rm.param.data)
+         rm.param.emit('closed', rm.param.data)
          break
       }
    }
@@ -123,6 +124,16 @@ export function closeTab(id: number) {
    if (panelList.length == 0) {
       const position = rm.position ? 0 : 1
       selectTab(NONE[position])
+   }
+}
+
+/**
+ * 关闭所有选项卡
+ */
+export function colseAllTabs(pos: 'left' | 'right') {
+   const position = pos === 'left'
+   for (const tab of panelList) {
+      if (position === tab.position) closeTab(tab.id)
    }
 }
 

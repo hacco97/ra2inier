@@ -1,81 +1,62 @@
 <script lang='ts' setup>
+import { shallowReactive } from 'vue';
+
 import { useCtxMenu } from '@/states/ctxMenu';
-import { addPanel, PanelType } from '@/states/panelList';
-import { useProject } from '@/stores/projectStore';
-import { ScopeRo } from '@ra2inier/core';
+import { addPanel, PanelParam, PanelType } from '@/states/panelList';
+import { addScope, saveScope } from '@/stores/projectStore';
+import { cloneTyped, ScopeRo } from '@ra2inier/core';
 
-// const scopes: Record<string, ScopeRo> = inject('scopes') ?? {}
+import { isReadonly, queryPkgNameByKey } from './metaState';
+
 const props = defineProps<{ scopes: Record<string, ScopeRo> }>()
+const scopeView: Record<string, ScopeRo> = shallowReactive(props.scopes)
 
-function onOpenClick(scope: ScopeRo) {
-   addPanel({
+function onSave(scope: ScopeRo) {
+   const newOne = cloneTyped(scope, ScopeRo)
+   saveScope(newOne)
+   scopeView[newOne.key] = newOne
+}
+
+function openScopePanel(scope: ScopeRo) {
+   const p = new PanelParam({
       label: scope.name,
       type: PanelType.ScopeEditor,
-      data: scope
+      data: scope,
+      readonly: isReadonly(scope)
    })
+   if (!isReadonly(scope)) {
+      p.on('closed', onSave)
+      p.on('save', onSave)
+   }
+   addPanel(p)
 }
 
-const project = useProject()
-
-function queryPkgNameByKey(key: string) {
-   return project.value.packages[key].name
+function onOpenClick(scope: ScopeRo) {
+   openScopePanel(scope)
 }
 
-// function onCtxOpenClick() {
-//    if (currentTarget.value) {
-//       addPanel({
-//          label: currentTarget.value.name,
-//          type: PanelType.ScopeEditor,
-//          data: currentTarget.value
-//       })
-//    }
-// }
-
-// function onScopeContextmenu(e: MouseEvent) {
-//    currentTarget.value = undefined
-//    showScopeContextmenu(e, currentTarget.value)
-// }
-
-function onAddClick() {
-   addNewScope()
-}
-
-function addNewScope() {
-   const scope = new ScopeRo
-   scope.name = 'NEW SCOPE'
-   addPanel({
-      label: 'SCOPE',
-      type: PanelType.ScopeEditor,
-      data: scope
-   })
-
-   return scope
-}
-
-const vCtxmenu = useCtxMenu({})
+const vCtxmenu = useCtxMenu({
+   '新建类型'() {
+      openScopePanel(addScope('NEW_SCOPE'))
+   }
+})
 
 </script>
 
 
 <template>
-   <div class="local-scopeview" v-ctxmenu>
+   <div :class="$style.scope" v-ctxmenu>
       <h2>Scope::对象类型</h2>
       <ul>
-         <li class="list-item c-h-n" v-for="(scope, key) of scopes" :key="key" @dblclick="onOpenClick(scope)">
+         <li class="list-item" v-for="(scope, key) of scopeView" :key="key" @dblclick="onOpenClick(scope)">
             <span>{{ queryPkgNameByKey(scope.package) }}</span><span>&gt;</span><span>{{ scope.name }}</span>
          </li>
       </ul>
    </div>
 </template>
 
-<style scoped lang='scss'>
-.local-scopeview {
-   $height: 25px;
-
-
-   h2 {
-      height: $height;
-      line-height: $height;
-   }
+<style scoped lang='scss' module>
+.scope {
+   @import './meta.scss';
 }
 </style>

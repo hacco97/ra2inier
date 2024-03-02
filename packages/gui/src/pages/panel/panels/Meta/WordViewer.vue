@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import { ref, Ref } from 'vue';
+import { ref, Ref, shallowReactive } from 'vue';
 
 import editSvg from '@/asset/icons/edit.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
@@ -16,10 +16,9 @@ import { FlexArea, FlexInput, LazyButton } from '@ra2inier/wc';
 
 import HeaderLayout from '../HeaderLayout.vue';
 
-defineOptions({ name: 'WordViewer' })
-
 const props = defineProps<{ param: PanelParam }>()
-const word: WordRo = props.param.data!
+const param = props.param
+const word: WordRo = shallowReactive(props.param.data)
 
 const isNoMarkdown = ref(!word.markdown)
 if (isNoMarkdown.value) {
@@ -29,14 +28,20 @@ if (isNoMarkdown.value) {
    })
 }
 
+function submit() {
+   word.markdown || (word.markdown = new MarkdownRo)
+   copy(md.value!.value(), word.markdown)
+   word.valueParam = parseValueTypeExp(word.values)
+   param.data = word
+}
+param.on('before-closed', submit)
+
 const disabled = ref(true)
 
 const md = ref<InstanceType<typeof Markdown>>()
 function onSaveClick() {
-   word.markdown || (word.markdown = new MarkdownRo)
-   copy(md.value!.value(), word.markdown)
-   word.valueParam = parseValueTypeExp(word.values)
-   saveWord(word)
+   submit()
+   param.emit('save', word)
    disabled.value = true
 }
 
@@ -65,7 +70,7 @@ async function onTemplateClick() {
       <template #header>
          <h2 :class="[$theme.header, $style.header]">
             <span>{{ word.name }}</span>
-            <lazy-button class="fore-button">
+            <lazy-button class="fore-button" v-if="!param.readonly">
                <div v-svgicon="saveSvg" @click="onSaveClick" v-if="!disabled"></div>
                <div v-svgicon="editSvg" @click="onEditClick" v-else></div>
             </lazy-button>

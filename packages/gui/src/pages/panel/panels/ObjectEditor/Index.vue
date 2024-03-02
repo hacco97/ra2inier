@@ -8,7 +8,6 @@ import delSvg from '@/asset/icons/delete.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
 import { PanelParam } from '@/states/panelList';
 import { projectName } from '@/stores/projectStore';
-import { fromRaw } from '@ra2inier/core';
 import { FlexInput, LazyButton } from '@ra2inier/wc';
 
 import HeaderLayout from '../HeaderLayout.vue';
@@ -19,7 +18,7 @@ defineOptions({ name: 'ObjectEditor' })
 const props = defineProps<{ param: PanelParam }>()
 const param = props.param
 const state = shallowReactive(
-   new EditorState(param.data, param.handler!)
+   new EditorState(param.data)
 )
 const data = state.data
 
@@ -27,9 +26,17 @@ function onNameChange() {
    param.label = data.name
 }
 
-function onSaveClick() {
-   state.save()
+function submit() {
+   const value = state.value()
+   param.data = value
 }
+param.on('before-closed', submit)
+
+function onSaveClick() {
+   submit()
+   param.emit('save', param.data)
+}
+
 
 function ondeleteClick() {
    state.removeSelected()
@@ -68,7 +75,7 @@ function onCheckClick() {
                      <em>.</em>
                      <em><flex-input v-model.lazy.trim="data.scope" placeholder="NullTypes" /></em><i></i>
                      <em>/</em><i @click="fi3?.focus()"></i>
-                     <em><flex-input ref="fi3" v-model.lazy.trim="data.scope" placeholder="root" /></em>
+                     <em><flex-input ref="fi3" v-model.lazy.trim="state.currentChild" placeholder="root" /></em>
                   </h2>
                   <label @click="fi3?.focus()"></label>
                   <label></label>

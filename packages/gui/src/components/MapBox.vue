@@ -93,9 +93,8 @@ function onValBlur(e: Event, order: number) {
                @focus="setCurrent(2 * order + 1)" @blur="onValBlur($event, order)" v-keymap="{ order, keyOrVal: false }"
                :tabindex="tabindex"></i>
          </span>
-         <b :isLast="order === data.length - 1">;</b>
+         <b>{{ order !== data.length - 1 ? ';' : "" }}</b>
       </template>
-      <b></b>
       <span v-if="!disabled">+</span>
       <b v-if="!disabled" :class="$theme.box">
          <s v-focus="2 * data.length" :disabled="disabled" :contenteditable="!disabled" ref="newKey"
@@ -147,10 +146,6 @@ $min-width: 60px;
 
    b {
       margin-right: align-size(normal);
-
-      &[isLast=true] {
-         display: none;
-      }
    }
 
    i,

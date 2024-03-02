@@ -1,28 +1,47 @@
 <script lang='ts' setup>
+import { shallowReactive } from 'vue';
+
 import { useCtxMenu } from '@/states/ctxMenu';
-import { addPanel, PanelType } from '@/states/panelList';
-import { MapperRo } from '@ra2inier/core';
+import { addPanel, PanelParam, PanelType } from '@/states/panelList';
+import { addMapper, saveMapper } from '@/stores/projectStore';
+import { setMapper } from '@/stores/projectStore/boot';
+import { cloneTyped, MapperRo } from '@ra2inier/core';
+
+import { isReadonly, queryPkgNameByKey } from './metaState';
 
 defineOptions({ name: 'MapperView' })
 
-defineProps<{ mappers: Record<string, MapperRo> }>()
+const props = defineProps<{ mappers: Record<string, MapperRo> }>()
+const mapperView: Record<string, MapperRo> = shallowReactive(props.mappers)
 
-function onOpenMapper(mapper: MapperRo) {
-   addPanel({
-      label: mapper.name,
-      type: PanelType.Mappers,
-      data: mapper
-   })
+function onSave(data: MapperRo) {
+   const newOne = cloneTyped(data, MapperRo)
+   saveMapper(newOne)
+   mapperView[newOne.key] = newOne
 }
 
-function onAddClick() {
+function openMapperPanel(mapper: MapperRo) {
+   const newOne = cloneTyped(mapper, MapperRo)
+   const p = new PanelParam({
+      label: mapper.name,
+      type: PanelType.Mappers,
+      data: newOne,
+      readonly: isReadonly(mapper)
+   })
+   if (!isReadonly(mapper)) {
+      p.on('closed', onSave)
+      p.on('save', onSave)
+   }
+   addPanel(p)
+}
 
+function onOpenMapper(mapper: MapperRo) {
+   openMapperPanel(mapper)
 }
 
 const vCtxmenu = useCtxMenu({
-   '添加输出文件'() {
-      console.log('添加')
-
+   '新建输出器'() {
+      openMapperPanel(addMapper('NEW_MAPPER'))
    }
 })
 
@@ -33,25 +52,15 @@ const vCtxmenu = useCtxMenu({
    <div :class="$style.mapper" v-ctxmenu>
       <h2>Mapper::文件类型</h2>
       <ul>
-         <li class="list-item c-h-n" v-for="(mapper, key) in mappers" @dblclick="onOpenMapper(mapper)" :key="key">
-            <span>+</span><span>{{ mapper.name }}</span>
+         <li class="list-item" v-for="(mapper, key) in mapperView" @dblclick="onOpenMapper(mapper)" :key="key">
+            <span>{{ queryPkgNameByKey(mapper.package) }}</span><span>&gt;</span><span>{{ mapper.name }}</span>
          </li>
       </ul>
    </div>
 </template>
 
 <style scoped lang='scss' module>
-$padding-left: align-size(large);
-$height: line-height(small);
-
 .mapper {
-   li {
-      padding-left: $padding-left;
-   }
-
-   h2 {
-      height: $height;
-      line-height: $height;
-   }
+   @import './meta.scss';
 }
 </style>

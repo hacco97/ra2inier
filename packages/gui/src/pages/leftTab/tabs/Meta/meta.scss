@@ -1,0 +1,12 @@
+$padding-left: align-size(normal);
+$height: line-height(small);
+
+li {
+   padding-left:2* $padding-left;
+}
+
+h2 {
+   height: $height;
+   line-height: $height;
+   padding-left: $padding-left;
+}

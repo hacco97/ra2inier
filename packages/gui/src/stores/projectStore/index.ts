@@ -107,7 +107,6 @@ export const projectInfo = computed(() => {
 
 })
 
-
 /**
  * 返回当前项目的资源集合
  */
@@ -119,7 +118,6 @@ const _project = computed(() => {
    loadingVersion.value
    return <Readonly<ProjectRo>>project
 })
-
 
 
 /**

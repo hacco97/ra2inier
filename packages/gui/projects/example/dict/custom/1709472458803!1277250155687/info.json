@@ -1,0 +1,1 @@
+{"id":1709472458803,"seed":1277250155687,"version":1709472458803,"name":"IsEmp","brief":"is emp","default":"yes","author":"","files":[],"values":"bool(开启,关闭)","valueParam":[{"type":"bool","exp":"bool(开启,关闭)","optiontmp":["yes","no"],"optionRemarks":["开启","关闭"],"repeat":1}],"scopes":["fa"]}

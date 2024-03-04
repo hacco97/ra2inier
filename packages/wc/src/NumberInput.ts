@@ -35,20 +35,31 @@ export class NumberInput extends HTMLElement implements WebComponent {
       }
    }
 
-   private parse(str: string) {
+   #parse(str: string) {
       const withPercent = !!str.trim().match(WITH_PERCENT)
       let val = parseFloat(str)
       val = withPercent ? val /= 100 : val
       this.#percent = withPercent
-      if (isNaN(val)) return 0 > this.#min ? 0 : this.#min
-      return this.validate(val)
+      if (isNaN(val)) {
+         this.invalid()
+         return 0 > this.#min ? 0 : this.#min
+      }
+      return this.#validate(val)
    }
 
-   private validate(val: number) {
+   #validate(val: number) {
       val = round(val, this.#precision)
-      if (val < this.#min) val = this.#min
-      if (val > this.#max) val = this.#max
+      this.validity = true
+      if (val < this.#min) val = this.#min, this.invalid()
+      if (val > this.#max) val = this.#max, this.invalid()
       return val
+   }
+
+   validate() {
+      this.validity = true
+      this.#value = this.#parse(this.#input.value)
+      this.setText(this.text)
+      return this.validity
    }
 
    get text() {
@@ -58,7 +69,7 @@ export class NumberInput extends HTMLElement implements WebComponent {
    }
 
    set text(val: string) {
-      this.#value = this.parse(val)
+      this.#value = this.#parse(val)
       this.setText(this.text)
    }
 
@@ -72,14 +83,9 @@ export class NumberInput extends HTMLElement implements WebComponent {
    }
 
    set value(val: number) {
-      this.#value = this.validate(val)
+      this.#value = this.#validate(val)
       this.setText(this.text)
-      if (val !== this.#value) {
-         this.dispatchEvent(new CustomEvent('invalid', {
-            bubbles: false,
-            detail: this.#value
-         }))
-      }
+      if (val !== this.#value) this.invalid()
    }
 
    set disabled(val: boolean) {
@@ -87,7 +93,21 @@ export class NumberInput extends HTMLElement implements WebComponent {
       this.#input.disabled = !!val
    }
 
+   validity = true
 
+   invalid() {
+      this.validity = false
+      this.dispatchEvent(new CustomEvent('invalid', {
+         bubbles: false,
+         detail: this.#value
+      }))
+   }
+
+   add(n: number) {
+      if (typeof n !== 'number') return
+      this.#value = this.#validate(n + this.#parse(this.#input.value))
+      this.setText(this.text)
+   }
 
    constructor() {
       super()
@@ -102,7 +122,7 @@ export class NumberInput extends HTMLElement implements WebComponent {
       const span = this.#span = shadow.querySelector('span')!
       input.addEventListener('input', (e: Event) => { span.textContent = input.value })
       input.addEventListener('change', () => {
-         this.#value = this.parse(input.value)
+         this.#value = this.#parse(input.value)
          this.setText(this.text)
          this.dispatchEvent(new CustomEvent('change', { bubbles: false }))
       })

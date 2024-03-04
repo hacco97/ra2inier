@@ -46,7 +46,7 @@ document.body.addEventListener('click', (e: MouseEvent) => {
    @include z-index(ctxmenu);
    height: fit-content;
    width: fit-content;
-   padding: align-size(large) 0;
+   padding: align-size(normal) 0;
    max-width: 20em;
    overflow-x: auto;
    overflow-y: hidden;

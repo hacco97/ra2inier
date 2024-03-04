@@ -18,6 +18,7 @@
 
 .normal-rpanel {
    @include plane-radius(normal);
+   @include normal-panel();
 }
 
 .normal-panel {

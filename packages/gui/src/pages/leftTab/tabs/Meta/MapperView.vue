@@ -4,7 +4,6 @@ import { shallowReactive } from 'vue';
 import { useCtxMenu } from '@/states/ctxMenu';
 import { addPanel, PanelParam, PanelType } from '@/states/panelList';
 import { addMapper, saveMapper } from '@/stores/projectStore';
-import { setMapper } from '@/stores/projectStore/boot';
 import { cloneTyped, MapperRo } from '@ra2inier/core';
 
 import { isReadonly, queryPkgNameByKey } from './metaState';

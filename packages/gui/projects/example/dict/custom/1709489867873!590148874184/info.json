@@ -1,0 +1,1 @@
+{"id":1709489867873,"seed":590148874184,"version":1709489867873,"name":"Emp","brief":"emp系数","default":"1","author":"","files":[],"values":"float(0,1)","valueParam":[{"type":"float","exp":"float(0,1)","min":0,"max":1,"repeat":1}],"scopes":["VehicleTypes"]}

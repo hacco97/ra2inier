@@ -30,7 +30,7 @@ if (isNoMarkdown.value) {
 
 function submit() {
    word.markdown || (word.markdown = new MarkdownRo)
-   copy(md.value!.value(), word.markdown)
+   copy(md.value?.value(), word.markdown)
    word.valueParam = parseValueTypeExp(word.values)
    param.data = word
 }
@@ -76,25 +76,26 @@ async function onTemplateClick() {
             </lazy-button>
          </h2>
       </template>
+
       <template #default>
          <!-- 中部info内容 -->
          <main :class="[$style.main, $theme.main]">
             <ul>
                <h2>
                   <span class="required">词条</span><em>：</em>
-                  <flex-input class="c-bg-l rd" :disabled="disabled" v-model="word.name"></flex-input>
+                  <flex-input :disabled="disabled" v-model.lazy="word.name"></flex-input>
                </h2>
                <h2 title="词条的用途简明说明，请控制在20字以内">
                   <span>概要</span><em>：</em>
-                  <flex-input class="c-bg-l rd" :disabled="disabled" v-model="word.brief"></flex-input>
+                  <flex-input :disabled="disabled" v-model.lazy="word.brief"></flex-input>
                </h2>
                <h2 title="这个词条可能的类型值，字数限制100字">
                   <span class="required">取值</span><em>：</em>
-                  <flex-input class="c-bg-l rd" :disabled="disabled" v-model="word.values"></flex-input>
+                  <flex-input :disabled="disabled" v-model.lazy="word.values"></flex-input>
                </h2>
                <h2 title="若该值不填，在游戏中的默认值为多少">
                   <span>默认值</span><em>：</em>
-                  <flex-input class="c-bg-l rd" :disabled="disabled" v-model="word.default"></flex-input>
+                  <flex-input :disabled="disabled" v-model.lazy="word.default"></flex-input>
                </h2>
                <h2 title="作用于什么类型的对象之上，必须是项目中声明的对象类型"><span class="required">作用对象</span><em>：</em></h2>
                <li>
@@ -121,4 +122,5 @@ async function onTemplateClick() {
 </template>
 
 <style src="@css/meta-panel.scss" scoped module="$theme" />
+
 <style src="./meta-layout.scss" scoped module></style>

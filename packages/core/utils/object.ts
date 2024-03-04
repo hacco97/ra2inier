@@ -107,18 +107,3 @@ export function forIn<T>(object: Record<string, T>, cb: (key: string, val: T) =>
 export function delKey(object: Record<string, any>, key: string) {
    delete object[key]
 }
-
-
-export function date() {
-   const date = new Date
-   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
-}
-
-export function time() {
-   const date = new Date
-   return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
-}
-
-export function dateTime() {
-   return `${date()} ${time()}`
-}

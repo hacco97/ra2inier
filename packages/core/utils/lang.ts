@@ -64,3 +64,39 @@ export function safeScript(script: string, returns?: string[]) {
       })()
    `)
 }
+
+/**
+ * 返回自定义日期字符串
+ */
+export function date() {
+   const date = new Date
+   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+}
+
+/**
+ * 返回自定义时间字符串
+ */
+export function time() {
+   const date = new Date
+   return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+}
+
+/**
+ * 返回自定义日期加时间字符串
+ */
+export function dateTime() {
+   return `${date()} ${time()}`
+}
+
+
+/**
+ * 删除一个数组中的全部元素，并使用一个新数组中的元素填充它
+ */
+export function overrideArray<T>(from: T[], to: T[]) {
+   for (let id = 0; id < from.length; id++) {
+      to[id] = from[id]
+   }
+   if (from.length < to.length) {
+      to.splice(from.length)
+   }
+}

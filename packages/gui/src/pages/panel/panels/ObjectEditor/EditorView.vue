@@ -6,12 +6,11 @@ import MapBox from '@/components/MapBox.vue';
 import { useFocus } from '@/hooks/focus';
 import { FlexArea, FlexInput } from '@ra2inier/wc';
 
+import Prompt from '../Prompt/Prompt.vue';
+import { PromptState } from '../Prompt/promptState';
 import { useEditorKeymap } from './editorKeymap';
-import {
-  EditorState, EntryRo, useCursorCoord, usePromptCoord,
-} from './eidtorState';
-import Prompt from './Prompt.vue';
-import { PromptState } from './promptState';
+import { EditorState, useCursorCoord, usePromptCoord } from './eidtorState';
+import { EntryRo } from './Entry';
 
 // 初始化数据
 const props = defineProps<{ state: EditorState }>()
@@ -32,7 +31,7 @@ function onInputFocused(e: Event, order: number, vid: number, entry: EntryRo) {
    focus.setCurrent(order + vid)
    // 切换被选择的词条
    entry.vid = vid
-   promptState.setEntry(entry)
+   promptState.entry = entry
    // 隐藏提示框防止闪烁，重定位提示框位置
    promptState.hide()
    onColFocus(e)
@@ -49,7 +48,6 @@ function onNewInputFocused(e: KeyboardEvent) {
 
 // 提示框交互逻辑
 function onPromptSubmit(value: string) {
-   promptState.hide()
    focus.focusCurrent()
 }
 function onInputCtxMenu(e: Event) {
@@ -116,12 +114,9 @@ state.on('comment-insert-require', () => {
 })
 
 // 子面板逻辑
-const isFolded = (folded: boolean) => `transform: rotate(${folded ? 0 : 90}deg);`
 function onSubFoldClick(entry: EntryRo) {
-   // console.log(entry.isSubFolded)
    entry.isSubFolded = !entry.isSubFolded
 }
-
 
 //
 const columCount = computed(() => ({ columns: state.columnCount }))
@@ -135,7 +130,7 @@ const columCount = computed(() => ({ columns: state.columnCount }))
             <!-- 提示框 -->
             <nav v-show="promptState.isShowed">
                <div :style="promptPosition" class="normal-box">
-                  <Prompt :disabled="false" :state="promptState" @blur="onInputBlur" @submit="onPromptSubmit"></Prompt>
+                  <Prompt :disabled="false" :state="promptState" @submit="onPromptSubmit"></Prompt>
                </div>
             </nav>
 
@@ -151,7 +146,8 @@ const columCount = computed(() => ({ columns: state.columnCount }))
 
             <ul :style="columCount">
                <!-- 词条编辑框 -->
-               <li v-for="(entry, eid) in entrys" :key="entry.id" @click="onRowClick(eid)" :style="{ order: entry.order }">
+               <li v-for="(entry, eid) in entrys" :key="entry.id" @click="onRowClick(eid)"
+                  :style="{ order: entry.order }">
                   <p @flex-focus="onRowFocus">
                      <i @click="onSubFoldClick(entry)" class="folder" :folded="entry.isSubFolded">&gt;</i>
                      <span :selected="entry.selected" @auxclick="onLabelAuxClick" @click="onLabelClick($event, entry)"
@@ -159,16 +155,15 @@ const columCount = computed(() => ({ columns: state.columnCount }))
                         {{ entry.key }}
                      </span>
                      <em>=</em>
-                     <flex-input v-for="(v, vid) in entry.values" :key="vid" :value="entry.values[vid]"
-                        @change="onInputChange($event, eid, vid)" v-focus="vid + entry.order" v-keymap="entry"
+                     <flex-input v-for="(value, vid) in entry.values" :key="vid" :value="value"
+                        @change="onInputChange($event, eid, vid)" v-focus="entry.order + vid" v-keymap="entry"
                         @blur="onInputBlur" @focus="onInputFocused($event, entry.order, vid, entry)"
                         @keydown="onInputKeydown" @contextmenu="onInputCtxMenu" />
                   </p>
                   <article v-show="entry.validitys.length > 0">
                      <h3 v-for="validity in entry.validitys">{{ validity.msg }}</h3>
                   </article>
-                  <flex-area v-show="!entry.isSubFolded" v-model.lazy="entry.comment"
-                     placeholder="添加备注"></flex-area>
+                  <flex-area v-show="!entry.isSubFolded" v-model.lazy="entry.comment" placeholder="添加备注"></flex-area>
                </li>
 
                <!-- 新词条输入框 -->
@@ -252,4 +247,3 @@ $height: align-size(larger);
    min-width: 150px;
 }
 </style>
-

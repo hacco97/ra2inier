@@ -7,6 +7,5 @@ export function isReadonly(o: { package: string }) {
 const project = useProject()
 
 export function queryPkgNameByKey(key: string) {
-   console.log(key)
    return project.value.packages[key].name
 }

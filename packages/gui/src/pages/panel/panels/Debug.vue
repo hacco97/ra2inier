@@ -1,7 +1,7 @@
 <script lang='ts' setup>
 import { ref, shallowReactive } from 'vue';
 
-import { PopupBox } from '@ra2inier/wc';
+import { PopupBox, TouchButton } from '@ra2inier/wc';
 
 const list = shallowReactive([
    { name: 'zs', age: 18 },
@@ -35,11 +35,21 @@ function onHiClick(e: Event) {
    e.stopPropagation()
 
 }
+
+function onHello() {
+   console.log('hello')
+
+}
+
+function onClick(){
+   console.log('hi')
+
+}
 </script>
 
 
 <template>
-   <div class="text-center" @click="onTest2Click">
+   <div class="text-center">
       <popup-box position="rb">
          <button @click="onTestClick">test</button>
          <p slot="pop">
@@ -50,6 +60,9 @@ function onHiClick(e: Event) {
             <button @click="onHiClick">hello</button>
          </p>
       </popup-box>
+      <touch-button @touch="onHello" @click="onClick">
+         hello
+      </touch-button>
    </div>
 </template>
 

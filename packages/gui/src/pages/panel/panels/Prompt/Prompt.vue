@@ -1,12 +1,16 @@
 <script lang='ts' setup>
 import { computed, reactive, shallowRef, watch } from 'vue';
 
+import submitSvg from '@/asset/icons/submit.svg?raw';
 import ColorPicker from '@/components/ColorPicker.vue';
+import { getPackageName } from '@/stores/projectStore';
 import { WordRo } from '@ra2inier/core';
-import { NumberInput } from '@ra2inier/wc';
+import { NumberInput, TouchButton } from '@ra2inier/wc';
 
+import { useFloat, useInt } from './number';
+import { Option, useOption } from './option';
 import { usePromptKeymap } from './promptKeymap';
-import { Option, PromptState, PromptType, useChildFocus } from './promptState';
+import { PromptState, PromptType, useChildFocus } from './promptState';
 
 const props = defineProps({
    disabled: { type: Boolean, default: false },
@@ -17,16 +21,15 @@ const emit = defineEmits(['submit', 'blur'])
 // 初始化组件参数
 const state = props.state
 const word = shallowRef(new WordRo)
-const author = computed(() => {
-   return word.value.author ? '作者：' + word.value.author : ''
-})
+const author = computed(() => word.value.author ? '作者：' + word.value.author : '')
+const isKnownWord = computed(() => state.entry && !state.entry.isNullWord)
+watch(() => props.state.entry, init, { immediate: true })
 function init() {
    if (!state.entry) return
    word.value = state.entry.word
 }
-watch(() => props.state.entry, init, { immediate: true })
 
-// 焦点控制逻辑
+// 提示框焦点控制逻辑
 function onPromptFocus() {
    state.isFocus = true
 }
@@ -42,61 +45,76 @@ state.on('focus-child', () => { focusChild(state.type) })
 
 
 // 键盘处理逻辑
-const { vKeymap, enters } = usePromptKeymap(state)
+const vKeymap = usePromptKeymap(state)
 function onPromptSubmit(e: KeyboardEvent) {
-   console.log('out')
    e.stopPropagation()
    if (e.key === 'Enter')
-      submit(state.value)
+      submit(getValue())
 }
 function submit(ret: string | number) {
-   console.log('s', state.value)
-
    state.entry.setValue(ret)
    state.unactive()
-   console.log('ret', ret)
-
    ret !== undefined && emit('submit', ret)
 }
 
+
 // 枚举类型的处理逻辑
+const { options, cursor: optionCursor } = useOption(state)
 function onOptionClick(id: number) {
    state.active()
-   state.cursor = id
+   optionCursor.value = id
 }
 function onOptionDblClick(option: Option) {
    state.active()
-   state.cursor = option.id
-   submit(state.value)
+   optionCursor.value = option.id
+   submit(option.value)
 }
 
 // 整数类型的处理逻辑
-function onFloatInputChange(e: Event) {
-   const input = <NumberInput>e.target
-   state.float = input.value
-   state.floatText = input.text
-   submit(state.value)
-}
+const { intInput, changeInt, getInt, isValid: intValid } = useInt(state)
 function onIntSubmit(e: Event) {
-   const input = <NumberInput>e.target
-   state.int = input.value
-   submit(input.text)
+   intValid() && submit(getInt())
+}
+
+// 浮点类型的处理逻辑
+const { floatInput, changeFloat, getFloat, isValid: floatValid } = useFloat(state)
+function onFloatSubmit(e: Event) {
+   floatValid() && submit(getFloat())
 }
 
 // 颜色类型
 const color = reactive({
    red: 0, green: 70, blue: 50
 })
+function getColor() {
+   return `${Math.round(color.red)},${Math.round(color.green)},${Math.round(color.blue)}`
+}
 function onColorSubmit() {
    if (!state.entry) return
-   const ret = `${Math.round(color.red)},${Math.round(color.green)},${Math.round(color.blue)}`
-   submit(ret)
+   submit(getColor())
 }
 
+/**
+ * 获取当前值
+ */
+const valueMap: Record<PromptType, Function> = {
+   [PromptType.enum]() { return options[optionCursor.value].value },
+   [PromptType.int]: getInt,
+   [PromptType.float]: getFloat,
+   [PromptType.color]: getColor,
+   [PromptType.new]() { },
+   [PromptType.obj]() { },
+   [PromptType.str]() { },
+}
 
-const isKnownWord = computed(() =>
-   state.entry && !state.entry.isNullWord
-)
+/**
+ * 提交值的逻辑
+ */
+function getValue() {
+   return valueMap[state.type]()
+}
+state.on('submit-request', () => submit(getValue()))
+
 </script>
 
 
@@ -105,21 +123,17 @@ const isKnownWord = computed(() =>
       @focusin="onPromptFocus" @focusout="onPromptBlur" v-show="isKnownWord">
       <h2>
          <h3 :title="author">{{ word.name }}</h3>
+         <h4>{{ `${getPackageName(word.package)}/${word.dictionary}/${word.fullname}` }}</h4>
          <hr>
          <li>{{ word?.brief }}</li>
          <li v-if="word.default">默认值：{{ word.default ?? 'unknown' }}</li>
          <li v-if="word.values">取值：{{ word.values ?? 'unknown' }}</li>
       </h2>
 
-      <!-- 文本类型 -->
-      <template v-show="state.type === PromptType.str">
-         <p>纯文本类型</p>
-      </template>
-
       <!-- 枚举类型 -->
       <ol :class="$style.enum" v-child-focus="PromptType.enum" v-show="state.type === PromptType.enum">
-         <li class="normal-button reactive-hcs" v-for="option in state.options" :key="option.id"
-            :selected="state.cursor === option.id && state.isActive" @click="onOptionClick(option.id)"
+         <li class="normal-rpanel reactive-hcs" v-for="option in options" :key="option.id"
+            :selected="optionCursor === option.id && state.isActive" @click="onOptionClick(option.id)"
             @dblclick="onOptionDblClick(option)">
             <span>{{ option.value }}</span>
             <span>{{ option.text }}</span>
@@ -128,55 +142,61 @@ const isKnownWord = computed(() =>
 
       <!-- 整数类型 -->
       <ul :class="$style.number" v-show="state.type === PromptType.int">
-         <button @mousedown="state.increaseInt(-10)">--</button>
-         <button @mousedown="state.increaseInt(-1)">-</button>
-         <span @keydown.stop>
-            <number-input :value="state.int" @change="onIntSubmit" :min="state.entry?.typeParam.min"
-               :max="state.entry?.typeParam.max" v-child-focus="PromptType.int" />
-         </span>
-         <button @mousedown="state.increaseInt(1)">+</button>
-         <button @mousedown="state.increaseInt(10)">++</button>
+         <touch-button @touch="changeInt(-10)">--</touch-button>
+         <touch-button @touch="changeInt(-1)">-</touch-button>
+         <number-input ref="intInput" @keydown.enter.stop="onIntSubmit" :min="state.entry?.typeParam.min"
+            :max="state.entry?.typeParam.max" v-child-focus="PromptType.int" />
+         <touch-button @touch="changeInt(1)">+</touch-button>
+         <touch-button @touch="changeInt(10)">++</touch-button>
+         <p class="normal-label" v-svgicon="submitSvg" padding="18%" @click="onIntSubmit"></p>
       </ul>
 
       <!-- 小数类型 -->
       <ul :class="$style.number" v-show="state.type === PromptType.float">
-         <button @mousedown="state.increaseFloat(-0.1)">--</button>
-         <button @mousedown="state.increaseFloat(-0.01)">-</button>
-         <span @keydown.stop>
-            <number-input v-model.lazy="state.float" precision="2" min="0" max="1" v-child-focus="PromptType.float" />
-         </span>
-         <button @mousedown="state.increaseFloat(0.01)">+</button>
-         <button @mousedown="state.increaseFloat(0.1)">++</button>
+         <touch-button @touch="changeFloat(-0.1)">--</touch-button>
+         <touch-button @touch="changeFloat(-0.01)">-</touch-button>
+         <number-input ref="floatInput" @keydown.enter.stop="onFloatSubmit" precision="2" min="0" max="1"
+            v-child-focus="PromptType.float" />
+         <touch-button @touch="changeFloat(0.01)">+</touch-button>
+         <touch-button @touch="changeFloat(0.1)">++</touch-button>
+         <p class="normal-label" v-svgicon="submitSvg" padding="18%" @click="onFloatSubmit"></p>
       </ul>
 
       <!-- 颜色类型 -->
       <div v-show="state.type === PromptType.color">
          <ColorPicker v-child-focus="PromptType.color" :color="color" @submit="onColorSubmit" />
+         <footer style="height: 10px;"></footer>
       </div>
 
-      <footer style="height: 10px;"></footer>
    </div>
 </template>
+
 <style scoped src="@css/prompt.scss" module="$theme"></style>
+
 <style scoped lang='scss' module>
 .prompt {
    width: fit-content;
    height: fit-content;
    min-width: 300px;
-   padding: 10px;
+   padding: align-size(normal);
 
    h2 {
+
       >* {
-         margin: align-size(tiny) 0;
+         margin: align-size(normal) 0;
       }
 
       h3 {
          padding: align-size(tiny) align-size(large);
       }
 
+      h4 {
+         font-size: 0.8em;
+      }
+
       hr {
          display: block;
-         height: 2px;
+         height: 1px;
          width: 100%;
       }
 
@@ -194,44 +214,39 @@ const isKnownWord = computed(() =>
 }
 
 .enum {
-   /* padding: 15px; */
-
    >li {
       display: flex;
       justify-content: space-between;
-      padding: 6px 12px;
-      margin: 6px;
+      padding: align-size(normal);
    }
 }
 
 .number {
    display: flex;
-   padding: align-size(small) align-size(normal);
-   margin: align-size(small);
-   text-align: center;
    align-items: center;
-   height: 3em;
-
-   span {
-      display: block;
-      flex: 1;
-      height: 100%;
-      margin: 0 4px;
-   }
+   height: line-height(larger);
+   padding: align-size(normal);
+   text-align: center;
 
    number-input {
+      flex: 1;
       display: block;
-      width: 100%;
       height: 100%;
-      min-width: 0;
-      padding: 4px 10px;
+      width: 100%;
+      padding: 0 align-size(normal);
    }
 
-   button {
+   touch-button {
       flex: 0;
       display: inline-block;
       height: 100%;
       aspect-ratio: 1;
    }
+
+   p {
+      height: 100%;
+      aspect-ratio: 1;
+   }
+
 }
 </style>

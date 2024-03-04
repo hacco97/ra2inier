@@ -23,6 +23,7 @@ watch(loadingVersion, () => {
       <li class="line"><span>目标环境：</span><span>{{ info.target }}</span></li>
       <li><span>引用：</span><pre>{{ info.references }}</pre></li>
       <li class="line"><span>环境变量：</span></li>
+      <li class="line"><span>构建方案：</span></li>
    </div>
 </template>
 

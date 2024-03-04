@@ -1,116 +1,12 @@
 import { computed, ref, shallowReactive, StyleValue } from 'vue';
 
 import { EventBus } from '@/hooks/eventBus';
-import {
-  queryWordByKey, queryWordByNameSync, validateWord,
-} from '@/stores/projectStore';
-import {
-  cloneTyped, createParam, Entry, IniObjectRo, removeFrom,
-  WordRo, WordValidity,
-} from '@ra2inier/core';
+import { validateWord } from '@/stores/projectStore';
+import { cloneTyped, Entry, IniObjectRo, removeFrom } from '@ra2inier/core';
 
-// 常量定义
-const NULL_WORD = new WordRo('未知词条')
-NULL_WORD.valueParam = [createParam()]
-const NOT_FOUND = 'not-found'
-const WORD_KEY = Symbol()
-const ENTRY_VID = Symbol()
+import { EntryRo } from './Entry';
 
-// 字段对象，代表一个字段的所需信息
-export class EntryRo {
-   static nextID = 0
-   readonly id: number = 0
-   // 顺序，用于焦点逻辑和排序逻辑
-   order: number = 0
-   // 字段的word名字
-   key: string = ''
-
-   // 字段的word具体值，列表，中间用“,”分割
-   values: string[] = [];
-   // 当前字段的活动值索引
-   [ENTRY_VID] = 0
-   get vid() { return this[ENTRY_VID] }
-   set vid(vid: number) {
-      vid >= this.values.length && (vid = this.values.length - 1)
-      vid < 0 && (vid = 0)
-      this[ENTRY_VID] = vid
-   }
-   // 字段的注释
-   comment?: string
-   // 是否折叠子面板
-   isSubFolded = true
-   // 该字段是否被选中
-   selected: boolean = false
-   // 该字段的合法性
-   validitys: WordValidity[] = shallowReactive([])
-   // 该字段的合法性，提示
-   prediction: string = '';
-   // 字段word的key值
-   [WORD_KEY] = ''
-   get wordKey() { return this.word.key }
-   // 该字段的UI校验参数
-   get word() {
-      let tmp
-      if (!!this[WORD_KEY]) {
-         if (this[WORD_KEY] === NOT_FOUND) return NULL_WORD
-         tmp = queryWordByKey(this[WORD_KEY]) ?? NULL_WORD
-      } else {
-         // TODO: 待升级为沿项目依赖进行查找
-         tmp = queryWordByNameSync(this.key)
-         this[WORD_KEY] = NOT_FOUND
-         if (tmp) this[WORD_KEY] = tmp.key
-         else tmp = NULL_WORD
-      }
-      return <WordRo>tmp
-   }
-   get isNullWord() { return this.word === NULL_WORD }
-
-   get typeParams() {
-      return this.word.valueParam
-   }
-
-   get typeParam() {
-      return this.word.valueParam[this.vid] ?? NULL_WORD.valueParam[0]
-   }
-
-   constructor(entry: Entry) {
-      this.id = EntryRo.nextID++
-      this.key = entry.key
-      this.values = entry.values
-   }
-
-   set value(value: string) {
-      // TODO: 在此进行赋值的拦截
-
-      this.values[this.vid] = value
-   }
-
-   get value() {
-      return this.values[this.vid ?? 0]
-   }
-
-   setValue(val: any, vid?: number) {
-      this.values[vid ?? this.vid] = val + ''
-   }
-
-   get fullValue() {
-      return this.values.join(',')
-   }
-
-   push(str: string) {
-      this.values.push(str)
-   }
-
-   pop(vid?: number) {
-      vid ?? (vid = this.vid)
-      return this.values.splice(vid, 1)[0]
-   }
-
-   get length() { return this.values.length }
-}
-
-
-const COLUMN_COUNT = Symbol()
+const COLUMN_COUNT = Symbol('column count')
 // 管理单个ObjectEditor的数据
 export class EditorState extends EventBus {
    // 源对象数据
@@ -201,16 +97,6 @@ export class EditorState extends EventBus {
    setValueById(id: number, val: string | number, vid?: number) {
       this.entrys[id].setValue(val + '', vid)
    }
-
-
-   // /**
-   //  * 翻译词条
-   //  */
-   // translate() {
-   //    // TODO:环境变量的逻辑
-   //    translateWord()
-
-   // }
 
    /**
     * 最终保存和提交数据的函数

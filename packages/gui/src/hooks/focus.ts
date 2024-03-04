@@ -1,15 +1,4 @@
-
-import { Directive, ref } from "vue"
-
-const range = window.getSelection()
-
-export function focusAnElement(el?: HTMLElement) {
-   if (el) {
-      range?.selectAllChildren(el)
-      range?.collapseToEnd()
-      el.focus()
-   }
-}
+import { Directive, ref } from 'vue';
 
 export function useFocus() {
    const current = ref(-1)
@@ -29,7 +18,7 @@ export function useFocus() {
 
    function focusAt(order: number) {
       setTimeout(() => {
-         focusAnElement(map.get(order))
+         map.get(order)?.focus()
          current.value = order
       }, 10)
    }
@@ -64,7 +53,7 @@ export function useFocus() {
       unmounted: unRegisterFocusElement
    }
 
-   function blur(){
+   function blur() {
       map.get(current.value)?.blur()
    }
 

@@ -11,12 +11,12 @@ import { isReadonly } from './metaState';
 defineOptions({ name: 'DictView' })
 
 const props = defineProps<{ dictionary: Record<string, WordRo> }>()
-const dict = shallowReactive(props.dictionary)
+const dictView: Record<string, WordRo> = shallowReactive(props.dictionary)
 
 function onSave(word: WordRo) {
    const newOne = cloneTyped(word, WordRo)
    saveWord(newOne)
-   dict[word.key] = newOne
+   dictView[newOne.key] = newOne
 }
 
 function openWordPanel(word: WordRo) {
@@ -51,9 +51,8 @@ const vCtxmenu = useCtxMenu({
    <div :class="$style.dict" v-ctxmenu>
       <h2>Word::词条类型</h2>
       <ul>
-         <li v-for="(word, key) in dictionary" :key="key" @dblclick="onOpenClick(word)" class="list-item">
+         <li v-for="(word, key) in dictView" :key="key" @dblclick="onOpenClick(word)" class="list-item">
             <span>+</span>
-            <!-- <span>{{ word.package().name }}</span><span>&gt;</span> -->
             <span>{{ word.dictionary }}</span><span>&gt;</span>
             <span>{{ word.name }}</span>
          </li>

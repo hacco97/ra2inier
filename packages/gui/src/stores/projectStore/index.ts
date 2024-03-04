@@ -119,6 +119,12 @@ const _project = computed(() => {
    return <Readonly<ProjectRo>>project
 })
 
+/**
+ * 通过包的键值获得包名
+ */
+export function getPackageName(key: string) {
+   return _project.value.packages[key]?.name
+}
 
 /**
  * 返回全部项目资源的可读集合

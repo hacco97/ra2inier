@@ -3,12 +3,12 @@ import { computed, reactive, shallowRef, watch } from 'vue';
 
 import submitSvg from '@/asset/icons/submit.svg?raw';
 import ColorPicker from '@/components/ColorPicker.vue';
-import { getPackageName } from '@/stores/projectStore';
-import { WordRo } from '@ra2inier/core';
+import { packageNames } from '@/stores/projectStore';
+import { IniObjectRo, WordRo } from '@ra2inier/core';
 import { NumberInput, TouchButton } from '@ra2inier/wc';
 
 import { useFloat, useInt } from './number';
-import { Option, useOption } from './option';
+import { Option, useObjects, useOption } from './option';
 import { usePromptKeymap } from './promptKeymap';
 import { PromptState, PromptType, useChildFocus } from './promptState';
 
@@ -21,6 +21,9 @@ const emit = defineEmits(['submit', 'blur'])
 // 初始化组件参数
 const state = props.state
 const word = shallowRef(new WordRo)
+function getWordPath(word: WordRo) {
+   return `${packageNames.value[word.package]}/${word.dictionary}/${word.fullname}`
+}
 const author = computed(() => word.value.author ? '作者：' + word.value.author : '')
 const isKnownWord = computed(() => state.entry && !state.entry.isNullWord)
 watch(() => props.state.entry, init, { immediate: true })
@@ -35,13 +38,19 @@ function onPromptFocus() {
 }
 function onPromptBlur() {
    state.isFocus = false
-   emit('blur')
-   state.unactive()
+   setTimeout(() => {
+      if (state.isFocus) return
+      state.isFocus = false
+      emit('blur')
+      state.unactive()
+   }, 10)
 }
 
 // 子元素焦点focus逻辑，该逻辑用于通过使用emit触发，使得Prompt内部子元素的主动focus
 const { vChildFocus, focusChild } = useChildFocus()
-state.on('focus-child', () => { focusChild(state.type) })
+state.on('focus-child', () => {
+   focusChild(state.type)
+})
 
 
 // 键盘处理逻辑
@@ -65,8 +74,6 @@ function onOptionClick(id: number) {
    optionCursor.value = id
 }
 function onOptionDblClick(option: Option) {
-   state.active()
-   optionCursor.value = option.id
    submit(option.value)
 }
 
@@ -94,6 +101,19 @@ function onColorSubmit() {
    submit(getColor())
 }
 
+// 对象类型
+const { objects, getObjectPath, cursor: objectCursor } = useObjects(state)
+function onObjectClick(id: number) {
+   state.active()
+   objectCursor.value = id
+}
+function onObjectDbclick(object: IniObjectRo) {
+   submit(object.name)
+}
+function getObject() {
+   return objects.value[objectCursor.value].name
+}
+
 /**
  * 获取当前值
  */
@@ -103,7 +123,7 @@ const valueMap: Record<PromptType, Function> = {
    [PromptType.float]: getFloat,
    [PromptType.color]: getColor,
    [PromptType.new]() { },
-   [PromptType.obj]() { },
+   [PromptType.obj]: getObject,
    [PromptType.str]() { },
 }
 
@@ -120,10 +140,10 @@ state.on('submit-request', () => submit(getValue()))
 
 <template>
    <div v-if="!disabled" :class="[$style.prompt, $theme.prompt]" v-keymap @keydown="onPromptSubmit"
-      @focusin="onPromptFocus" @focusout="onPromptBlur" v-show="isKnownWord">
+      @focusin.stop="onPromptFocus" @focusout.stop="onPromptBlur" v-show="isKnownWord">
       <h2>
          <h3 :title="author">{{ word.name }}</h3>
-         <h4>{{ `${getPackageName(word.package)}/${word.dictionary}/${word.fullname}` }}</h4>
+         <h4>{{ getWordPath(word) }}</h4>
          <hr>
          <li>{{ word?.brief }}</li>
          <li v-if="word.default">默认值：{{ word.default ?? 'unknown' }}</li>
@@ -168,6 +188,14 @@ state.on('submit-request', () => submit(getValue()))
          <footer style="height: 10px;"></footer>
       </div>
 
+      <!-- 对象类型 -->
+      <div :class="$style.enum" v-show="state.type === PromptType.obj" v-child-focus="PromptType.obj">
+         <li class="normal-rpanel reactive-hcs" v-for="(object, id) in objects" :key="id"
+            :selected="objectCursor === id && state.isActive" @click="onObjectClick(id)"
+            @dblclick="onObjectDbclick(object)">
+            <span :title="getObjectPath(object)">{{ object.name }}.{{ object.scope }}</span>
+         </li>
+      </div>
    </div>
 </template>
 
@@ -217,7 +245,7 @@ state.on('submit-request', () => submit(getValue()))
    >li {
       display: flex;
       justify-content: space-between;
-      padding: align-size(normal);
+      padding: align-size(small) align-size(normal);
    }
 }
 

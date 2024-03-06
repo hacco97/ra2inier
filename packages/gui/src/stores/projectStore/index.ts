@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue';
 
-import { eventBus, exec, work } from '@/boot/apis';
+import { exec, globalEvent, work } from '@/boot/apis';
 import {
   forIn, IniObjectRo, MapperRo, PackageRo, parseProjectVo,
   ProjectRo, ProjectVo, ScopeRo, WordRo,
@@ -33,7 +33,7 @@ export async function openProject(path?: string, callback?: () => {}) {
       parseProjectVo(ipkg, project)
       // 将初始数据传递给worker
       work('project/init', ipkg)
-      eventBus.emit('project-loaded')
+      globalEvent.emit('project-loaded')
 
       // 结束
       loadingVersion.value++
@@ -122,9 +122,14 @@ const _project = computed(() => {
 /**
  * 通过包的键值获得包名
  */
-export function getPackageName(key: string) {
-   return _project.value.packages[key]?.name
-}
+export const packageNames = computed(() => {
+   const map: Record<string, string> = {}
+   forIn(_project.value.packages, (key, pkg) => {
+      map[key] = pkg.name
+   })
+   return map
+})
+
 
 /**
  * 返回全部项目资源的可读集合
@@ -153,3 +158,37 @@ function mergeKey<T>(packages: Record<string, PackageRo>, readKey: string) {
    return <Readonly<Record<string, T>>>tmp
 }
 
+
+
+/**
+ * 查找项目中的对象
+ */
+export function queryObject<T extends keyof (typeof QUERY_TYPES_MAP)>(type: T,
+   filter: (v: InstanceType<typeof QUERY_TYPES_MAP[T]>) => number, limit = 20) {
+   const targetSet = getSets(type)
+   const ret: [number, any][] = []
+   forIn(<Record<string, any>>targetSet, (key, val) => {
+      const priority = filter(val)
+      if (priority > 0) ret.push([priority, val])
+   })
+   ret.sort((a, b) => a[0] - b[0])
+   const temp = []
+   for (let i = 0; i < limit && i < ret.length; ++i) { temp.push(ret[i][1]) }
+   return <InstanceType<typeof QUERY_TYPES_MAP[T]>[]>(temp.reverse())
+}
+
+function getSets(type: keyof (typeof QUERY_TYPES_MAP)) {
+   let targetSet, sets = _allResource.value
+   if (type === 'mapper') targetSet = sets.mappers
+   else if (type === 'scope') targetSet = sets.scopes
+   else if (type === 'word') targetSet = sets.scopes
+   else targetSet = sets.objects
+   return targetSet
+}
+
+const QUERY_TYPES_MAP = {
+   object: IniObjectRo,
+   scope: ScopeRo,
+   mapper: MapperRo,
+   word: WordRo,
+}

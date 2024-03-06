@@ -49,7 +49,7 @@ const vCtxmenu = useCtxMenu({
       <h2>Scope::对象类型</h2>
       <ul>
          <li class="list-item" v-for="(scope, key) of scopeView" :key="key" @dblclick="onOpenClick(scope)">
-            <span>{{ queryPkgNameByKey(scope.package) }}</span><span>&gt;</span><span>{{ scope.name }}</span>
+            <span>{{ queryPkgNameByKey(scope.package) }}</span><span>/</span><span>{{ scope.name }}</span>
          </li>
       </ul>
    </div>

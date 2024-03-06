@@ -1,6 +1,6 @@
 import { shallowReactive } from 'vue';
 
-import { eventBus } from '@/boot/apis';
+import { globalEvent } from '@/boot/apis';
 import { EventBus } from '@/hooks/eventBus';
 import { IS_DEV } from '@/stores/config';
 
@@ -19,7 +19,8 @@ export enum PanelType {
    DEBUG = 'Debug',
    Setting = 'Setting',
    API = "API",
-   NewProject = 'NewProject'
+   NewProject = 'NewProject',
+   ObjectViewer = 'ObjectViewer'
 }
 
 /**
@@ -89,7 +90,7 @@ function initPanel() {
    curPanel[0] = initLeftPanel
    curPanel[1] = NONE[1]
 }
-eventBus.on('project-loaded', initPanel)
+globalEvent.on('project-loaded', initPanel)
 
 export function selectTab(tab: PanelTab) {
    const position = tab.position ? 0 : 1

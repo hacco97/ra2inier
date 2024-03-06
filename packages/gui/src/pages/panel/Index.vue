@@ -14,6 +14,7 @@ import WordViewer from './panels/Meta/WordViewer.vue';
 import NewProject from './panels/NewProject.vue';
 import None from './panels/None.vue';
 import ObjectEditor from './panels/ObjectEditor/Index.vue';
+import ObjectViewer from './panels/ObjectEditor/ObjectViewer.vue';
 import ProjectInfo from './panels/ProjectInfo.vue';
 import Setting from './panels/Setting.vue';
 import Welcome from './panels/Welcome.vue';
@@ -21,8 +22,9 @@ import Welcome from './panels/Welcome.vue';
 defineOptions({
    name: 'Panel',
    components: {
-      PanelLayout, Welcome, Debug, API, ProjectInfo, ObjectEditor,
-      None, ScopeEditor, WordViewer, MapperEditor, Setting, NewProject
+      PanelLayout, Welcome, Debug, API, ProjectInfo,
+      ObjectEditor, None, ScopeEditor, WordViewer,
+      MapperEditor, Setting, NewProject, ObjectViewer
    },
 })
 
@@ -91,6 +93,7 @@ function getMainSlotName(tab: PanelTab) {
             </li>
          </ul>
       </template>
+
       <template v-for="panel in curPanel" v-slot:[getMainSlotName(panel)] :key="panel.id">
          <KeepAlive>
             <component :is="panel.param.type" :param="panel.param" :key="panel.id" />
@@ -100,6 +103,7 @@ function getMainSlotName(tab: PanelTab) {
 </template>
 
 <style src="@css/panel.scss" scoped module="$theme" />
+
 <style lang='scss' scoped module>
 $height: layout-size(panelnav);
 $buttun-size: clamp(14px, calc($height * 0.7), align-size(larger));

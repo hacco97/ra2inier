@@ -1,8 +1,9 @@
 import { Directive, ref } from 'vue';
 
-export function useFocus() {
+export function useFocus(isNormalElement = false) {
    const current = ref(-1)
    const map = new Map<number, HTMLElement>()
+   const sel = getSelection()!
 
    function registerFocusElement(el: HTMLElement, binding: { value: number }) {
       map.set(binding.value, el)
@@ -16,12 +17,22 @@ export function useFocus() {
       map.delete(binding.value)
    }
 
-   function focusAt(order: number) {
+   function focusAt1(order: number) {
       setTimeout(() => {
          map.get(order)?.focus()
          current.value = order
       }, 10)
    }
+
+   function focusAt2(order: number) {
+      setTimeout(() => {
+         sel.selectAllChildren(map.get(order)!)
+         sel.collapseToEnd()
+         current.value = order
+      }, 10)
+   }
+
+   const focusAt = isNormalElement ? focusAt2 : focusAt1
 
    function focusNext(step = 1) {
       focusAt((current.value += step) % map.size)

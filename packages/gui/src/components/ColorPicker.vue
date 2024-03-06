@@ -152,8 +152,8 @@ const selected = ref(false)
                @mouseleave="isHueSliderShowed = false"></i>
          </div>
          <span></span>
-         <number-input v-bind="$attrs" ref="hueInput" tabindex="-1" v-focus="0" v-model.lazy="hsv.hue" @change="doHsv2Rgb"
-            class="rd ol-n" min="0" max="360" />
+         <number-input v-bind="$attrs" ref="hueInput" tabindex="-1" v-focus="0" v-model.lazy="hsv.hue"
+            @change="doHsv2Rgb" class="rd ol-n" min="0" max="360" />
       </section>
       <hr>
       <ul>
@@ -176,6 +176,7 @@ const selected = ref(false)
    }
 }
 </style>
+
 <style scoped lang='scss' module>
 $line-height: line-height(normal);
 
@@ -353,4 +354,3 @@ $line-height: line-height(normal);
    }
 }
 </style>
-

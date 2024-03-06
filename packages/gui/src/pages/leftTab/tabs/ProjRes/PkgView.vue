@@ -33,20 +33,24 @@ function addNewObjectToView(object: IniObjectRo) {
    view[g][object.key] = object
 }
 
+function onSave(object: IniObjectRo) {
+   const tmp = cloneIniObject(object)
+   saveObject(tmp)
+   addNewObjectToView(tmp)
+}
+
 function openObjectPanel(object: IniObjectRo) {
    const opened = cloneIniObject(object)
    const p: PanelParam = new PanelParam({
       label: opened.name,
-      type: PanelType.ObjectEditor,
+      type: props.isMain ? PanelType.ObjectEditor : PanelType.ObjectViewer,
       data: opened,
+      readonly: !props.isMain
    })
-   function onSave(object: IniObjectRo) {
-      const tmp = cloneIniObject(object)
-      saveObject(tmp)
-      addNewObjectToView(tmp)
+   if (props.isMain) {
+      p.on('closed', onSave)
+      p.on('save', onSave)
    }
-   p.on('closed', onSave)
-   p.on('save', onSave)
    addPanel(p)
 }
 

@@ -99,6 +99,7 @@ function onCheckClick() {
             </h1>
          </div>
       </template>
+
       <template #default>
          <!-- 编辑视图 -->
          <EditorView :state="state" />
@@ -106,97 +107,4 @@ function onCheckClick() {
    </HeaderLayout>
 </template>
 
-<style scoped lang='scss' module >
-$height: line-height(normal);
-
-.editor {
-   height: 100%;
-   position: relative;
-   z-index: 0;
-
-   // 上部页面标题
-   >h1 {
-      height: $height;
-      width: 100%;
-      position: absolute;
-      @include z-index(menu);
-
-      >ul {
-         display: flex;
-         width: fit-content;
-         height: 100%;
-      }
-
-      h2 {
-         display: flex;
-         flex-wrap: nowrap;
-         height: 100%;
-         margin-left: align-size(normal);
-         align-items: center;
-      }
-
-      flex-input::part(input) {
-         text-decoration: underline;
-      }
-
-      label {
-         width: align-size(larger);
-         height: 100%;
-      }
-
-      span {
-         display: block;
-         float: left;
-         padding: 0 5px;
-      }
-
-      i {
-         width: align-size(normal);
-         height: 100%;
-      }
-
-      aside {
-         display: flex;
-         flex-wrap: nowrap;
-         height: 100%;
-         min-height: 0;
-         align-items: center;
-      }
-   }
-
-   footer {
-      height: 300px;
-      width: 100%;
-   }
-}
-
-.buttons {
-   em {
-      width: align-size(large);
-      height: 100%;
-   }
-
-   s {
-      display: block;
-      height: 100%;
-      aspect-ratio: 1;
-      margin: 0 align-size(tiny);
-   }
-}
-
-.column {
-   position: relative;
-}
-
-.column::after {
-   content: attr(column);
-   position: absolute;
-   top: 0;
-   right: - align-size(normal);
-   width: align-size(large);
-   height: align-size(large);
-   text-align: center;
-   border-radius: 50px;
-   @include selection()
-}
-</style>
+<style scoped src="./editor.scss" module></style>

@@ -28,8 +28,6 @@ const {
    referHeightVBind
 } = usePanelHeight()
 
-
-
 </script>
 
 <template>

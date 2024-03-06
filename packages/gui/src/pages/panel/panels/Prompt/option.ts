@@ -1,7 +1,8 @@
 import { reactive, ref } from 'vue';
 
+import { packageNames } from '@/stores/projectStore';
 import {
-  overrideArray, WordValueType, WordValueTypeParam,
+  IniObjectRo, overrideArray, WordValueType, WordValueTypeParam,
 } from '@ra2inier/core';
 
 import { EntryRo } from '../ObjectEditor/Entry';
@@ -63,4 +64,38 @@ function createOptions(param: WordValueTypeParam) {
       }
    }
    return newOne
+}
+
+/**
+ * 对象类型的逻辑
+ */
+export function useObjects(state: PromptState) {
+   const objects = ref<IniObjectRo[]>([])
+   const cursor = ref(0)
+
+   state.on('init-' + PromptType.obj, (newList) => {
+      if (newList instanceof Array) {
+         cursor.value = 0
+         objects.value = newList
+      }
+   })
+
+   function getObjectPath(object: IniObjectRo) {
+      return `${packageNames.value[object.package]}/${object.group}/${object.name}.${object.scope}`
+   }
+
+   state.on('prev-' + PromptType.obj, () => {
+      if (cursor.value - 1 < 0) cursor.value += objects.value.length
+      cursor.value--
+   })
+   state.on('next-' + PromptType.obj, () => {
+      cursor.value = (cursor.value + 1) % objects.value.length
+   })
+
+   return {
+      objects,
+      getObjectPath,
+      cursor,
+
+   }
 }

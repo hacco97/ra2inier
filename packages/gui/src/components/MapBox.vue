@@ -18,7 +18,7 @@ const {
 } = useData(props.map)
 
 
-const focus = useFocus()
+const focus = useFocus(true)
 const { setCurrent, focusAt, focusNext, focusPrev, deleteFocus, focusLast } = focus
 const vFocus = focus.directive
 const tabindex = computed(() => props.disabled ? -1 : 0)

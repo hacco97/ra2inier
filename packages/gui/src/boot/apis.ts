@@ -145,4 +145,4 @@ window.addEventListener('message', (ev) => {
 
 // ******************* Event bus，全局事件订阅逻辑 **********************
 
-export const eventBus = new EventBus
+export const globalEvent = new EventBus

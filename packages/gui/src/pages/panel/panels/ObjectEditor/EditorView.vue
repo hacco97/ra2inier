@@ -9,7 +9,9 @@ import { FlexArea, FlexInput } from '@ra2inier/wc';
 import Prompt from '../Prompt/Prompt.vue';
 import { PromptState } from '../Prompt/promptState';
 import { useEditorKeymap } from './editorKeymap';
-import { EditorState, useCursorCoord, usePromptCoord } from './eidtorState';
+import {
+  EditorState, useCursorCoord, usePromptCoord, useQueryObject,
+} from './eidtorState';
 import { EntryRo } from './Entry';
 
 // 初始化数据
@@ -43,12 +45,14 @@ function onNewInputFocused(e: KeyboardEvent) {
    promptState.hide()
    onColFocus(e)
    e.currentTarget!.dispatchEvent(new CustomEvent('flex-focus', { bubbles: true }))
-
 }
 
 // 提示框交互逻辑
 function onPromptSubmit(value: string) {
    focus.focusCurrent()
+}
+function onPromptBlur() {
+   if (!promptState.isFocus) promptState.hide()
 }
 function onInputCtxMenu(e: Event) {
    promptState.active()
@@ -64,7 +68,7 @@ const {
 function onInputKeydown(e: KeyboardEvent) {
    if (promptState.isShowed) return
    if (e.key.length !== 1) return
-   if (e.ctrlKey || e.shiftKey || e.altKey) return
+   if (e.ctrlKey || e.altKey) return
    (<FlexInput>e.target).change()
    promptState.show()
 }
@@ -78,6 +82,9 @@ function onInputBlur(e: KeyboardEvent) {
 function onInputChange(e: CustomEvent, eid: number, vid: number) {
    state.setValueById(eid, e.detail, vid)
 }
+
+// 对象查询逻辑
+const { onInputKeyup } = useQueryObject(promptState)
 
 // 游标逻辑
 const { onRowClick, current } = useCursorCoord()
@@ -130,7 +137,8 @@ const columCount = computed(() => ({ columns: state.columnCount }))
             <!-- 提示框 -->
             <nav v-show="promptState.isShowed">
                <div :style="promptPosition" class="normal-box">
-                  <Prompt :disabled="false" :state="promptState" @submit="onPromptSubmit"></Prompt>
+                  <Prompt :disabled="false" :state="promptState" @blur="onPromptBlur" @submit="onPromptSubmit">
+                  </Prompt>
                </div>
             </nav>
 
@@ -158,7 +166,7 @@ const columCount = computed(() => ({ columns: state.columnCount }))
                      <flex-input v-for="(value, vid) in entry.values" :key="vid" :value="value"
                         @change="onInputChange($event, eid, vid)" v-focus="entry.order + vid" v-keymap="entry"
                         @blur="onInputBlur" @focus="onInputFocused($event, entry.order, vid, entry)"
-                        @keydown="onInputKeydown" @contextmenu="onInputCtxMenu" />
+                        @keydown="onInputKeydown" @keyup="onInputKeyup" @contextmenu="onInputCtxMenu" />
                   </p>
                   <article v-show="entry.validitys.length > 0">
                      <h3 v-for="validity in entry.validitys">{{ validity.msg }}</h3>
@@ -217,7 +225,6 @@ $height: align-size(larger);
       width: 0;
       height: 0;
       overflow: visible;
-
 
       >div {
          position: relative;

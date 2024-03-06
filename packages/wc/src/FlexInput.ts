@@ -49,7 +49,6 @@ export class FlexInput extends HTMLElement implements WebComponent {
    #input: HTMLInputElement
    get value() {
       return this.#input.value
-      // return this.#input.value
    }
    set value(val: string) {
       this.#input.value = val

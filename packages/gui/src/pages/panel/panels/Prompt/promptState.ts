@@ -1,9 +1,38 @@
 import { Directive } from 'vue';
 
 import { EventBus } from '@/hooks/eventBus';
-import { WordValueType } from '@ra2inier/core';
+import { IniObjectRo, WordValueType } from '@ra2inier/core';
 
 import { EntryRo } from '../ObjectEditor/Entry';
+
+/**
+ * 常量定义
+ */
+export enum PromptType {
+   str = 'str',
+   enum = 'enum',
+   obj = 'obj',
+   int = 'int',
+   float = 'float',
+   color = 'color',
+   new = 'new'
+}
+
+const TYPE_MAP = {
+   [WordValueType.bool]: PromptType.enum,
+   [WordValueType.color]: PromptType.color,
+   [WordValueType.enum]: PromptType.enum,
+   [WordValueType.float]: PromptType.float,
+   [WordValueType.int]: PromptType.int,
+   [WordValueType.obj]: PromptType.obj,
+   [WordValueType.str]: PromptType.str,
+   [WordValueType.unknown]: PromptType.str,
+   [PromptType.new]: PromptType.new
+}
+
+export function getPromptType(t: WordValueType) {
+   return TYPE_MAP[t] ?? PromptType.str
+}
 
 const ENTRY = Symbol('entry')
 const FOCUS_CHANGE_WHEN_ACTIVE = Symbol()
@@ -21,10 +50,8 @@ export class PromptState extends EventBus {
    set entry(entry: EntryRo) {
       this[ENTRY] = entry
       this.type = PromptType.str
-      this.emit('change', entry)
       if (!entry) return
       this.type = getPromptType(entry.typeParam?.type)
-      // this.emit('init-' + this.type, entry)
    }
 
    //提示框的类型
@@ -85,6 +112,14 @@ export class PromptState extends EventBus {
    }
 
    /**
+    * 改变当Type为obj时的，option选项值
+    */
+   setObjects(objects: IniObjectRo[]) {
+      if (this.type === PromptType.obj)
+         this.emit('init-' + PromptType.obj, objects)
+   }
+
+   /**
     * 如果entry不为空，则提交当前的prompt值到entry当中，调用该方法时，必须保证prompt还在展示
     * 否则将提交空值
     */
@@ -117,32 +152,3 @@ export function useChildFocus() {
 }
 
 
-
-/**
- * 常量定义
- */
-export enum PromptType {
-   str = 'str',
-   enum = 'enum',
-   obj = 'obj',
-   int = 'int',
-   float = 'float',
-   color = 'color',
-   new = 'new'
-}
-
-const TYPE_MAP = {
-   [WordValueType.bool]: PromptType.enum,
-   [WordValueType.color]: PromptType.color,
-   [WordValueType.enum]: PromptType.enum,
-   [WordValueType.float]: PromptType.float,
-   [WordValueType.int]: PromptType.int,
-   [WordValueType.obj]: PromptType.obj,
-   [WordValueType.str]: PromptType.str,
-   [WordValueType.unknown]: PromptType.str,
-   [PromptType.new]: PromptType.new
-}
-
-export function getPromptType(t: WordValueType) {
-   return TYPE_MAP[t] ?? PromptType.str
-}

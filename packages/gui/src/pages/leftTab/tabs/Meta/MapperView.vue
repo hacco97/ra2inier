@@ -52,7 +52,7 @@ const vCtxmenu = useCtxMenu({
       <h2>Mapper::文件类型</h2>
       <ul>
          <li class="list-item" v-for="(mapper, key) in mapperView" @dblclick="onOpenMapper(mapper)" :key="key">
-            <span>{{ queryPkgNameByKey(mapper.package) }}</span><span>&gt;</span><span>{{ mapper.name }}</span>
+            <span>{{ queryPkgNameByKey(mapper.package) }}</span><span>/</span><span>{{ mapper.name }}</span>
          </li>
       </ul>
    </div>

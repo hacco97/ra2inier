@@ -33,7 +33,7 @@ const DEFAULT_OPTION = {
  * expires设置过期时间，若果过期则重新计算值
  * depends设置依赖数组，只要当依赖数组改变之后，则重新计算缓存
  */
-export function useMemo(caller: () => any, option: Partial<MemoOption> = {}) {
+export function useComputed(caller: () => any, option: Partial<MemoOption> = {}) {
    const tmp = <Memo>{
       ...DEFAULT_OPTION,
       ...option,
@@ -81,3 +81,29 @@ export function expire(target?: string | RegExp | Function) {
    }
 }
 
+/**
+ * 使用一个函数作为数据源，返回一对取值函数，get时将会调用数据源函数，如果计算过该值则
+ */
+export function useComputedKey<T>(
+   sourceFunction: (key: string) => T,
+   keyParser?: (key: string) => string,
+   expiresTime?: number) {
+
+   const map: Record<string, T> = {}
+   const timeout: Record<string, number> = {}
+   expiresTime || (expiresTime = 15 * 60 * 1000)
+   keyParser || (keyParser = x => x)
+
+   return {
+      get(key: string) {
+         if (key in map && Date.now() - timeout[key] < expiresTime!)
+            return map[key]
+         timeout[key] = Date.now()
+         return map[key] = sourceFunction(keyParser!(key))
+      },
+      expire(key: string) {
+         delete map[key]
+         delete timeout[key]
+      }
+   }
+}

@@ -1,9 +1,13 @@
 import { computed, ref, shallowReactive, StyleValue } from 'vue';
 
 import { EventBus } from '@/hooks/eventBus';
-import { validateWord } from '@/stores/projectStore';
-import { cloneTyped, Entry, IniObjectRo, removeFrom } from '@ra2inier/core';
+import { queryObject, validateWord } from '@/stores/projectStore';
+import {
+  cloneTyped, Entry, IniObjectRo, removeFrom, WordValueType,
+} from '@ra2inier/core';
+import { FlexInput } from '@ra2inier/wc';
 
+import { PromptState, PromptType } from '../Prompt/promptState';
 import { EntryRo } from './Entry';
 
 const COLUMN_COUNT = Symbol('column count')
@@ -170,7 +174,7 @@ export function usePromptCoord() {
    return {
       translate,
       onRowFocus,
-      onColFocus
+      onColFocus,
    }
 }
 
@@ -189,5 +193,49 @@ export function useCursorCoord() {
    return {
       onRowClick,
       current,
+   }
+}
+
+/**
+ * 查询逻辑
+ */
+export function useQueryObject(promptState: PromptState) {
+   let querying = false
+
+   async function onInputKeyup(e: KeyboardEvent) {
+      if (promptState.type !== PromptType.obj) return
+      if (querying) return
+      if (e.ctrlKey || e.altKey) return
+      if (e.key.length !== 1 && !whiteName.has(e.key)) return
+      querying = true
+      await changeObjectsOptions((<FlexInput>e.target).value)
+      await waitALittle()
+      querying = false
+   }
+
+   function changeObjectsOptions(startString: string) {
+      const param = promptState.entry.typeParam
+      if (param.type !== WordValueType.obj) return
+      const objects = queryObject('object', (object) => {
+         let rate = 0
+         if (object.scope === param.objectType) rate += 2
+         if (object.name.startsWith(startString)) rate += 2
+         else if (object.name.toLowerCase().startsWith(startString.toLowerCase()))
+            rate += 1
+         return rate
+      })
+      promptState.setObjects(objects)
+   }
+
+   function waitALittle() {
+      return new Promise(r => setTimeout(r, 50))
+   }
+
+   const whiteName = new Set([
+      'Backspace', 'Delete'
+   ])
+
+   return {
+      onInputKeyup
    }
 }

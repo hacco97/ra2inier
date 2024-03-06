@@ -1,6 +1,7 @@
 <script lang='ts' setup>
-import { ref, shallowReactive } from 'vue';
+import { inject, provide, ref, shallowReactive } from 'vue';
 
+import { queryObject } from '@/stores/projectStore';
 import { PopupBox, TouchButton } from '@ra2inier/wc';
 
 const list = shallowReactive([
@@ -41,10 +42,14 @@ function onHello() {
 
 }
 
-function onClick(){
-   console.log('hi')
-
+function onClick() {
+   const objects = queryObject('mapper', (object) => {
+      if (object.name.match('s')) return 1
+      else return 0
+   })
+   console.log(objects)
 }
+
 </script>
 
 

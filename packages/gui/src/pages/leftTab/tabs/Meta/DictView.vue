@@ -3,7 +3,7 @@ import { shallowReactive } from 'vue';
 
 import { useCtxMenu } from '@/states/ctxMenu';
 import { addPanel, PanelParam, PanelType } from '@/states/panelList';
-import { addWord, saveWord } from '@/stores/projectStore';
+import { addWord, packageNames, saveWord } from '@/stores/projectStore';
 import { cloneTyped, copy, WordRo } from '@ra2inier/core';
 
 import { isReadonly } from './metaState';
@@ -52,8 +52,8 @@ const vCtxmenu = useCtxMenu({
       <h2>Word::词条类型</h2>
       <ul>
          <li v-for="(word, key) in dictView" :key="key" @dblclick="onOpenClick(word)" class="list-item">
-            <span>+</span>
-            <span>{{ word.dictionary }}</span><span>&gt;</span>
+            <span>{{ packageNames[word.package] }}</span><span>/</span>
+            <span>{{ word.dictionary }}</span><span>/</span>
             <span>{{ word.name }}</span>
          </li>
       </ul>

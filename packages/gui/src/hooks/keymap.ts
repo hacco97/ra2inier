@@ -36,19 +36,18 @@ export function useKeyMap(keymap: KeyMap, options?: KeymapOptions) {
          e.key
       ].filter(f)
       const key = keys.join('+').toLowerCase()
-      if (keymap[key]) {
-         const prevent = customOptions.prevent
-         const tmp = keymap[key]
-         if (tmp instanceof Array) {
-            tmp.forEach(cb => {
-               if (cb.call(el, e, vmData.get(el)) !== false)
-                  prevent && e.preventDefault()
-            })
-         }
-         else {
-            if (tmp.call(el, e, vmData.get(el)) !== false)
+      if (!keymap[key]) return
+      const prevent = customOptions.prevent
+      const tmp = keymap[key]
+      if (tmp instanceof Array) {
+         tmp.forEach(cb => {
+            if (cb.call(el, e, vmData.get(el)) !== false)
                prevent && e.preventDefault()
-         }
+         })
+      }
+      else {
+         if (tmp.call(el, e, vmData.get(el)) !== false)
+            prevent && e.preventDefault()
       }
    }
 

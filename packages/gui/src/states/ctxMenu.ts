@@ -34,15 +34,6 @@ export async function showContextMenu(e: MouseEvent, type: number) {
    e.stopPropagation()
 }
 
-
-
-
-
-
-
-
-
-
 // 右键菜单逻辑
 const isCtxMenuShowed = ref(false)
 const ctxMenuPostion = reactive({

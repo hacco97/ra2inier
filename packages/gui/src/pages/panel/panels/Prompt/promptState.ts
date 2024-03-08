@@ -1,7 +1,6 @@
 import { Directive } from 'vue';
 
-import { EventBus } from '@/hooks/eventBus';
-import { IniObjectRo, WordValueType } from '@ra2inier/core';
+import { EventEmitter, IniObjectRo, WordValueType } from '@ra2inier/core';
 
 import { EntryRo } from '../ObjectEditor/Entry';
 
@@ -40,7 +39,7 @@ const FOCUS_CHANGE_WHEN_ACTIVE = Symbol()
 /**
  * 提示框组件，可以辅助用户进行输入，作为用户的草稿纸
  */
-export class PromptState extends EventBus {
+export class PromptState extends EventEmitter {
 
    /**
     * 提示框必须基于一个entry，才能正常工作，entry由使用者进行注入

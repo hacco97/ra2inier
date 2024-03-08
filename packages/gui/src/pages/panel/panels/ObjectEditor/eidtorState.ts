@@ -1,9 +1,9 @@
 import { computed, ref, shallowReactive, StyleValue } from 'vue';
 
-import { EventBus } from '@/hooks/eventBus';
 import { queryObject, validateWord } from '@/stores/projectStore';
 import {
-  cloneTyped, Entry, IniObjectRo, removeFrom, WordValueType,
+  cloneTyped, Entry, EventEmitter, IniObjectRo, removeFrom,
+  WordValueType,
 } from '@ra2inier/core';
 import { FlexInput } from '@ra2inier/wc';
 
@@ -12,7 +12,7 @@ import { EntryRo } from './Entry';
 
 const COLUMN_COUNT = Symbol('column count')
 // 管理单个ObjectEditor的数据
-export class EditorState extends EventBus {
+export class EditorState extends EventEmitter {
    // 源对象数据
    data: IniObjectRo
    // 词条数据

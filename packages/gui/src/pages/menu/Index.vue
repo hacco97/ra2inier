@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import { computed, ref } from 'vue';
+import { computed, Directive, ref } from 'vue';
 
 import closeSvg from '@/asset/icons/close.svg?raw';
 import minSvg from '@/asset/icons/min.svg?raw';

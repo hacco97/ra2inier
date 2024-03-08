@@ -1,6 +1,5 @@
-import { EventBus } from '@/hooks/eventBus';
 import MyWorker from '@/worker?worker';
-import { Logger } from '@ra2inier/core';
+import { EventEmitter, Logger } from '@ra2inier/core';
 
 // 初始化日志和端口
 let log: Logger
@@ -145,4 +144,4 @@ window.addEventListener('message', (ev) => {
 
 // ******************* Event bus，全局事件订阅逻辑 **********************
 
-export const globalEvent = new EventBus
+export const globalEvent = new EventEmitter

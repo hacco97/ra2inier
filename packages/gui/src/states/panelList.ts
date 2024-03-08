@@ -1,8 +1,8 @@
 import { shallowReactive } from 'vue';
 
 import { globalEvent } from '@/boot/apis';
-import { EventBus } from '@/hooks/eventBus';
 import { IS_DEV } from '@/stores/config';
+import { EventEmitter } from '@ra2inier/core';
 
 /**
  * 内容主体页面的选项卡类型,每一个新的页面均需要注册到此
@@ -26,7 +26,7 @@ export enum PanelType {
 /**
  * 用以创建一个新的页面所需的参数
  */
-export class PanelParam extends EventBus {
+export class PanelParam extends EventEmitter {
    /**
     * 页面的标签名称
     */

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import Home from '@/pages/home/Index.vue'
-import ContextMenu from '@/pages/contextmenu/Index.vue'
+import ContextMenu from '@/pages/contextmenu/Index.vue';
+import Home from '@/pages/home/Index.vue';
+
 import.meta.glob('@/css/global/**/*', { eager: true })
 import.meta.glob('@/css/classes/**/*', { eager: true })
 

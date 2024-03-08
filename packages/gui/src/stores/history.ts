@@ -1,7 +1,6 @@
 import { shallowReactive } from 'vue';
 
-import { EventBus } from '@/hooks/eventBus';
-import { dateTime } from '@ra2inier/core';
+import { dateTime, EventEmitter } from '@ra2inier/core';
 
 /**
  * 历史操作对象
@@ -28,7 +27,7 @@ export class History {
 /**
  * 历史管理中心
  */
-class HistoryCenter extends EventBus {
+class HistoryCenter extends EventEmitter {
    histories: History[] = shallowReactive([])
 }
 

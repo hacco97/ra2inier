@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import { resolve } from 'node:path';
 
 import { ClientConfig, Config, fromRaw, WindowSize } from '@ra2inier/core';
 import { escapePath, readJson, writeJson } from '@ra2inier/core/node';
@@ -27,8 +26,8 @@ const defaultConfig: Partial<Config> = {
    IS_DEV: import.meta.env.DEV,
    DEV_URL: import.meta.env.VITE_DEV_SERVER_URL ?? "",
    CONFIG_AUTOSAVE_INTERVAL: 1000 * 60 * 6,
-   VITE_VUE_DEVTOOLS: resolve(import.meta.env.VITE_VUE_DEVTOOLS),
-   DEFAULT_PROJECT_DIR: resolve('./projects')
+   VITE_VUE_DEVTOOLS: escapePath(import.meta.env.VITE_VUE_DEVTOOLS),
+   DEFAULT_PROJECT_DIR: escapePath('./projects')
 }
 
 // 读取用户已经保存的配置

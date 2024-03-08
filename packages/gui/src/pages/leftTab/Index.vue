@@ -107,6 +107,7 @@ $width: layout-size(lefttab);
    height: 100%;
    width: 100%;
    min-height: 0;
+   line-height: line-height(small);
 
    >ul {
       float: left;

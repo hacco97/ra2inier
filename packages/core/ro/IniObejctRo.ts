@@ -1,5 +1,5 @@
+import { ToDto } from '../dto';
 import { Entry, IniObject, UniqueObject } from '../entity/Obejct';
-import { ToDto } from './index';
 
 export class IniObjectRo extends IniObject implements ToDto {
    declare package: string

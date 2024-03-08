@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import { reactive } from 'vue';
+import { computed, reactive } from 'vue';
 
 import closeSvg from '@/asset/icons/close.svg?raw';
 import { PopupBox } from '@ra2inier/wc';
@@ -26,11 +26,11 @@ class Item {
    }
 }
 
-const data = reactive(props.list.map(x => new Item(x)))
+const data = computed(() => reactive(props.list.map(x => new Item(x))))
 
 defineExpose({
    get value() {
-      return data.map(x => x.value)
+      return data.value.map(x => x.value)
    }
 })
 
@@ -41,7 +41,7 @@ function onSelectChange(item: Item, order: number) {
 }
 
 function onDeleteClick(order: number) {
-   data.splice(order, 1)
+   data.value.splice(order, 1)
 }
 </script>
 
@@ -52,7 +52,7 @@ function onDeleteClick(order: number) {
          <slot></slot>
       </header>
       <section>
-         <li v-for="(item, order) in data">
+         <li v-for="(item, order) in data" class="reactive-h">
             <input v-if="checkBox" type="checkbox" class="normal-button" :id="item.id" v-model="item.selected"
                :selected="item.selected" @change="onSelectChange(item, order)">
             <label :for="item.id">
@@ -85,10 +85,27 @@ function onDeleteClick(order: number) {
    width: 100%;
 
    header {
+      position: relative;
+      z-index: 40;
       height: fit-content;
    }
 
+   section {
+      position: relative;
+      z-index: 30;
+   }
+
+   footer {
+      position: relative;
+      z-index: 1;
+   }
+
+   &>*:hover {
+      z-index: 888;
+   }
+
    li {
+      position: relative;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -126,12 +143,16 @@ function onDeleteClick(order: number) {
       flex: 0 0 auto;
       display: inline-block;
       height: 100%;
-
    }
 
    popup-box {
       min-width: 15em;
       text-align: left;
+   }
+
+   pre {
+      position: relative;
+      z-index: 100;
    }
 
    i {
@@ -140,7 +161,7 @@ function onDeleteClick(order: number) {
 
    s {
       flex: 0;
-      height: 80%;
+      height: 0.9lh;
       aspect-ratio: 1;
    }
 }

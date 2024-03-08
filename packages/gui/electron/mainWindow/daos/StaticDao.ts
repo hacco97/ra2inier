@@ -1,7 +1,5 @@
-import { resolve } from 'node:path';
-
 import { Config } from '@ra2inier/core';
-import { forDir } from '@ra2inier/core/node';
+import { escapePath, forDir } from '@ra2inier/core/node';
 
 import { component, inject } from '../ioc.config';
 import { DaoConfig } from './DaoConfig';
@@ -15,7 +13,7 @@ export class StaticDao {
    @inject('package-dao') declare packageDao: PackageDao
 
    readGlobalPackagesList() {
-      const dir = resolve(this.appConfig.GLOBAL_PACKAGE_DIR)
+      const dir = escapePath(this.appConfig.GLOBAL_PACKAGE_DIR)
       const packages: Record<string, string> = {}
       forDir(dir, (path, dirent) => {
          const pkg = this.packageDao.readPackageInfoByPath(path)

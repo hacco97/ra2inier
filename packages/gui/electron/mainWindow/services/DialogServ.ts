@@ -1,5 +1,5 @@
-import { dialog } from "electron";
-import { mapping, pathVar, controller } from "~/mainWindow/ioc.config";
+import { dialog } from 'electron';
+import { controller, mapping, pathVar } from '~/mainWindow/ioc.config';
 
 @controller('dialog')
 export class DialogServ {
@@ -18,6 +18,6 @@ export class DialogServ {
       }
       const ret = await dialog.showOpenDialog({ properties })
       if (ret.canceled) throw Error('用户取消了操作')
-      else return ret.filePaths
+      else return ret.filePaths.map(p => p.replaceAll('\\', '/'))
    }
 }

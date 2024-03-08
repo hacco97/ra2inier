@@ -144,12 +144,13 @@ const columCount = computed(() => ({ columns: state.columnCount }))
 
             <!-- 对象info -->
             <h2>
-               <p>附属对象</p>
+               <p>附属对象：</p>
                <ListBox :list="object.inline" :disabled="false"></ListBox>
-               <p>局部变量</p>
+               <p>局部变量：</p>
                <MapBox :map="object.envVariable" :disabled="false"></MapBox>
+               <p>备注：</p>
                <flex-area v-show="!isDetailFolded" class="scroll" v-model.lazy="state.detail"
-                  placeholder="对象备注"></flex-area>
+                  placeholder="添加对象备注"></flex-area>
             </h2>
 
             <ul :style="columCount">
@@ -199,12 +200,15 @@ const columCount = computed(() => ({ columns: state.columnCount }))
 
 <style scoped lang='scss' module>
 $height: align-size(larger);
+$align: align-size(normal);
 
 .main {
    position: relative;
+   padding: $align 0;
    z-index: var(--z-index-main);
    min-height: 0;
    color: var(--color-t-1);
+   line-height: var(--line-height);
 
    section {
       height: 100%;
@@ -214,6 +218,15 @@ $height: align-size(larger);
       // 不可更改，ol是提示框的定位元素，提示框的工作依赖于ol的相对定位属性
       position: relative;
       z-index: auto;
+   }
+
+   h2 {
+      padding: 0 $align;
+   }
+
+   flex-area {
+      display: block;
+      width: 100%;
    }
 
    ul {
@@ -233,19 +246,6 @@ $height: align-size(larger);
       }
    }
 
-   h2 {
-
-      p {
-         line-height: $height;
-         height: $height;
-      }
-   }
-
-   flex-area {
-      width: 100%;
-      height: fit-content;
-      padding: align-size(normal);
-   }
 
    @import './editor-view.scss';
 }

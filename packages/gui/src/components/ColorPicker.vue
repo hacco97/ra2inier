@@ -178,13 +178,12 @@ const selected = ref(false)
 </style>
 
 <style scoped lang='scss' module>
-$line-height: line-height(normal);
 
 .picker {
    position: relative;
    width: 100%;
    text-align: center;
-
+   line-height: inherit;
 
    >ol {
       position: relative;
@@ -339,7 +338,8 @@ $line-height: line-height(normal);
    >ul {
       display: flex;
       justify-content: space-around;
-      height: $line-height;
+      height: 1lh;
+      line-height: inherit;
       align-items: center;
 
       >number-input,

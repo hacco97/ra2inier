@@ -82,6 +82,7 @@
    @if $hover==true {
       &:hover {
          filter: brightness(1.25) hue-rotate(13deg);
+         z-index: 1;
       }
    }
 }

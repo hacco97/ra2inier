@@ -20,7 +20,7 @@ $height: layout-size(foottab);
    > main {
       flex: 1 1 0;
       position: relative;
-      @include z-index(main); // z-index最小
+      @include z-index(main);
       min-width: 0;
       height: 100%;
       width: 100%;
@@ -28,6 +28,7 @@ $height: layout-size(foottab);
 
       > article {
          position: relative;
+         @include z-index(main);
          height: 100%;
          min-height: 0;
          min-width: 0;

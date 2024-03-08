@@ -67,8 +67,6 @@ export function cloneTyped<T extends Constructor<InstanceType<T>>>
    (object: any, constructor: T) {
    const temp = new constructor
    const newOne = toRaw(object)
-   console.log(newOne)
-
    copy(newOne, temp)
    return temp
 }

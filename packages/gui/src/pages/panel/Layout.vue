@@ -87,6 +87,10 @@ function onCloseAll(pos: 'left' | 'right') {
 <style scoped lang='scss' module>
 $height: layout-size(panelnav);
 
+$z-index-nav:2;
+$z-index-panel:1;
+
+
 .left {
    flex: 0 1 100%;
    min-width: 200px;
@@ -104,10 +108,13 @@ $height: layout-size(panelnav);
    width: 100%;
    height: 100%;
    overflow: hidden;
+   position: relative;
+   z-index: 0;
+   line-height: line-height(normal);
 
    main {
       position: relative;
-      z-index: 0;
+      z-index: $z-index-panel;
       height: calc(100% - $height);
       overflow: hidden;
       transition: all 1.5s ease-in-out;
@@ -116,7 +123,7 @@ $height: layout-size(panelnav);
    // 导航条
    nav {
       position: relative;
-      z-index: 10;
+      z-index: $z-index-nav;
       display: flex;
       height: $height;
       /* overflow: hidden; */

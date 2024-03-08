@@ -4,53 +4,69 @@ import { ref } from 'vue';
 import newSvg from '@/asset/icons/new.svg?raw';
 import openDirSvg from '@/asset/icons/openDir.svg?raw';
 import { openDir, useConfig } from '@/stores/config';
+import { createNewProject } from '@/stores/projectStore';
 import { FlexInput, LazyButton } from '@ra2inier/wc';
 
+import HeaderLayout from './HeaderLayout.vue';
 import ReferView from './ReferView.vue';
 
-const defaultPath = useConfig().DEFAULT_PROJECT_DIR + '\\new_project'
+const defaultPath = useConfig().DEFAULT_PROJECT_DIR + '/new_project'
 const name = ref('new_project')
-const dir = ref(defaultPath)
+const targetPath = ref(defaultPath)
 
 async function onOpenClick() {
    const path = await openDir()
-   path && (dir.value = path)
+   path && (targetPath.value = path)
 }
 
 
 function onAddClick() {
-   console.log('add click')
-
+   createNewProject(targetPath.value)
 }
 </script>
 
 
 <template>
-   <div :class="$style['new-project']" class="scroll">
-      <main>
-         <li class="line">
-            <span>项目名称：</span>
-            <flex-input v-model="name" placeholder="new_project"></flex-input>
-         </li>
-         <li class="line">
-            <span>项目路径：</span>
-            <flex-input v-model="dir" :placeholder="defaultPath"></flex-input>
-            <lazy-button class="fore-button" @click="onOpenClick">
-               <s v-svgicon="openDirSvg" padding="15%"></s>
-            </lazy-button>
-            <lazy-button class="fore-button" @click="onAddClick">
-               <s v-svgicon="newSvg" padding="13%"></s>
-            </lazy-button>
-         </li>
+   <HeaderLayout :class="$style['new-project']">
+      <template #header>
          <li>
-            <ReferView />
+            <h2>
+               <em>{{ name }}</em>
+               <em>
+                  <lazy-button class="fore-button" @click="onAddClick">
+                     <s v-svgicon="newSvg" padding="13%"></s>
+                  </lazy-button>
+               </em>
+            </h2>
          </li>
-      </main>
-   </div>
+      </template>
+      <template #default>
+         <main>
+            <li>
+               <h2>
+                  <span>项目名称：</span>
+                  <flex-input v-model="name" class="normal-rpanel" placeholder="new_project"></flex-input>
+               </h2>
+            </li>
+            <li>
+               <h2>
+                  <span>项目路径：</span>
+                  <lazy-button class="fore-button" @click="onOpenClick">
+                     <s v-svgicon="openDirSvg" padding="15%"></s>
+                  </lazy-button>
+               </h2>
+               <div><flex-input class="normal-rpanel" v-model="targetPath" :placeholder="defaultPath"></flex-input></div>
+            </li>
+            <li>
+               <ReferView />
+            </li>
+         </main>
+      </template>
+   </HeaderLayout>
 </template>
 
 <style module scoped lang='scss'>
-$align: align-size(large);
+$align: align-size(normal);
 
 .new-project {
    height: 100%;
@@ -60,9 +76,26 @@ $align: align-size(large);
    }
 
    li {
-      display: flex;
-      vertical-align: middle;
       padding: 0 $align;
+   }
+
+   h2 {
+      display: flex;
+      align-items: center;
+      height: 1lh;
+   }
+
+   em {
+      height: 100%;
+      margin: align-size(large);
+   }
+
+   lazy-button {
+      margin-right: align-size(small);
+   }
+
+   div {
+      height: 1lh;
    }
 
    span {
@@ -72,7 +105,7 @@ $align: align-size(large);
    flex-input {
       min-height: $align;
       text-decoration: underline;
+      padding: 0 align-size(normal);
    }
-
 }
 </style>

@@ -1,7 +1,4 @@
-import { Markdown } from "../entity/Markdown";
-import { UniqueObject } from "../entity/Obejct";
-import { MarkdownVo } from "../vo/ObjectVo";
-
+import { UniqueObject } from '../entity/Obejct';
 
 export class MarkdownRo extends UniqueObject {
    raw: string = ''

@@ -65,8 +65,6 @@ const {
 
 <style scoped module="$theme" src="@css/lefttab.scss"></style>
 <style scoped lang='scss' module>
-$height: line-height(small);
-
 .header {
    text-overflow: ellipsis;
    white-space: nowrap;
@@ -124,18 +122,17 @@ $height: line-height(small);
       flex: 0;
       flex-basis: v-bind(referHeightVBind);
       overflow: hidden;
-      min-height: $height;
+      min-height: 1lh;
 
       h2 {
          display: flex;
          align-items: center;
          z-index: 5;
-         height: $height;
-         line-height: $height;
+         height: 1lh;
       }
 
       section {
-         height: calc(100% - $height);
+         height: calc(100% - 1lh);
       }
    }
 }

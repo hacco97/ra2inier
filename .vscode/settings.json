@@ -1,5 +1,5 @@
 {
-    "hide-files.files": [
+   "hide-files.files": [
       ".git",
       "node_modules",
       "packages/core/node_modules",
@@ -10,9 +10,9 @@
       "packages/wc/node_modules",
       "packages/dev/node_modules"
    ],
-    "typescript.tsdk": "node_modules\\typescript\\lib",
-    "svg.preview.background": "transparent",
-    "files.exclude": {
+   "typescript.tsdk": "node_modules\\typescript\\lib",
+   "svg.preview.background": "transparent",
+   "files.exclude": {
       "**/.git": true,
       "**/.svn": true,
       "**/.hg": true,

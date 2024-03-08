@@ -58,7 +58,7 @@ const { isMasked } = useMask()
             </div>
          </aside>
          <!-- 右侧主要内容区域 -->
-         <main :class="$theme.panel">
+         <main :class="$theme.panel" >
             <!-- 右下边栏 -->
             <aside :style="footTabSize.heightS">
                <slot name="footSide"></slot>
@@ -69,7 +69,7 @@ const { isMasked } = useMask()
             <b :class="$style['drager2-panel']" v-show="display2" @mousemove="onFootDrag" @mouseleave="display2 = false"
                @mouseup="display2 = false"></b>
             <!-- 面板主体 -->
-            <article>
+            <article id="main">
                <slot name="main"></slot>
             </article>
          </main>
@@ -97,7 +97,7 @@ $footer-height: layout-size(footer);
 
    >header {
       position: relative;
-      z-index: var(--z-index-menu);
+      @include z-index(menu);
       flex: 0 0 $header-height;
 
       >div {
@@ -107,7 +107,7 @@ $footer-height: layout-size(footer);
 
    >legend {
       position: relative;
-      z-index: var(--z-index-ctxmenu);
+      @include z-index(ctxmenu);
       flex: 0 0 0px;
       min-height: 0;
       overflow: visible;
@@ -123,7 +123,7 @@ $footer-height: layout-size(footer);
 
    >footer {
       position: relative;
-      z-index: var(--z-index-footer);
+      @include z-index(footer);
       flex: 0 0 $footer-height;
    }
 }

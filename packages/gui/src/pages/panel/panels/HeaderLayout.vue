@@ -25,6 +25,7 @@ $height: line-height(normal);
    position: relative;
    height: 100%;
    width: 100%;
+   line-height: $height;
 
    h1 {
       position: absolute;

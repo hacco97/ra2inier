@@ -1,5 +1,6 @@
-import { css } from './cssUtils';
-import { WebComponent } from './WebComponent';
+import { css, WebComponent } from './WebComponent';
+
+;
 
 const styleSheet = css`
    :host {

@@ -118,4 +118,15 @@ export class ProjectDao {
       writeFile(path, result)
       return true
    }
+
+
+   writeProjectInfo(project: Project, path?: string,) {
+      const projectPath = path || this.#path
+      const infoPath = escapePath(projectPath, this.config.PROJECT_INFO_FILE)
+      writeFile(infoPath, JSON.stringify(projectPath))
+   }
+
+   createInfo(){
+
+   }
 }

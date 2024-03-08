@@ -1,5 +1,6 @@
-import { css } from './cssUtils';
-import { WebComponent } from './WebComponent';
+import { css, html, WebComponent } from './WebComponent';
+
+;
 
 export const styleSheet = css`
    :host {
@@ -65,7 +66,7 @@ export class FlexInput extends HTMLElement implements WebComponent {
    constructor() {
       super()
       const shadow = this.attachShadow({ mode: 'open', delegatesFocus: true })
-      shadow.innerHTML = `
+      shadow.innerHTML = html`
       <div>
          <span part="span"></span>
          <input type="text" part="input" />

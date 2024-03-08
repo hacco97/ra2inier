@@ -1,5 +1,5 @@
-import { WebComponent } from './WebComponent'
-import { css } from './cssUtils'
+import { css, html, WebComponent } from './WebComponent';
+
 const styleSheet = css`
    :host {
       display: inline-block;
@@ -35,7 +35,7 @@ export class LazyButton extends HTMLElement implements WebComponent {
    constructor() {
       super()
       const shadow = this.attachShadow({ mode: 'open' })
-      shadow.innerHTML = `<div><slot></slot></div>`
+      shadow.innerHTML = html`<div><slot></slot></div>`
       const div = shadow.querySelector('div')!
       div.addEventListener('click', (e: Event) => {
          if (this.#disabled) return e.stopPropagation()

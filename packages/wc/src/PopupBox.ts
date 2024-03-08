@@ -1,5 +1,6 @@
-import { css } from './cssUtils';
-import { WebComponent } from './WebComponent';
+import { css, html, WebComponent } from './WebComponent';
+
+;
 
 const styleSheet = css`
    :host {
@@ -16,32 +17,32 @@ const styleSheet = css`
 
    ol {
       position: relative;
+      z-index: 0;
       overflow: hidden;
-      z-index: 11;
    }
 
-   ol:has(>*:hover) {
+   ol:hover {
       overflow: visible;
-      z-index: 99;
    }
 
-   ol:has(>*:hover) >div {
+   ol:hover >div {
       visibility: visible;
    }
 
    p {
       position: relative;
-      z-index: 5;
+      z-index: 3;
    }
 
    section {
       position: absolute;
       inset: -12px;
+      z-index: 1;
    }
 
    div {
       position: absolute;
-      z-index: 1;
+      z-index: 2;
       top: 100%;
       left: 0%;
       visibility: hidden;
@@ -59,7 +60,7 @@ export class PopupBox extends HTMLElement implements WebComponent {
    constructor() {
       super()
       const shadow = this.attachShadow({ mode: 'open', delegatesFocus: true })
-      shadow.innerHTML = `
+      shadow.innerHTML = html`
          <ol>
             <p><slot></slot></p>
             <section></section>

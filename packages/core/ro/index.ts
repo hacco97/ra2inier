@@ -6,7 +6,3 @@ export * from './ProjectRo'
 export * from './ResourseRo'
 export * from './ScopeRo'
 export * from './WordRo'
-
-export interface ToDto {
-    toDto?(): ToDto
-}

@@ -73,9 +73,9 @@ function onCheckClick() {
                      <em>./</em><span>{{ pName }}</span><em>/</em>
                      <i></i><flex-input v-model.lazy.trim="data.name" @change="onNameChange" placeholder="OBJECT" />
                      <em>.</em>
-                     <em><flex-input v-model.lazy.trim="data.scope" placeholder="NullTypes" /></em><i></i>
+                     <flex-input v-model.lazy.trim="data.scope" placeholder="NullTypes" /><i></i>
                      <em>/</em><i @click="fi3?.focus()"></i>
-                     <em><flex-input ref="fi3" v-model.lazy.trim="state.currentChild" placeholder="root" /></em>
+                     <flex-input ref="fi3" v-model.lazy.trim="state.currentChild" placeholder="root" />
                   </h2>
                   <label @click="fi3?.focus()"></label>
                   <label></label>

@@ -1,7 +1,7 @@
 import { round } from 'lodash';
 
 import { styleSheet } from './FlexInput';
-import { WebComponent } from './WebComponent';
+import { html, WebComponent } from './WebComponent';
 
 const WITH_PERCENT = /\%/
 
@@ -112,7 +112,7 @@ export class NumberInput extends HTMLElement implements WebComponent {
    constructor() {
       super()
       const shadow = this.attachShadow({ mode: 'open', delegatesFocus: true })
-      shadow.innerHTML = `
+      shadow.innerHTML = html`
       <div>
       <span part="span"></span>
       <input type="text" part="input"/>

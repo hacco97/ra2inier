@@ -1,9 +1,11 @@
-import { readFile, writeFile } from "@ra2inier/core/node";
-import { component, inject } from "~/mainWindow/ioc.config";
-import { DaoConfig } from "./DaoConfig";
-import fs, { Dirent } from 'node:fs'
-import { Markdown, UniqueObject, forIn, } from '@ra2inier/core'
-import { resolve } from "node:path";
+import fs, { Dirent } from 'node:fs';
+
+import { component, inject } from '~/mainWindow/ioc.config';
+
+import { forIn, Markdown, UniqueObject } from '@ra2inier/core';
+import { escapePath, readFile, writeFile } from '@ra2inier/core/node';
+
+import { DaoConfig } from './DaoConfig';
 
 // markdown 文件被抽象成为一个文件夹，传入读取的时候使用md文件的地址，外界访问markdown使用key值来进行访问，key值和路径地址之间使用
 
@@ -83,12 +85,12 @@ export class MarkdownDao {
    readMarkdownByPath(mdPath: string, id = Date.now(), version = Date.now()): Markdown {
       if (this.markdownPathMap[mdPath])
          return this.markdownPathMap[mdPath]
-      mdPath = resolve(mdPath)
-      const dir = resolve(mdPath, '..')
+      mdPath = escapePath(mdPath)
+      const dir = escapePath(mdPath, '..')
       const tmp = new Markdown(undefined, id, version)
       tmp.raw = readFile(mdPath)
       for (const name of findImages(dir)) {
-         tmp.images[name] = fs.readFileSync(resolve(dir, name))
+         tmp.images[name] = fs.readFileSync(escapePath(dir, name))
       }
       this.markdownKeyMap[tmp.key] = mdPath
       this.markdownPathMap[mdPath] = tmp
@@ -98,9 +100,9 @@ export class MarkdownDao {
    writeMarkdownByPath(mdPath: string, md: Markdown) {
       this.markdownPathMap[mdPath] = md
       writeFile(mdPath, md.raw)
-      const dir = resolve(mdPath, '..')
+      const dir = escapePath(mdPath, '..')
       forIn(md.images, (key, val) => {
-         fs.writeFileSync(resolve(dir, key), val)
+         fs.writeFileSync(escapePath(dir, key), val)
       })
    }
 

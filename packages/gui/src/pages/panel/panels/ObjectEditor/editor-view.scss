@@ -6,7 +6,6 @@ li {
    // 可能与columns布局的底层代码的限制有关，当其子元素为block时会很卡
    display: inline-block;
    width: 100%;
-   height: fit-content;
    max-width: 100%;
 
    &:nth-child(even) {
@@ -26,7 +25,6 @@ li {
       margin: align-size(tiny) 0;
       padding: 0 $padding;
       min-height: 1lh;
-      line-height: var(--line-height);
    }
 
    article {

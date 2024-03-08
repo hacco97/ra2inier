@@ -10,7 +10,7 @@ const props = defineProps<{
    map: Record<string, any>,
    clazz?: string,
    onValidated?(str: string): boolean,
-   disabled: boolean
+   disabled?: boolean
 }>()
 const {
    data, newKey, newVal, deleteAt, addNewOne,

@@ -1,5 +1,6 @@
-import { css } from './cssUtils';
-import { WebComponent } from './WebComponent';
+import { css, html, WebComponent } from './WebComponent';
+
+;
 
 const styleSheet = css`
    :host {
@@ -24,7 +25,7 @@ const styleSheet = css`
       height: 100%;
       margin: 0;
       visibility: hidden;
-      min-height: 1em;
+      min-height: 1lh;
    }
 
    textarea {
@@ -32,10 +33,10 @@ const styleSheet = css`
       position: absolute;
       margin: 0;
       padding: 0;
-      height: 100%;
+      height: 1lh;
       width: 100%;
       min-width: fit-content;
-      min-height: 1em;
+      min-height: 1lh;
       font: inherit;
       resize: none;
       white-space: pre-wrap;
@@ -48,11 +49,12 @@ const styleSheet = css`
 `
 
 /**
- * 能够弹性伸缩的多行文本输入框
+ * 能够弹性伸缩的多行文本输入框，并重写了TAB键的效果，使得TAB键输入多个空格
  */
 export class FlexArea extends HTMLElement implements WebComponent {
    #textarea: HTMLTextAreaElement
    #p: HTMLElement
+   tabsize = 3
 
    get placeholder() { return this.#textarea.placeholder }
    set placeholder(val: string) { this.#textarea.placeholder = val }
@@ -72,7 +74,7 @@ export class FlexArea extends HTMLElement implements WebComponent {
    constructor() {
       super()
       const shadow = this.attachShadow({ mode: 'open', delegatesFocus: true })
-      shadow.innerHTML = `
+      shadow.innerHTML = html`
       <div>
       <textarea part="pre"></textarea>
       <p></p>
@@ -93,9 +95,12 @@ export class FlexArea extends HTMLElement implements WebComponent {
          textarea.setRangeText(str, i, j)
          textarea.setSelectionRange(i + str.length, i + str.length)
       }
+      const getTab = () => {
+         return (new Array(this.tabsize)).fill(' ').join('')
+      }
       textarea.addEventListener('keydown', (e: KeyboardEvent) => {
          if (e.key === 'Tab') {
-            insert('   ')
+            insert(getTab())
             e.preventDefault()
          } else if (e.key === 'Enter') {
             insert('\n')
@@ -109,7 +114,7 @@ export class FlexArea extends HTMLElement implements WebComponent {
       shadow.adoptedStyleSheets.push(styleSheet)
    }
 
-   static observedAttributes = ["text", "disabled", "placeholder"]
+   static observedAttributes = ["text", "disabled", "placeholder", 'tabsize']
    attributeChangedCallback(name: string, ov: string, nv: string) {
       if (name === 'text') {
          this.value = nv
@@ -117,6 +122,8 @@ export class FlexArea extends HTMLElement implements WebComponent {
          this.#textarea.disabled = nv !== 'true'
       } else if (name === 'placeholder') {
          this.placeholder = nv
+      } else if (name === 'tabsize') {
+         this.tabsize = parseInt(nv) || 3
       }
    }
 

@@ -35,11 +35,13 @@ const all = useAll()
 
 <style scoped lang='scss' module>
 .metaview {
+   li {
+      padding-left: align-size(normal);
+   }
+
    i {
       display: block;
       height: align-size(large);
-      border-bottom: var(--color-line-dark) solid 1px;
-
    }
 }
 </style>

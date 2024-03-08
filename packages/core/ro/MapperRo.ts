@@ -1,5 +1,5 @@
+import { ToDto } from '../dto';
 import { Mapper, MapperHandler } from '../entity/Mapper';
-import { ToDto } from './index';
 
 export class MapperRo extends Mapper implements ToDto {
 

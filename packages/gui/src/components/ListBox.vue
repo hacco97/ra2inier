@@ -102,7 +102,6 @@ const vNkeymap = useKeyMap({
 </style>
 
 <style scoped lang='scss' module>
-$height: line-height(small);
 $min-width: 60px;
 
 .list-box {
@@ -112,8 +111,8 @@ $min-width: 60px;
    user-select: text;
 
    span {
-      height: $height;
-      line-height: $height;
+      height: 1lh;
+      line-height: inherit;
       margin-right: align-size(normal);
    }
 
@@ -135,7 +134,7 @@ $min-width: 60px;
 
    b {
       display: inline-block;
-      height: $height;
+      height: 1lh;
       width: fit-content;
       vertical-align: top;
    }

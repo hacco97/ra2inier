@@ -56,8 +56,13 @@ export class PackageDao {
       return tmp
    }
 
-   writePackageByPath(pkgPath: string,) {
-      throw Error('没有实现')
+   writePackageInfoByPath(pkg: Package, pkgPath: string) {
+
+   }
+
+   writePackageByPath(pkg: Package, pkgPath: string,) {
+      this.writePackageInfoByPath(pkg, pkgPath)
+
    }
 
    // 读写object逻辑
@@ -67,9 +72,6 @@ export class PackageDao {
       const objects: Record<string, IniObject> = {}
       const objectDir = escapePath(pkgPath, this.config.OBJECT_DIR)
       forDir(objectDir, (objPath) => {
-         // const tmp = fromRaw(readJson(objPath), IniObject)
-         // this.objectsPathMap[tmp.key] = objPath
-         // objects[tmp.key] = tmp
          const tmp = this.objectDao.readObjectByPath(objPath)
          tmp && (objects[tmp.key] = tmp)
       })
@@ -79,7 +81,6 @@ export class PackageDao {
    writeObjectByPath(pkgPath: string, object: IniObject) {
       const objectPath = this.objectsPathMap[object.key] ||
          escapePath(pkgPath, this.config.OBJECT_DIR, object.key)
-      // writeJson(objectPath, object)
       this.objectDao.writeObjectByPath(objectPath, object)
    }
 

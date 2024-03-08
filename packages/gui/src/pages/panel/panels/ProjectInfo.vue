@@ -1,9 +1,11 @@
 <script lang='ts' setup>
 import { computed, onMounted, ref, watch } from 'vue';
 
-import addSvg from '@/asset/icons/openDir.svg?raw';
+import openSvg from '@/asset/icons/openDir.svg?raw';
 import reloadSvg from '@/asset/icons/reload.svg?raw';
+import rightSvg from '@/asset/icons/right.svg?raw';
 import ListView from '@/components/ListView.vue';
+import MapBox from '@/components/MapBox.vue';
 import { loadingVersion, ProjectInfo, useProject } from '@/stores/projectStore';
 import { useGlobalPackages } from '@/stores/staticStore';
 import { PopupBox } from '@ra2inier/wc';
@@ -25,11 +27,24 @@ const popups = computed(() => info.value.references.map(x => {
    return `${url}本地路径：${x.path}`
 }))
 
+
+const localList = computed(() => {
+   return Object.keys(globalPackages)
+})
+const localListPopups = computed(() => {
+   return Object.values(globalPackages)
+})
+
 const listView = ref<InstanceType<typeof ListView>>()
 onMounted(() => {
    console.log(listView.value)
    console.log(listView.value!.value)
 })
+
+const isLocalShowed = ref(false)
+function onAddClick() {
+
+}
 
 </script>
 
@@ -43,25 +58,23 @@ onMounted(() => {
          <ListView ref="listView" :list :popups :check-box="false">
             <h2>
                <span>引用：</span>
-               <s class="normal-button" v-svgicon="addSvg" padding="15%"></s>
+               <s class="normal-button" v-svgicon="openSvg" padding="15%"></s>
                <s class="normal-button" v-svgicon="reloadSvg" padding="15%"></s>
+               <i></i>
+               <s class="normal-button folder" v-svgicon="rightSvg" padding="15%"
+                  @click="isLocalShowed = !isLocalShowed" :folded="!isLocalShowed"></s>
             </h2>
-            <main>
-               <ListView :list="['23', '43', '34']" :delete-button="false"></ListView>
+            <main class="normal-rpanel" v-show="isLocalShowed">
+               <ListView :list="localList" :popups="localListPopups" :delete-button="false">
+                  <h3><span>本地包：</span></h3>
+               </ListView>
             </main>
-            <template #footer>
-               <ol>
-                  <p v-for="item in globalPackages">
-                     <popup-box>
-                        <span>{{ item }}</span>
-                        <span></span>
-                     </popup-box>
-                  </p>
-               </ol>
-            </template>
          </ListView>
       </ul>
-      <li class="line"><span>环境变量：</span></li>
+      <ul class="line">
+         <p><span>环境变量：</span></p>
+         <MapBox :map="{}"></MapBox>
+      </ul>
       <li class="line"><span>构建方案：</span></li>
       <footer></footer>
    </div>
@@ -72,14 +85,19 @@ $height: line-height(normal);
 $align: align-size(normal);
 
 .project-info {
+   position: relative;
+   z-index: 0;
    padding: $align 0;
    line-height: $height;
 
    ul,
    li {
       padding: 0 $align;
-
       height: 1lh;
+   }
+
+   main {
+      padding: 0 $align;
    }
 
    p {
@@ -90,13 +108,16 @@ $align: align-size(normal);
       display: flex;
       align-items: center;
 
+      i {
+         flex: 1;
+         width: 1em;
+      }
 
       s {
-         display: inline-block;
-         line-height: $height;
-         height: 1lh;
+         flex: 0 0 auto;
+         height: 0.9lh;
          aspect-ratio: 1;
-         margin: 0 align-size(small);
+         margin-left: align-size(small);
       }
    }
 

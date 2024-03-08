@@ -79,15 +79,19 @@ export class ProjServ {
       const isExist = existsSync(newProjectPath)
       if (isExist) {
          const dirent = readdirSync(newProjectPath)
-         if (dirent.length != 0) throw Error('目标目录不能为空')
+         if (dirent.length != 0) throw Error('新项目文件夹应当为空文件夹')
       }
       this.appConfig.addProjectHistory(newProjectPath)
       const project = new Project()
+      return 'new'
    }
 
    @mapping('save')
-   saveProject() {
+   saveProject(@param('data') project: Project) {
       // TODO: 保存整个项目
+
+
+
       return ''
    }
 

@@ -8,7 +8,7 @@ import {
 
 import { useConfig } from '../config';
 import useLog from '../messageStore';
-import { clearAll, project } from './boot';
+import { clearAll, project, ValueSetKey, ValueSetType } from './boot';
 
 export * from './metaStore'
 export * from './iniObjectStore'
@@ -163,8 +163,8 @@ function mergeKey<T>(packages: Record<string, PackageRo>, readKey: string) {
 /**
  * 查找项目中的对象
  */
-export function queryObject<T extends keyof (typeof QUERY_TYPES_MAP)>(type: T,
-   filter: (v: InstanceType<typeof QUERY_TYPES_MAP[T]>) => number, limit = 20) {
+export function queryObject<T extends ValueSetKey>(type: T,
+   filter: (v: ValueSetType[T]) => number, limit = 20) {
    const targetSet = getSets(type)
    const ret: [number, any][] = []
    forIn(<Record<string, any>>targetSet, (key, val) => {
@@ -174,21 +174,19 @@ export function queryObject<T extends keyof (typeof QUERY_TYPES_MAP)>(type: T,
    ret.sort((a, b) => a[0] - b[0])
    const temp = []
    for (let i = 0; i < limit && i < ret.length; ++i) { temp.push(ret[i][1]) }
-   return <InstanceType<typeof QUERY_TYPES_MAP[T]>[]>(temp.reverse())
+   return <ValueSetType[T][]>(temp.reverse())
 }
 
-function getSets(type: keyof (typeof QUERY_TYPES_MAP)) {
+function getSets(type: ValueSetKey) {
    let targetSet, sets = _allResource.value
-   if (type === 'mapper') targetSet = sets.mappers
-   else if (type === 'scope') targetSet = sets.scopes
-   else if (type === 'word') targetSet = sets.scopes
+   if (type === 'mappers') targetSet = sets.mappers
+   else if (type === 'scopes') targetSet = sets.scopes
+   else if (type === 'dictionary') targetSet = sets.scopes
    else targetSet = sets.objects
    return targetSet
 }
 
-const QUERY_TYPES_MAP = {
-   object: IniObjectRo,
-   scope: ScopeRo,
-   mapper: MapperRo,
-   word: WordRo,
-}
+
+/**
+ *
+ */

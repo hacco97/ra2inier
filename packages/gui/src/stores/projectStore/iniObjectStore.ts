@@ -3,7 +3,7 @@ import { fromRaw, IniObjectRo } from '@ra2inier/core';
 
 import { useHistory } from '../history';
 import useLog from '../messageStore';
-import { project, setObject } from './boot';
+import { project, setValue } from './boot';
 
 const log = useLog('object-store')
 
@@ -43,8 +43,6 @@ function backupObject(object: IniObjectRo) {
  * 保存一个对象，不论是新对象还是改对象
  */
 export async function saveObject(object: IniObjectRo) {
-   // 在更新对象之后需要更新对象的键值
-   object.update()
    // 先向后端发送数据，更新后端的数据
    const { status, data } =
       await exec<string>('project/save-object/' + object.key, { data: object })
@@ -53,7 +51,7 @@ export async function saveObject(object: IniObjectRo) {
    if (status && workRes.status) {
       log.info('对象保存成功', object.fullname)
       // 如果是修改对象则更新和备份旧的对象
-      const toDel = setObject(object.key, object)
+      const toDel = setValue('objects', object.key, object)
       if (toDel) backupObject(toDel)
    }
    else log.warn('对象保存失败', data)
@@ -66,7 +64,7 @@ export async function saveObject(object: IniObjectRo) {
 export function deleteObject(object: IniObjectRo) {
    exec<boolean>('project/delete-object/' + object.key).then((res) => {
       if (res.status) {
-         const toDel = setObject(object.key, undefined)
+         const toDel = setValue('objects', object.key, undefined)
          toDel && backupObject(toDel)
          log.info('删除对象成功', object.fullname)
       } else {

@@ -1,16 +1,42 @@
 import { UniqueObject } from './Obejct';
 
 export class Word extends UniqueObject {
-   brief: string = ''    // 概要
-   default: string = ''  // 默认值，纯文本
-   author: string = ''   // 作者信息表达式
-   files: string[] = []  // 可以在哪些文件下使用，纯文本
-   dictionary: string = 'custom'  // 字典的名称，使用的是该word的父文件夹的名字
-
-   values: string = ''         // 一个使用'values表达式语法'的字符串
+   /**
+    *  概要
+    */
+   brief: string = ''
+   /**
+    * 默认值，纯文本
+    */
+   default: string = ''
+   /**
+    * 作者信息表达式
+    */
+   author: string = ''
+   /**
+    * 可以在哪些文件下使用，纯文本
+    */
+   files: string[] = []
+   /**
+    * 字典的名称，使用的是该word的父文件夹的名字
+    */
+   dictionary: string = 'custom'
+   /**
+    * 一个使用'values表达式语法'的字符串
+    */
+   values: string = ''
+   /**
+    * word的类型参数
+    */
    valueParam: WordValueTypeParam[] = []
-   scopes: string[] = [] // 决定在哪些scope下进行使用,scopes的key值
-   hookScript: string = ''    // js代码 纯文本值
+   /**
+    * 决定在哪些scope下进行使用,scopes的key值
+    */
+   scopes: string[] = []
+   /**
+    * js代码 纯文本值
+    */
+   hookScript: string = ''
 }
 
 /**
@@ -27,18 +53,30 @@ export class Word extends UniqueObject {
    int()*3,表示三个数字，多个类型参数中间用逗号分割，只有最后一个参数可以使用可变参数
  */
 export enum WordValueType {   // 定义输入框UI种类
-   str = 'str',    // 字符串类型，无验证
+   /**
+    * 字符串类型，无验证
+    */
+   str = 'str',
 
    int = 'int',
    float = 'float',
 
-   bool = 'bool',  //
-   enum = 'enum',  // 枚举类型，可以让UI界面生成下拉选择框
-   obj = 'obj',    // 对象类型，可以让UI界面生成下拉选择框，去project里面寻找相应的对象
+   /**
+    * 枚举类型，可以让UI界面生成下拉选择框
+    */
+   bool = 'bool',
+   enum = 'enum',
+   /**
+    * 对象类型，可以让UI界面生成下拉选择框，去project里面寻找相应的对象
+    */
+   obj = 'obj',
 
    color = 'color',
 
-   unknown = 'unknown'  // 解析错误的类型
+   /**
+    * 解析错误的类型
+    */
+   unknown = 'unknown'
 }
 
 
@@ -46,18 +84,23 @@ export interface WordValueTypeParam {
    exp: string,
    type: WordValueType,
 
-   // 类型为bool和enum时的参数
+   /**
+    * 类型为bool和enum时的参数
+    */
    optiontmp?: string[]
    optionRemarks?: string[]
 
-   // 类型为int和float的时候的参数
+   /**
+    * 类型为int和float的时候的参数
+    */
    max?: number
    min?: number
 
-   // 类型为字符串的时候的参数
+   /**
+    * 型为字符串的时候的参数
+    */
    regex?: string
 
-   //
    objectType?: string
    repeat?: number
 }

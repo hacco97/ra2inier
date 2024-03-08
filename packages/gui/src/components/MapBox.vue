@@ -14,12 +14,12 @@ const props = defineProps<{
 }>()
 const {
    data, newKey, newVal, deleteAt, addNewOne,
-   alterKeyAt, alterValAt, getNew, setNew
+   alterKeyAt, alterValAt, getNew
 } = useData(props.map)
 
 
 const focus = useFocus(true)
-const { setCurrent, focusAt, focusNext, focusPrev, deleteFocus, focusLast } = focus
+const { setCurrent, focusAt, focusNext, focusPrev, deleteFocus } = focus
 const vFocus = focus.directive
 const tabindex = computed(() => props.disabled ? -1 : 0)
 

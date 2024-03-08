@@ -24,7 +24,7 @@ function openWordPanel(word: WordRo) {
    copy(word, newWord)
    const p = new PanelParam({
       label: word.name,
-      type: PanelType.WordViewer,
+      type: PanelType.WordEditor,
       data: newWord,
       readonly: isReadonly(word)
    })

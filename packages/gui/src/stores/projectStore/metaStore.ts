@@ -4,7 +4,7 @@ import {
 } from '@ra2inier/core';
 
 import useLog from '../messageStore';
-import { all, mainKey, setMapper, setScope, setWord } from './boot';
+import { all, mainKey, setValue } from './boot';
 
 const log = useLog('meta-store')
 
@@ -17,6 +17,7 @@ const log = useLog('meta-store')
  * 保存scope到硬盘
  */
 export function saveScope(scope: ScopeRo) {
+   setValue('scopes', scope.key, scope)
    exec('project/save-scope', { data: scope }).then((res) => {
       if (res.status) {
          log.info('保存"对象类型"成功', scope.fullname)
@@ -33,7 +34,7 @@ export function addScope(name = Math.random() + '') {
    const scope = new ScopeRo
    scope.name = name
    scope.package = mainKey()
-   setScope(scope.key, scope)
+   setValue('scopes', scope.key, scope)
    return scope
 }
 
@@ -53,7 +54,7 @@ export function addWord(name = Math.random() + '') {
    word.markdown = md
    word.name = name
    word.package = mainKey()
-   setWord(word.key, word)
+   setValue('dictionary', word.key, word)
    return word
 }
 
@@ -61,7 +62,7 @@ export function addWord(name = Math.random() + '') {
  * 保存词条到硬盘
  */
 export function saveWord(word: WordRo) {
-   setWord(word.key, word)
+   setValue('dictionary', word.key, word)
    exec('project/save-word', { data: word }).then((res) => {
       if (res.status) {
          log.info('保存"词条"成功', word.fullname)
@@ -141,7 +142,7 @@ export async function translateWord(wordKey: string) {
  * 保存mapper到硬盘
  */
 export function saveMapper(mapper: MapperRo) {
-   setMapper(mapper.key, mapper)
+   setValue('mappers', mapper.key, mapper)
    exec('project/save-mapper', { data: mapper }).then(res => {
       if (res.status) {
          log.info('保存"输入器"成功', mapper.fullname)
@@ -159,6 +160,6 @@ export function addMapper(name = 'NEW_MAPPER') {
    const mapper = new MapperRo
    mapper.name = name
    mapper.package = mainKey()
-   setMapper(mapper.key, mapper)
+   setValue('mappers', mapper.key, mapper)
    return mapper
 }

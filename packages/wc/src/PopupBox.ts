@@ -5,41 +5,46 @@ const styleSheet = css`
    :host {
       display: inline-block;
       box-sizing: border-box;
-      width: fit-content;
-      height: 100%;
       text-align: center;
       overflow: visible;
    }
 
-   div {
-      position: relative;
-      height: 0;
-      width: 100%;
-      overflow: hidden;
+   * {
+      margin: 0;
+      padding: 0;
    }
 
-   p:hover+div, div:hover {
+   ol {
+      position: relative;
+      overflow: hidden;
+      z-index: 11;
+   }
+
+   ol:has(>*:hover) {
       overflow: visible;
+      z-index: 99;
+   }
+
+   ol:has(>*:hover) >div {
+      visibility: visible;
+   }
+
+   p {
+      position: relative;
+      z-index: 5;
    }
 
    section {
       position: absolute;
-      height: 300px;
-      width: 300px;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      background-color: transparent;
+      inset: -12px;
    }
 
-   ul {
+   div {
       position: absolute;
       z-index: 1;
-      top: 50%;
-      left: 50%;
-      height: fit-content;
-      width: fit-content;
-      margin: 0;
-      padding: 0;
+      top: 100%;
+      left: 0%;
+      visibility: hidden;
    }
 
 `
@@ -55,12 +60,11 @@ export class PopupBox extends HTMLElement implements WebComponent {
       super()
       const shadow = this.attachShadow({ mode: 'open', delegatesFocus: true })
       shadow.innerHTML = `
-         <p><slot></slot></p>
-         <div>
-            <section>
-            <ul><slot name="pop"></slot></ul>
-            </section>
-         </div>
+         <ol>
+            <p><slot></slot></p>
+            <section></section>
+            <div><slot name="pop"></slot></div>
+         </ol>
       `
       this.#div = shadow.querySelector('div')!
       shadow.adoptedStyleSheets.push(styleSheet)
@@ -69,21 +73,22 @@ export class PopupBox extends HTMLElement implements WebComponent {
    /**
     * position值：left , top
     */
-   #current = 'b'
-   #map: Record<string, string[]> = {
-      r: ['100%', '-100%'],
-      b: ['0', '0'],
-      rb: ['100%', '0']
-   }
+   #current = 'top-100%,left-0'
+   static #Set = new Set(['left', 'top', 'right', 'bottom'])
 
    get position() {
       return this.#current
    }
 
+   /**
+    * 格式：例如：'top-100px,right-100px'
+    */
    set position(pos: string) {
-      const p = this.#map[pos] ?? this.#map[pos = 'b']
-      this.#div.style.left = p[0]
-      this.#div.style.top = p[1]
+      const kv = pos.split(',').map(x => x.split('-'))
+      for (const e of kv) {
+         if (PopupBox.#Set.has(e[0]))
+            this.#div.style.setProperty(e[0], e[1])
+      }
       this.#current = pos
    }
 

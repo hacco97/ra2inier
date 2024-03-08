@@ -10,7 +10,7 @@ import API from './panels/API.vue';
 import Debug from './panels/Debug.vue';
 import MapperEditor from './panels/Meta/MapperEditor.vue';
 import ScopeEditor from './panels/Meta/ScopeEditor.vue';
-import WordViewer from './panels/Meta/WordViewer.vue';
+import WordEditor from './panels/Meta/WordEditor.vue';
 import NewProject from './panels/NewProject.vue';
 import None from './panels/None.vue';
 import ObjectEditor from './panels/ObjectEditor/Index.vue';
@@ -23,7 +23,7 @@ defineOptions({
    name: 'Panel',
    components: {
       PanelLayout, Welcome, Debug, API, ProjectInfo,
-      ObjectEditor, None, ScopeEditor, WordViewer,
+      ObjectEditor, None, ScopeEditor, WordEditor,
       MapperEditor, Setting, NewProject, ObjectViewer
    },
 })

@@ -9,7 +9,7 @@ import { IS_DEV } from '@/stores/config';
  */
 export enum PanelType {
    Tutorial = "Tutorial",
-   WordViewer = "WordViewer",
+   WordEditor = "WordEditor",
    ObjectEditor = "ObjectEditor",
    Welcome = "Welcome",
    ProjectInfo = "ProjectInfo",

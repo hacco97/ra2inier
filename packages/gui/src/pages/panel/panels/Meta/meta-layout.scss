@@ -1,4 +1,4 @@
-$height: line-height(small);
+$height: line-height(normal);
 $align: align-size(normal);
 
 .header {
@@ -23,14 +23,14 @@ $align: align-size(normal);
       display: flex;
       flex-wrap: nowrap;
       padding: 0 $align;
-      min-height: $height;
+      min-height: fit-content;
       line-height: $height;
       overflow: hidden;
       white-space: nowrap;
    }
 
    h2 {
-      margin-top: $align;
+      // margin-top: $align;
    }
 
    flex-area {

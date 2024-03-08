@@ -21,12 +21,13 @@ function onBlur(e: Event, order: number) {
    alterAt(order, val)
 }
 
-const focus = useFocus()
+const focus = useFocus(true)
 const vFocus = focus.directive
 
 const vKeymap: Directive<HTMLElement, number> = useKeyMap({
    enter(e, order: number) {
       nextTick(() => alterAt(order, this.innerText))
+      focus.focusLast()
       e.preventDefault()
    },
    arrowup(e) {
@@ -52,6 +53,7 @@ const vNkeymap = useKeyMap({
       if (!newVal) return
       if (props.onValidated && !props.onValidated(newVal)) return
       addNewOne(newVal)
+      focus.focusLast()
       this.innerText = ''
    },
    arrowup(e) {
@@ -98,6 +100,7 @@ const vNkeymap = useKeyMap({
    }
 }
 </style>
+
 <style scoped lang='scss' module>
 $height: line-height(small);
 $min-width: 60px;

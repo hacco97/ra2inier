@@ -1,96 +1,16 @@
 <script lang='ts' setup>
-import { inject, provide, ref, shallowReactive } from 'vue';
+import ListView from '@/components/ListView.vue';
+const props = defineProps<{}>()
 
-import { queryObject } from '@/stores/projectStore';
-import { PopupBox, TouchButton } from '@ra2inier/wc';
-
-const list = shallowReactive([
-   { name: 'zs', age: 18 },
-   { name: 'ls', age: 42 },
-   { name: 'ww', age: 67 },
-])
-
-
-function onTestClick(e: MouseEvent) {
-   list[0].age++
-   console.log(list[0])
-}
-
-function onTest2Click(e: MouseEvent) {
-   new Promise((solve) => {
-      var a: any
-      new Promise((s) => {
-         var b: any
-         b.dd
-         s(b)
-      })
-      console.log(a.sd)
-      solve(a)
-   }).catch(e => console.log(e)
-   )
-}
-
-
-function onHiClick(e: Event) {
-   console.log(e)
-   e.stopPropagation()
-
-}
-
-function onHello() {
-   console.log('hello')
-
-}
-
-function onClick() {
-   const objects = queryObject('mapper', (object) => {
-      if (object.name.match('s')) return 1
-      else return 0
-   })
-   console.log(objects)
-}
+const list = ['123', '23', '132', '123']
 
 </script>
 
 
 <template>
-   <div class="text-center">
-      <popup-box position="rb">
-         <button @click="onTestClick">test</button>
-         <p slot="pop">
-            <li v-for="item in list">
-               <span>{{ item.name }}</span>
-               <span>{{ item.age }}</span>
-            </li>
-            <button @click="onHiClick">hello</button>
-         </p>
-      </popup-box>
-      <touch-button @touch="onHello" @click="onClick">
-         hello
-      </touch-button>
+   <div>
+      <ListView :list />
    </div>
 </template>
 
-<style scoped lang='scss'>
-div {
-   width: 200px;
-   height: 200px;
-   background-color: aliceblue;
-
-   button {
-      width: 100px;
-      height: 100px;
-      background-color: red;
-   }
-
-   li {
-      padding: align-size(normal);
-
-      background-color: palegoldenrod;
-   }
-
-   span {
-      padding: align-size(large);
-   }
-}
-</style>
+<style module scoped lang='scss'></style>

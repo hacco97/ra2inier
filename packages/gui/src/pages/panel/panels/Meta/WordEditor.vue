@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import { ref, Ref, shallowReactive } from 'vue';
+import { ref, shallowReactive } from 'vue';
 
 import editSvg from '@/asset/icons/edit.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
@@ -8,7 +8,6 @@ import Markdown from '@/components/Markdown.vue';
 import { ask, DialogType } from '@/states/dialog';
 import { PanelParam } from '@/states/panelList';
 import { useMarkdown } from '@/stores/markdownStore';
-import { saveWord } from '@/stores/projectStore';
 import {
   copy, HOOK_FILE_TEMPLATE, MarkdownRo, parseValueTypeExp, WordRo,
 } from '@ra2inier/core';

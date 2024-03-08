@@ -66,7 +66,7 @@ export class ProjectDao {
       if (!this.isConnected) throw Error('需要先打开项目，才能获得packages')
       const projectPath = this.#path
       // 读取主包
-      const mainPkg = this.packageDao.readPackageInfoByPath(projectPath)
+      const mainPkg = this.packageDao.readPackageInfoByPath(projectPath)!
       this.#main = mainPkg.key
       const references = this.resolveReferences(projectPath)
       const set = new Set(mainPkg.references.map((ref) => ref.split('\n')[0]))
@@ -88,7 +88,7 @@ export class ProjectDao {
       for (const name of fs.readdirSync(referPath)) {
          const pkgPath = escapePath(referPath, name)
          const pkg = this.packageDao.readPackageInfoByPath(pkgPath)
-         references[pkg.key] = pkg
+         pkg && (references[pkg.key] = pkg)
       }
       return references
    }
@@ -107,8 +107,8 @@ export class ProjectDao {
       const pkgs = this.readPackagesList()
       projectVo.main = this.main
       for (const key in pkgs) {
-         const pkgPath = pkgs[key].path
-         projectVo.packages[key] = this.packageDao.readPackageByPath(pkgPath)
+         const pkg = this.packageDao.readPackageByPath(pkgs[key].path)
+         pkg && (projectVo.packages[key] = pkg)
       }
       return projectVo
    }

@@ -1,12 +1,12 @@
 import fs from 'node:fs';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
 
 import { component, final, inject, task } from '~/mainWindow/ioc.config';
 
 import {
   Config, enhance, forIn, fromRaw, IniObject,
-  Mapper, MapperDto, Markdown, Package, PackageVo,
-  Scope, WordDto, WordRo, WordVo,
+  isEmptyObject, Mapper, MapperDto, Markdown, Package,
+  PackageVo, Scope, WordDto, WordRo, WordVo,
 } from '@ra2inier/core';
 import { escapePath, forDir, readJson } from '@ra2inier/core/node';
 
@@ -28,11 +28,15 @@ export class PackageDao {
    @inject('object-dao') declare objectDao: ObjectDao
 
    readPackageInfoByPath(pkgPath: string) {
-      let pkg = fromRaw(readJson(join(pkgPath, this.config.PACKAGE_INFO_FILE)), Package)
+      const info = readJson(join(pkgPath, this.config.PACKAGE_INFO_FILE))
+      if (isEmptyObject(info)) return undefined
+      let pkg = fromRaw(info, Package)
       if ((pkg.path += '').startsWith('~')) {
          let path = pkg.path.replace('~', this.appConfig.GLOBAL_PACKAGE_DIR)
-         path = resolve(this.appConfig.CWD, path)
-         pkg = fromRaw(readJson(resolve(path, this.config.PACKAGE_INFO_FILE)), Package)
+         path = escapePath(this.appConfig.CWD, path)
+         const info = readJson(escapePath(path, this.config.PACKAGE_INFO_FILE))
+         if (isEmptyObject(info)) return undefined
+         pkg = fromRaw(info, Package)
          pkg.path = path
       } else {
          pkg.path = pkgPath
@@ -42,6 +46,7 @@ export class PackageDao {
 
    readPackageByPath(pkgPath: string) {
       const pkg = this.readPackageInfoByPath(pkgPath)
+      if (!pkg) return undefined
       const tmp: PackageVo = enhance(pkg, {
          objects: this.readObjectsByPath(pkgPath),
          scopes: this.readScopesByPath(pkgPath),

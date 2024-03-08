@@ -198,3 +198,8 @@
       rotate: 90deg;
    }
 }
+
+.popup {
+   padding: align-size(small) align-size(normal);
+   @include fore-panel(true);
+}

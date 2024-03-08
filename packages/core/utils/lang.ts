@@ -1,4 +1,4 @@
-import { enhance } from './';
+import { enhance } from './object';
 
 /**
  * 尝试执行一个函数
@@ -99,4 +99,15 @@ export function overrideArray<T>(from: T[], to: T[]) {
    if (from.length < to.length) {
       to.splice(from.length)
    }
+}
+
+
+/**
+ * 判读是否是一个空对象
+ */
+export function isEmptyObject(o: Object) {
+   for (const key in o) {
+      return false
+   }
+   return true
 }

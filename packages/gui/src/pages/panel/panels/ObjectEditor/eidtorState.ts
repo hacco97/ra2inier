@@ -216,7 +216,7 @@ export function useQueryObject(promptState: PromptState) {
    function changeObjectsOptions(startString: string) {
       const param = promptState.entry.typeParam
       if (param.type !== WordValueType.obj) return
-      const objects = queryObject('object', (object) => {
+      const objects = queryObject('objects', (object) => {
          let rate = 0
          if (object.scope === param.objectType) rate += 2
          if (object.name.startsWith(startString)) rate += 2
@@ -239,3 +239,4 @@ export function useQueryObject(promptState: PromptState) {
       onInputKeyup
    }
 }
+

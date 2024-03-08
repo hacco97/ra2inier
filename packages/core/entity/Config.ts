@@ -1,7 +1,6 @@
-
-// 程序配置信息
-
-// 程序前端的设置
+/**
+ * 程序前端的设置
+ */
 export interface ClientConfig {
    saveConfig(): void
    setByKey(key: string, val: any): void
@@ -10,6 +9,9 @@ export interface ClientConfig {
    [x: string]: any
 }
 
+/**
+ * 程序前端的设置
+ */
 export class ClientConfig {
    /**
     * 当前的主题名称
@@ -49,7 +51,9 @@ export class ClientConfig {
    DEFAULT_PROJECT_DIR: string = ''
 }
 
-// 程序后端的设置
+/**
+ * 程序前后端的设置
+ */
 export class Config extends ClientConfig {
    /**
     * 当前程序的启动位置

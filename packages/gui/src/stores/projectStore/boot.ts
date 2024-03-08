@@ -12,51 +12,27 @@ export const all = {
    get scopes() { return project.main!.scopes },
 }
 
+export type ValueSetType = {
+   objects: IniObjectRo;
+   dictionary: WordRo;
+   mappers: MapperRo;
+   scopes: ScopeRo
+};
+export type ValueSetKey = keyof ValueSetType
+
 /**
  * 修改主包中的对象
  */
-export function setObject(key: string, object?: IniObjectRo): IniObjectRo | undefined {
-   const tmp = project.main!.objects[key]
-   if (!object) {
-      delete project.main!.objects[key]
+export function setValue<V extends ValueSetKey, T extends ValueSetType[V]>(type: V, key: string, value?: T) {
+   const tmp = project.main![type][key]
+   if (!value) {
+      delete project.main![type][key]
    } else {
-      project.main!.objects[key] = object
+      project.main![type][key] = value
    }
-   return tmp
+   return tmp as T
 }
 
-/**
- * 修改主包中的输出器
- */
-export function setMapper(key: string, mapper?: MapperRo) {
-   if (!mapper) {
-      delete project.main!.mappers[key]
-   } else {
-      project.main!.mappers[key] = mapper
-   }
-}
-
-/**
- * 修改主包中的词条
- */
-export function setWord(key: string, word?: WordRo) {
-   if (!word) {
-      delete project.main!.dictionary[key]
-   } else {
-      project.main!.dictionary[key] = word
-   }
-}
-
-/**
- * 修改主包中的scope
- */
-export function setScope(key: string, scope?: ScopeRo) {
-   if (!scope) {
-      delete project.main!.dictionary[key]
-   } else {
-      project.main!.scopes[key] = scope
-   }
-}
 
 export function clearAll() {
    copy(createProject(), project)

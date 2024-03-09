@@ -6,7 +6,9 @@ import {
   enhance, fromRaw, isUniqueObject, Package, Project,
   ProjectVo,
 } from '@ra2inier/core';
-import { escapePath, readJson, writeFile } from '@ra2inier/core/node';
+import {
+  escapePath, forDir, readJson, writeFile, writeJson,
+} from '@ra2inier/core/node';
 
 import { DaoConfig } from './DaoConfig';
 import { PackageDao } from './PackageDao';
@@ -85,11 +87,10 @@ export class ProjectDao {
       const referPath = escapePath(pkgPath, this.config.REFERENCE_DIR)
       // 读取引用的包
       const references: Record<string, Package> = {}
-      for (const name of fs.readdirSync(referPath)) {
-         const pkgPath = escapePath(referPath, name)
-         const pkg = this.packageDao.readPackageInfoByPath(pkgPath)
+      forDir(referPath, (path) => {
+         const pkg = this.packageDao.readPackageInfoByPath(path)
          pkg && (references[pkg.key] = pkg)
-      }
+      }, false)
       return references
    }
 
@@ -123,10 +124,10 @@ export class ProjectDao {
    writeProjectInfo(project: Project, path?: string,) {
       const projectPath = path || this.#path
       const infoPath = escapePath(projectPath, this.config.PROJECT_INFO_FILE)
-      writeFile(infoPath, JSON.stringify(projectPath))
+      writeJson(infoPath, project)
    }
 
-   createInfo(){
+   createInfo() {
 
    }
 }

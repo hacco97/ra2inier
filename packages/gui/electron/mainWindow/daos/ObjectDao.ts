@@ -1,9 +1,10 @@
-import fs from 'node:fs'
-import { escapePath } from "@ra2inier/core/node";
-import { component, inject } from "../ioc.config";
-import { Entry, IniObject, fromRaw } from "@ra2inier/core";
-import { DaoConfig } from './DaoConfig';
+import fs from 'node:fs';
 
+import { Entry, fromRaw, IniObject } from '@ra2inier/core';
+import { escapePath, writeFile } from '@ra2inier/core/node';
+
+import { component, inject } from '../ioc.config';
+import { DaoConfig } from './DaoConfig';
 
 @component('object-dao')
 export class ObjectDao {
@@ -22,7 +23,7 @@ export class ObjectDao {
 
    writeObjectByPath(objectPath: string, object: IniObject) {
       try {
-         fs.writeFileSync(objectPath, JSON.stringify(object, this.stringifyV1))
+         writeFile(objectPath, JSON.stringify(object, this.stringifyV1))
       } catch (error) { return false }
    }
 

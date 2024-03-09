@@ -88,11 +88,3 @@ export function parseProjectVo(data: ProjectVo, project: ProjectRo) {
    }
    project.main = project.packages[data.main]
 }
-
-
-/**
- * 初始化项目数据，在worker中调用
- */
-export function initProject() {
-
-}

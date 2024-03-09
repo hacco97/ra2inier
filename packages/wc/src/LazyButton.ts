@@ -24,11 +24,25 @@ const styleSheet = css`
 export class LazyButton extends HTMLElement implements WebComponent {
    delay = 1.5
    #disabled = false
+   #forceDisabled = false
+   #div: HTMLDivElement
 
-   static observedAttributes: string[] = ['delay']
+   #update() {
+      this.#div.setAttribute('disabled', this.#forceDisabled || this.#disabled ? 'true' : 'false')
+   }
+
+   get disabled() { return this.#forceDisabled }
+   set disabled(val: boolean) {
+      this.#forceDisabled = val + '' === 'true'
+      this.#update()
+   }
+
+   static observedAttributes: string[] = ['delay', 'disabled']
    attributeChangedCallback(name: string, ov: any, nv: string) {
       if (name === 'delay') {
          this.delay = parseInt(nv) || 1.5
+      } else if (name === 'disabled') {
+         this.disabled = nv + '' === 'true'
       }
    }
 
@@ -36,15 +50,19 @@ export class LazyButton extends HTMLElement implements WebComponent {
       super()
       const shadow = this.attachShadow({ mode: 'open' })
       shadow.innerHTML = html`<div><slot></slot></div>`
-      const div = shadow.querySelector('div')!
+      const div = this.#div = shadow.querySelector('div')!
       div.addEventListener('click', (e: Event) => {
-         if (this.#disabled) return e.stopPropagation()
-         else {
+         if (this.#forceDisabled || this.#disabled) {
+            e.preventDefault()
+            e.stopPropagation()
+         } else {
             this.#disabled = true
-            div.setAttribute('disabled', 'true')
+            this.#update()
             setTimeout(() => {
-               div.setAttribute('disabled', 'false')
-               this.#disabled = false
+               if (!this.#forceDisabled) {
+                  this.#disabled = false
+                  this.#update()
+               }
             }, this.delay * 1000)
          }
       })
@@ -54,4 +72,4 @@ export class LazyButton extends HTMLElement implements WebComponent {
 }
 
 if (!customElements.get('lazy-button'))
-customElements.define('lazy-button', LazyButton)
+   customElements.define('lazy-button', LazyButton)

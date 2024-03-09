@@ -21,16 +21,14 @@ function onSave(data: MapperRo) {
 
 function openMapperPanel(mapper: MapperRo) {
    const newOne = cloneTyped(mapper, MapperRo)
+   const readonly = isReadonly(mapper)
    const p = new PanelParam({
       label: mapper.name,
       type: PanelType.Mappers,
       data: newOne,
-      readonly: isReadonly(mapper)
+      readonly
    })
-   if (!isReadonly(mapper)) {
-      p.on('closed', onSave)
-      p.on('save', onSave)
-   }
+   if (!readonly) p.on('save', onSave)
    addPanel(p)
 }
 

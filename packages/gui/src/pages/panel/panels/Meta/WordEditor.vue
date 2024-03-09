@@ -14,10 +14,12 @@ import {
 import { FlexArea, FlexInput, LazyButton } from '@ra2inier/wc';
 
 import HeaderLayout from '../HeaderLayout.vue';
+import { useFilp } from './flip';
 
 const props = defineProps<{ param: PanelParam }>()
 const param = props.param
 const word: WordRo = shallowReactive(props.param.data)
+const { onChanged, vFlip, disabled } = useFilp(param, word)
 
 const isNoMarkdown = ref(!word.markdown)
 if (isNoMarkdown.value) {
@@ -27,29 +29,15 @@ if (isNoMarkdown.value) {
    })
 }
 
+const md = ref<InstanceType<typeof Markdown>>()
 function submit() {
    word.markdown || (word.markdown = new MarkdownRo)
-   copy(md.value?.value(), word.markdown)
+   copy(md.value?.value, word.markdown)
    word.valueParam = parseValueTypeExp(word.values)
-   param.data = word
 }
 param.on('before-closed', submit)
 
-const disabled = ref(true)
-
-const md = ref<InstanceType<typeof Markdown>>()
-function onSaveClick() {
-   submit()
-   param.emit('save', word)
-   disabled.value = true
-}
-
-function onEditClick() {
-   disabled.value = false
-}
-
 let asking = false
-
 async function onTemplateClick() {
    if (!word.hookScript.trim()) {
       word.hookScript = HOOK_FILE_TEMPLATE
@@ -69,16 +57,16 @@ async function onTemplateClick() {
       <template #header>
          <h2 :class="[$theme.header, $style.header]">
             <span>{{ word.name }}</span>
-            <lazy-button class="fore-button" v-if="!param.readonly">
-               <div v-svgicon="saveSvg" @click="onSaveClick" v-if="!disabled"></div>
-               <div v-svgicon="editSvg" @click="onEditClick" v-else></div>
+            <lazy-button class="fore-button" v-if="!param.readonly" v-flip>
+               <div v-svgicon="saveSvg" v-if="!disabled"></div>
+               <div v-svgicon="editSvg" v-else></div>
             </lazy-button>
          </h2>
       </template>
 
       <template #default>
          <!-- 中部info内容 -->
-         <main :class="[$style.main, $theme.main]">
+         <main :class="[$style.main, $theme.main]" @keydown="onChanged">
             <ul>
                <h2>
                   <span class="required">词条</span><em>：</em>

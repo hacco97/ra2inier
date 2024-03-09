@@ -19,13 +19,15 @@ setMessageBadge(messageList.length)
 
 <style scoped src="@css/foottab.scss" module="$theme" />
 <style scoped lang='scss' module>
+$align: align-size(normal);
+
 .message {
    overflow: auto;
    height: 100%;
-   padding: align-size(large) 0;
+   padding: $align 0;
 
    li {
-      padding: align-size(normal) align-size(large);
+      padding: 0 $align;
    }
 
    b {
@@ -35,12 +37,16 @@ setMessageBadge(messageList.length)
    b::after {
       content: '';
       position: absolute;
-      top: 40%;
-      right: -align-size(normal);
-      height: 30%;
+      top: 50%;
+      right: -$align;
+      height: 1ch;
+      transform: translateY(-50%);
       aspect-ratio: 1;
-      /* background-color: red; */
       border-radius: 50%;
+   }
+
+   pre {
+      text-wrap: wrap;
    }
 }
 </style>

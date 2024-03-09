@@ -8,7 +8,7 @@ import {
   isEmptyObject, Mapper, MapperDto, Markdown, Package,
   PackageVo, Scope, WordDto, WordRo, WordVo,
 } from '@ra2inier/core';
-import { escapePath, forDir, readJson } from '@ra2inier/core/node';
+import { escapePath, forDir, readJson, writeJson } from '@ra2inier/core/node';
 
 import { DaoConfig } from './DaoConfig';
 import { MapperDao } from './MapperDao';
@@ -57,7 +57,8 @@ export class PackageDao {
    }
 
    writePackageInfoByPath(pkg: Package, pkgPath: string) {
-
+      const infoPath = escapePath(pkgPath, this.config.PACKAGE_INFO_FILE)
+      writeJson(infoPath, pkg)
    }
 
    writePackageByPath(pkg: Package, pkgPath: string,) {
@@ -81,7 +82,7 @@ export class PackageDao {
    writeObjectByPath(pkgPath: string, object: IniObject) {
       const objectPath = this.objectsPathMap[object.key] ||
          escapePath(pkgPath, this.config.OBJECT_DIR, object.key)
-      this.objectDao.writeObjectByPath(objectPath, object)
+      return this.objectDao.writeObjectByPath(objectPath, object)
    }
 
    deleteObjectByPath(pkgPath: string, key: string) {

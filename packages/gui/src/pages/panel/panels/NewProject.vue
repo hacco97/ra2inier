@@ -21,7 +21,7 @@ async function onOpenClick() {
 
 
 function onAddClick() {
-   createNewProject(targetPath.value)
+   createNewProject(targetPath.value, name.value)
 }
 </script>
 
@@ -55,7 +55,8 @@ function onAddClick() {
                      <s v-svgicon="openDirSvg" padding="15%"></s>
                   </lazy-button>
                </h2>
-               <div><flex-input class="normal-rpanel" v-model="targetPath" :placeholder="defaultPath"></flex-input></div>
+               <div><flex-input class="normal-rpanel" v-model="targetPath" :placeholder="defaultPath"></flex-input>
+               </div>
             </li>
             <li>
                <ReferView />

@@ -1,13 +1,16 @@
 {
    "id": 8642962,
-   "name": "example",
    "seed": 5,
    "version": 1691588642962,
+   "name": "example",
    "target": "",
    "author": "xxx <33243@gmail.com> (https://dfs.xyz)",
    "references": [
       "10001!1",
       "1!1"
    ],
-   "loaderVersion": "v1"
+   "loaderVersion": "v1",
+   "envVariable": {},
+   "link": "",
+   "path": "D:\\document\\codes\\projects\\ra2inier\\packages\\gui\\projects\\example"
 }

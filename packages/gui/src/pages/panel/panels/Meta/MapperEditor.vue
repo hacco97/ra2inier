@@ -10,30 +10,18 @@ import { MapperRo } from '@ra2inier/core';
 import { FlexArea, FlexInput, LazyButton } from '@ra2inier/wc';
 
 import HeaderLayout from '../HeaderLayout.vue';
+import { useFilp } from './flip';
 
 const props = defineProps<{ param: PanelParam }>()
 const mapper: MapperRo = reactive(props.param.data)
 const param = props.param
-const disabled = ref(true)
 
-
-function submit() {
-   param.data = mapper
-}
-param.on('before-closed', submit)
-
-function onSaveClick() {
-   disabled.value = true
-   param.emit('save', mapper)
-}
-
-function onEditClick() {
-   disabled.value = false
-}
+const { onChanged, disabled, vFlip } = useFilp(param, mapper)
 
 function onNameChange() {
    param.label = mapper.name
 }
+
 
 </script>
 
@@ -43,15 +31,15 @@ function onNameChange() {
       <template #header>
          <h2 :class="[$theme.header, $style.header]">
             <span>{{ mapper.name }}</span>
-            <lazy-button class="fore-button" v-if="!param.readonly">
-               <div v-svgicon="saveSvg" @click="onSaveClick" v-if="!disabled"></div>
-               <div v-svgicon="editSvg" @click="onEditClick" v-else></div>
+            <lazy-button class="fore-button" v-flip v-if="!param.readonly">
+               <div v-svgicon="editSvg" v-if="disabled"></div>
+               <div v-svgicon="saveSvg" v-else></div>
             </lazy-button>
          </h2>
       </template>
       <template #default>
          <!-- 中部info内容 -->
-         <ul :class="[$style.main, $theme.main]">
+         <ul :class="[$style.main, $theme.main]" @keydown="onChanged">
             <h2>
                <span class="required">输出器名称</span><em>：</em>
                <flex-input :disabled="disabled" v-model.lazy="mapper.name" @change="onNameChange"></flex-input>

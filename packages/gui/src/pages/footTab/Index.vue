@@ -138,6 +138,7 @@ $height: layout-size(foottab);
 
 .foottab {
    height: 100%;
+   line-height: line-height(small);
 
    >nav {
       height: $height;
@@ -149,7 +150,7 @@ $height: layout-size(foottab);
          height: 100%;
          overflow: visible;
 
-         >b{
+         >b {
             width: align-size(tiny);
          }
 
@@ -164,6 +165,7 @@ $height: layout-size(foottab);
                top: align-size(tiny);
                right: align-size(small);
                height: align-size(large);
+               line-height: align-size(large);
                aspect-ratio: 1;
                text-align: center;
             }

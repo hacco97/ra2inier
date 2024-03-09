@@ -10,27 +10,20 @@ import { ScopeRo } from '@ra2inier/core';
 import { FlexArea, FlexInput, LazyButton } from '@ra2inier/wc';
 
 import HeaderLayout from '../HeaderLayout.vue';
+import { useFilp } from './flip';
 
 defineOptions({ name: 'ScopeEditor' })
 const props = defineProps<{ param: PanelParam }>()
 const scope: ScopeRo = shallowReactive(props.param.data!)
 const param = props.param
-const disabled = ref(true)
+const { onChanged, disabled, changed, vFlip } = useFilp(param, scope)
 
-function submit() {
-   param.data = scope
-}
-param.on('before-closed', submit)
+
 
 function onNameChange() {
    param.label = scope.name
 }
 
-function onSaveClick() {
-   disabled.value = true
-   submit()
-   param.emit('save', scope)
-}
 
 </script>
 
@@ -40,14 +33,14 @@ function onSaveClick() {
       <template #header>
          <h2 :class="[$theme.header, $style.header]">
             <span>{{ scope.name }}</span>
-            <lazy-button class="fore-button" v-if="!param.readonly">
-               <div v-svgicon="saveSvg" @click="onSaveClick" v-if="!disabled"></div>
-               <div v-svgicon="editSvg" @click="disabled = false" v-else></div>
+            <lazy-button class="fore-button" v-flip v-if="!param.readonly">
+               <div v-svgicon="saveSvg" v-if="!disabled"></div>
+               <div v-svgicon="editSvg" v-else></div>
             </lazy-button>
          </h2>
       </template>
       <template #default>
-         <main :class="[$style.main, $theme.main]">
+         <main :class="[$style.main, $theme.main]" @keydown="onChanged">
             <!-- 中部info内容 -->
             <ul>
                <h2>

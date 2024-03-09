@@ -8,8 +8,8 @@ import {
 
 import {
   Config, fromRaw, IniObject, isUniqueObject, MapperDto,
-  PackageVo, Project, ProjectVo, Scope, ScopeDto,
-  WordDto,
+  Package, PackageVo, Project, ProjectDto, ProjectVo,
+  Scope, ScopeDto, WordDto,
 } from '@ra2inier/core';
 import { escapePath } from '@ra2inier/core/node';
 
@@ -74,7 +74,7 @@ export class ProjServ {
    }
 
    @mapping('new')
-   newProject(@param('path') newProjectPath: string) {
+   newProject(@param('path') newProjectPath: string, @param('name') name: string) {
       console.log(newProjectPath)
       const isExist = existsSync(newProjectPath)
       if (isExist) {
@@ -82,17 +82,19 @@ export class ProjServ {
          if (dirent.length != 0) throw Error('新项目文件夹应当为空文件夹')
       }
       this.appConfig.addProjectHistory(newProjectPath)
-      const project = new Project()
-      return 'new'
+      const project = new Project(name)
+      this.projectDao.writeProjectInfo(project, newProjectPath)
+      this.packageDao.writePackageInfoByPath(new Package(name), newProjectPath)
+      return this.openProject(newProjectPath)
    }
 
    @mapping('save')
-   saveProject(@param('data') project: Project) {
-      // TODO: 保存整个项目
+   saveProject(@param('data') project: ProjectDto) {
+      this.projectDao.writeProjectInfo(fromRaw(project, Project))
+      this.packageDao.writePackageInfoByPath(fromRaw(project.main, Package), this.path)
+      // TODO: 更多的保存任务
 
-
-
-      return ''
+      return true
    }
 
    @mapping('output')

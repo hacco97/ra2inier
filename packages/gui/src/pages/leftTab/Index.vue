@@ -64,8 +64,6 @@ function onTabDragDrop(e: DragEvent, tab: LeftTab) {
    }
    dragingTab.order = tmp;
 }
-
-
 </script>
 
 

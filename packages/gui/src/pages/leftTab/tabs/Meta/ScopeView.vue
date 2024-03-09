@@ -24,10 +24,7 @@ function openScopePanel(scope: ScopeRo) {
       data: scope,
       readonly: isReadonly(scope)
    })
-   if (!isReadonly(scope)) {
-      p.on('closed', onSave)
-      p.on('save', onSave)
-   }
+   if (!isReadonly(scope)) p.on('save', onSave)
    addPanel(p)
 }
 

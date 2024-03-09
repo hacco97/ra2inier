@@ -28,10 +28,7 @@ function openWordPanel(word: WordRo) {
       data: newWord,
       readonly: isReadonly(word)
    })
-   if (!isReadonly(word)) {
-      p.on('save', onSave)
-      p.on('closed', onSave)
-   }
+   if (!isReadonly(word)) p.on('save', onSave)
    addPanel(p)
 }
 

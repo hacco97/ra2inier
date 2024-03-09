@@ -39,8 +39,18 @@ export class PanelParam extends EventEmitter {
     * 传递给页面组件数据
     */
    data: any
-
+   /**
+    * 告诉派生组件，该数据不可修改
+    */
    readonly: boolean = false
+   /**
+    * 预示着数据发生了改变
+    */
+   changed: boolean = false
+   /**
+    * 处理结果
+    */
+   result: any
 
    constructor(init: Partial<PanelParam>) {
       super()
@@ -103,7 +113,7 @@ export function selectTabByID(id: number) {
 }
 
 /**
- * 关闭所给定id值的panel
+ * 关闭所给定id值的panel，并且触发param的回调函数
  */
 export function closeTab(id: number) {
    // @ts-ignore
@@ -111,8 +121,10 @@ export function closeTab(id: number) {
    for (let i = 0; 0 < panelList.length; ++i) {
       if (id === panelList[i].id) {
          rm = panelList.splice(i, 1)[0]
-         rm.param.emit('before-closed', rm.param.data)
-         rm.param.emit('closed', rm.param.data)
+         const p = rm.param
+         p.emit('before-closed', p.result)
+         if (!p.readonly && p.changed) p.emit('save', p.result)
+         p.emit('closed', p.result)
          break
       }
    }

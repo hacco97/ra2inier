@@ -18,36 +18,45 @@ export * from './iniObjectStore'
 const logger = useLog('project-store')
 export const loadingVersion = ref(0)
 
-export async function openProject(path?: string, callback?: () => {}) {
+function updateProject(ipkg: ProjectVo) {
+   // 打开项目核心逻辑
+   clearAll()
+   parseProjectVo(ipkg, project)
+
+   // 将初始数据传递给worker
+   work('project/init', ipkg)
+   globalEvent.emit('project-loaded')
+
+   // 结束
+   loadingVersion.value++
+}
+
+
+/**
+ * 打开一个项目
+ */
+export function openProject(path?: string) {
    if (project.loaded) return logger.info('项目已经加载')
    project.loading = true
    path = path ?? useConfig().PROJECT_PATH
-   await exec<ProjectVo>('project/open', { path }).then((res) => {
+   exec<ProjectVo>('project/open', { path }).then((res) => {
       const ipkg = res.data
       if (!res.status || !ipkg) {
          project.loaded = false
          return logger.warn('加载项目失败', ipkg ?? "项目文件损坏")
       }
 
-      // 打开项目核心逻辑
-      parseProjectVo(ipkg, project)
-      // 将初始数据传递给worker
-      work('project/init', ipkg)
-      globalEvent.emit('project-loaded')
+      updateProject(ipkg)
 
-      // 结束
-      loadingVersion.value++
       project.loaded = true
       project.loading = false
-      callback?.()
    })
 }
 
-export async function reloadProject(path: string) {
-   await exec<boolean>('project/check-path/' + path).then((res) => {
+export function reloadProject(path: string) {
+   exec<boolean>('project/check-path/' + path).then((res) => {
       if (res.data && res.status) {
          project.loaded = false
-         clearAll()
          openProject(path)
       } else {
          logger.warn('项目路径不正确', path)
@@ -72,43 +81,43 @@ export function openNewProject() {
  * 保存项目
  */
 export function saveProject() {
-
+   if (!project.main) return logger.warn('当前无项目')
+   exec('project/save', { data: project }).then(({ status, data }) => {
+      if (!status) return logger.warn('保存项目失败', data)
+      logger.info('保存项目成功')
+   })
 }
 
 /**
  * 新建一个空项目
  */
-export function createNewProject(path: string,) {
-   exec('project/new', { path }).then(({ status, data }) => {
-      if (!status) return logger.warn('新建项目失败', data)
-      console.log(data)
-
+export function createNewProject(path: string, name: string) {
+   exec<ProjectVo>('project/new', { path, name }).then(({ status, data }) => {
+      if (!status || !data) return logger.warn('新建项目失败', data)
+      updateProject(data)
    })
 }
 
 
 /**
  * 项目构建逻辑
- * ***********************************************************************************************
  */
 let building = false
 /**
  * 构建项目
  */
-export async function build() {
+export function build() {
    if (building) return
    const buildList: string[] = []
-
    // TODO: 从UI读取BuildList，此处暂时为全部构建
    forIn(all.value.objects, (key, val) => { buildList.push(key) })
-
-   const res = await work<boolean>('project/build', buildList)
-   if (res.status) {
-      logger.info('构建成功')
-   } else {
-      logger.warn('构建失败', res.data)
-      console.debug(res.data)
-   }
+   work<boolean>('project/build', buildList).then(({ status, data }) => {
+      if (status) {
+         logger.info('构建成功')
+      } else {
+         logger.warn('构建失败', data)
+      }
+   })
 }
 
 /**

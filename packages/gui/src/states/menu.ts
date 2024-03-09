@@ -1,6 +1,6 @@
 import { exec, send } from '@/boot/apis';
 // 菜单栏
-import { openNewProject } from '@/stores/projectStore';
+import { openNewProject, saveProject } from '@/stores/projectStore';
 
 import { addPanel, PanelParam, PanelType } from './panelList';
 
@@ -43,7 +43,8 @@ export const menuList: ListItem[] = [
          },
          {
             id: 2,
-            label: '保存项目'
+            label: '保存项目',
+            exec: saveProject
          },
          {
             id: 3,

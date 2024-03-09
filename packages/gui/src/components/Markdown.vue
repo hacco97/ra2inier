@@ -1,11 +1,10 @@
 <script lang='ts' setup>
-import { onBeforeUnmount, reactive, ref, shallowReactive, watch } from 'vue';
+import { onBeforeUnmount, ref, shallowReactive, watch } from 'vue';
 
 import markDownIt from 'markdown-it';
 
 import addImgSvg from '@/asset/icons/addImage.svg?raw';
 import closeSvg from '@/asset/icons/close.svg?raw';
-import openSvg from '@/asset/icons/openDir.svg?raw';
 import { copy, forIn, MarkdownRo } from '@ra2inier/core';
 import { FlexArea, LazyButton } from '@ra2inier/wc';
 
@@ -19,7 +18,6 @@ const maskdownit = new markDownIt({
    breaks: true,
    linkify: true
 })
-const data = shallowReactive(props.markdown)
 
 // 渲染逻辑
 const imgLinkLike = /(?<=!\[.*\]\()((?!http).+)(?=\))/g
@@ -35,7 +33,7 @@ function parseMd(markdoen: MarkdownRo) {
    const hot = markdoen.raw.replaceAll(imgLinkLike, substr)
    return maskdownit.render(hot)
 }
-
+const data = shallowReactive(props.markdown)
 watch(() => props.markdown, () => {
    copy(data, props.markdown)
    forIn(data.images, (key, buf) => {
@@ -44,8 +42,8 @@ watch(() => props.markdown, () => {
    data.md = parseMd(data)
 }, { immediate: true })
 
-function value() { return data }
-defineExpose({ value })
+
+defineExpose({ get value() { return data } })
 
 // 在组件销毁时释放图片资源
 onBeforeUnmount(() => {
@@ -85,7 +83,6 @@ function onDeleteClick(name: string) {
 function onImageClick(name: string) {
    navigator.clipboard.writeText(name)
 }
-
 
 // 渲染的缓存机制
 let prev: string

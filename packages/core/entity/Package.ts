@@ -48,3 +48,31 @@ export class Package extends UniqueObject {
    link: string = ''
    path: string = ''
 }
+
+
+export class Reference {
+   /**
+    * 依赖的包名
+    */
+   name = ''
+   /**
+    * 依赖包的键值
+    */
+   key = ''
+   /**
+    * 依赖的github仓库
+    */
+   url = ''
+   /**
+    * 依赖的本地路径
+    */
+   path = ''
+
+
+   constructor(pkg: Package) {
+      this.name = pkg.name
+      this.key = pkg.key
+      this.url = pkg.link
+      this.path = pkg.path
+   }
+}

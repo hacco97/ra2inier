@@ -1,9 +1,9 @@
-import { computed, ref } from 'vue';
+import { computed, ComputedGetter, ref } from 'vue';
 
 import { exec, globalEvent, work } from '@/boot/apis';
 import {
   forIn, IniObjectRo, MapperRo, PackageRo, parseProjectVo,
-  ProjectRo, ProjectVo, ScopeRo, WordRo,
+  ProjectInfo, ProjectVo, ScopeRo, WordRo,
 } from '@ra2inier/core';
 
 import { useConfig } from '../config';
@@ -12,7 +12,7 @@ import { clearAll, project, ValueSetKey, ValueSetType } from './boot';
 
 export * from './metaStore'
 export * from './iniObjectStore'
-export * from './infoStore'
+
 
 // 项目数据仓库
 const logger = useLog('project-store')
@@ -100,7 +100,7 @@ export async function build() {
    const buildList: string[] = []
 
    // TODO: 从UI读取BuildList，此处暂时为全部构建
-   forIn(useAll().value.objects, (key, val) => { buildList.push(key) })
+   forIn(all.value.objects, (key, val) => { buildList.push(key) })
 
    const res = await work<boolean>('project/build', buildList)
    if (res.status) {
@@ -111,42 +111,43 @@ export async function build() {
    }
 }
 
+/**
+ * 自定义computed，让computed的值依赖于loadingVersion
+ */
+export function loaderComputed<T>(f: ComputedGetter<T>) {
+   return computed((o?: T) => {
+      if (project.loadable) openProject()
+      loadingVersion.value
+      return f(o)
+   })
+}
 
 /**
  * 使用vue包装数据使得数据具有响应性
  */
-export const projectName = computed(() => {
-   loadingVersion.value
+export const projectName = loaderComputed(() => {
    return project.main ? project.main.name : ''
 })
 
-export const mainPackage = computed(() => {
-   loadingVersion.value
+export const mainPackage = loaderComputed(() => {
    return project.main ? project.main : new PackageRo
 })
 
-export const projectInfo = computed(() => {
-
+export const packages = loaderComputed(() => {
+   return project.packages
 })
 
-/**
- * 返回当前项目的资源集合
- */
-export function useProject() {
-   if (project.loadable) openProject()
-   return _project
-}
-const _project = computed(() => {
-   loadingVersion.value
-   return <Readonly<ProjectRo>>project
+export const projectInfo = loaderComputed(() => {
+   return new ProjectInfo(project)
 })
+
 
 /**
  * 通过包的键值获得包名
  */
-export const packageNames = computed(() => {
+export const packageNames = loaderComputed(() => {
    const map: Record<string, string> = {}
-   forIn(_project.value.packages, (key, pkg) => {
+   forIn(project.packages, (key, pkg) => {
       map[key] = pkg.name
    })
    return map
@@ -156,12 +157,7 @@ export const packageNames = computed(() => {
 /**
  * 返回全部项目资源的可读集合
  */
-export function useAll() {
-   if (project.loadable) openProject()
-   return _allResource
-}
-const _allResource = computed(() => {
-   loadingVersion.value
+export const all = loaderComputed(() => {
    return {
       objects: mergeKey<IniObjectRo>(project.packages, 'objects'),
       scopes: mergeKey<ScopeRo>(project.packages, 'scopes'),
@@ -181,13 +177,12 @@ function mergeKey<T>(packages: Record<string, PackageRo>, readKey: string) {
 }
 
 
-
 /**
  * 查找项目中的对象
  */
 export function queryObject<T extends ValueSetKey>(type: T,
    filter: (v: ValueSetType[T]) => number, limit = 20) {
-   const targetSet = getSets(type)
+   const targetSet = all.value[type]
    const ret: [number, any][] = []
    forIn(<Record<string, any>>targetSet, (key, val) => {
       const priority = filter(val)
@@ -198,17 +193,3 @@ export function queryObject<T extends ValueSetKey>(type: T,
    for (let i = 0; i < limit && i < ret.length; ++i) { temp.push(ret[i][1]) }
    return <ValueSetType[T][]>(temp.reverse())
 }
-
-function getSets(type: ValueSetKey) {
-   let targetSet, sets = _allResource.value
-   if (type === 'mappers') targetSet = sets.mappers
-   else if (type === 'scopes') targetSet = sets.scopes
-   else if (type === 'dictionary') targetSet = sets.scopes
-   else targetSet = sets.objects
-   return targetSet
-}
-
-
-/**
- *
- */

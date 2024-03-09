@@ -7,7 +7,7 @@ import toggleSvg from '@/asset/icons/toggle.svg?raw';
 import toggle2Svg from '@/asset/icons/toggle2.svg?raw';
 import { on, send } from '@/boot/apis';
 import { invokeMenuOption, menuList as list } from '@/states/menu';
-import { projectName, useProject } from '@/stores/projectStore';
+import { projectName } from '@/stores/projectStore';
 
 import CheckBox from './menuItem/CheckBox.vue';
 import FileBox from './menuItem/FileBox.vue';
@@ -27,7 +27,6 @@ const vScrollx = {
 // 菜单逻辑
 const show = ref(0)
 const focused = ref(false)
-const project = useProject()
 
 const pName = computed(() => {
    return projectName.value || 'ra2 inier'

@@ -3,10 +3,10 @@ import { shallowReactive } from 'vue';
 
 import { useCtxMenu } from '@/states/ctxMenu';
 import { addPanel, PanelParam, PanelType } from '@/states/panelList';
-import { addScope, saveScope } from '@/stores/projectStore';
+import { addScope, packageNames, saveScope } from '@/stores/projectStore';
 import { cloneTyped, ScopeRo } from '@ra2inier/core';
 
-import { isReadonly, queryPkgNameByKey } from './metaState';
+import { isReadonly } from './metaState';
 
 const props = defineProps<{ scopes: Record<string, ScopeRo> }>()
 const scopeView: Record<string, ScopeRo> = shallowReactive(props.scopes)
@@ -49,7 +49,7 @@ const vCtxmenu = useCtxMenu({
       <h2>Scope::对象类型</h2>
       <ul>
          <li class="list-item" v-for="(scope, key) of scopeView" :key="key" @dblclick="onOpenClick(scope)">
-            <span>{{ queryPkgNameByKey(scope.package) }}</span><span>/</span><span>{{ scope.name }}</span>
+            <span>{{ packageNames[scope.package] }}</span><span>/</span><span>{{ scope.name }}</span>
          </li>
       </ul>
    </div>

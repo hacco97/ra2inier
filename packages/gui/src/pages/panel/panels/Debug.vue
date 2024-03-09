@@ -1,9 +1,14 @@
 <script lang='ts' setup>
 import ListView from '@/components/ListView.vue';
-const props = defineProps<{}>()
+import { PanelParam } from '@/states/panelList';
+
+const props = defineProps<{ param: PanelParam }>()
 
 const list = ['123', '23', '132', '123']
 
+
+
+ 
 </script>
 
 
@@ -11,6 +16,8 @@ const list = ['123', '23', '132', '123']
    <div>
       <ListView :list />
    </div>
+
+
 </template>
 
 <style module scoped lang='scss'></style>

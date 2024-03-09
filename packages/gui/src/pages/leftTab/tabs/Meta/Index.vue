@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import { projectName, useAll } from '@/stores/projectStore';
+import { all, projectName } from '@/stores/projectStore';
 
 import Layout from '../Layout.vue';
 import DictView from './DictView.vue';
@@ -9,7 +9,7 @@ import ScopeView from './ScopeView.vue';
 defineOptions({ name: "Meta" })
 
 const pName = projectName
-const all = useAll()
+
 
 </script>
 

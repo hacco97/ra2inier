@@ -160,7 +160,7 @@ const selected = ref(false)
          <number-input tabindex="-1" v-focus="1" v-model.lazy="rgb.red" @change="onRgbChange" min="0" max="255" />
          <number-input tabindex="-1" v-focus="2" v-model.lazy="rgb.green" @change="onRgbChange" min="0" max="255" />
          <number-input tabindex="-1" v-focus="3" v-model.lazy="rgb.blue" @change="onRgbChange" min="0" max="255" />
-         <p tabindex="-1" v-focus="4" class="normal-label" v-svgicon="submitSvg" @click="onSubmit"
+         <p tabindex="-1" v-focus="4" class="normal-label" v-svgicon="submitSvg" @click="onSubmit" padding="0"
             @keydown.enter="onSubmit" :selected="selected" @focus="selected = true" @blur="selected = false"></p>
       </ul>
    </div>

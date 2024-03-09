@@ -1,24 +1,11 @@
 <script lang='ts' setup>
 import { computed, ref } from 'vue';
 
-import { loadingVersion, mainPackage, useProject } from '@/stores/projectStore';
+import { loadingVersion, mainPackage, packages } from '@/stores/projectStore';
 
 import LeftTabLayout from '../Layout.vue';
 import { usePanelHeight } from './panelHeight';
 import PkgView from './PkgView.vue';
-
-defineOptions({ name: 'ProjRes' })
-
-const project = useProject()
-const packages = computed(() => {
-   const list = [], mainKey = mainPackage.value.key
-   const packages = project.value.packages
-   for (const pkgKey in packages) {
-      if (pkgKey === mainKey) continue
-      list.push(packages[pkgKey])
-   }
-   return list
-})
 
 const {
    onReferClick,
@@ -56,8 +43,8 @@ const {
                </section>
                </p>
             </ul>
-            <i @mouseup="isDragerPanelShowed = false" @mouseout="isDragerPanelShowed = false" v-show="isDragerPanelShowed"
-               @mousemove="onDragerMousemove"></i>
+            <i @mouseup="isDragerPanelShowed = false" @mouseout="isDragerPanelShowed = false"
+               v-show="isDragerPanelShowed" @mousemove="onDragerMousemove"></i>
          </div>
       </template>
    </LeftTabLayout>

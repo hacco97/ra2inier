@@ -6,20 +6,13 @@ import reloadSvg from '@/asset/icons/reload.svg?raw';
 import rightSvg from '@/asset/icons/right.svg?raw';
 import ListView from '@/components/ListView.vue';
 import MapBox from '@/components/MapBox.vue';
-import { loadingVersion, ProjectInfo, useProject } from '@/stores/projectStore';
+import { projectInfo as info } from '@/stores/projectStore';
 import { useGlobalPackages } from '@/stores/staticStore';
-import { PopupBox } from '@ra2inier/wc';
+import { ProjectInfo } from '@ra2inier/core';
 
 defineOptions({ name: 'ProjectInfo' })
-const project = useProject()
 
-
-const info = ref(new ProjectInfo(project.value))
 const globalPackages = useGlobalPackages()
-
-watch(loadingVersion, () => {
-   info.value = new ProjectInfo(project.value)
-})
 
 const list = computed(() => info.value.references.map(x => x.name))
 const popups = computed(() => info.value.references.map(x => {

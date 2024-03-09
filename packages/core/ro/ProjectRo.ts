@@ -1,3 +1,4 @@
+import { Reference } from '../';
 import { Project } from '../entity/Project';
 import { PackageRo } from './PackageRo';
 
@@ -18,4 +19,22 @@ export class ProjectRo extends Project {
    packages: Record<string, PackageRo> = {}
 
    get references() { return this.main ? this.main.references : [] }
+}
+
+export class ProjectInfo {
+   name = ''
+   author = ''
+   target = ''
+   references: Reference[] = []
+
+   constructor(project?: ProjectRo) {
+      if (!project) return
+      const main = project.main!
+      this.name = project.name
+      this.author = main.author
+      this.target = main.target
+      this.references = main.references.map((key) => {
+         return new Reference(project.packages[key])
+      })
+   }
 }

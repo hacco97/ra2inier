@@ -1,5 +1,5 @@
+import { ToDto } from '../dto';
 import { Word } from '../entity/Word';
-import { ToDto } from './index';
 import { MarkdownRo } from './MarkdownRo';
 
 export class WordRo extends Word implements ToDto {

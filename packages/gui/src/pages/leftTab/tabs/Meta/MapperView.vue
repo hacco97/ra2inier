@@ -3,10 +3,10 @@ import { shallowReactive } from 'vue';
 
 import { useCtxMenu } from '@/states/ctxMenu';
 import { addPanel, PanelParam, PanelType } from '@/states/panelList';
-import { addMapper, saveMapper } from '@/stores/projectStore';
+import { addMapper, packageNames, saveMapper } from '@/stores/projectStore';
 import { cloneTyped, MapperRo } from '@ra2inier/core';
 
-import { isReadonly, queryPkgNameByKey } from './metaState';
+import { isReadonly } from './metaState';
 
 defineOptions({ name: 'MapperView' })
 
@@ -52,7 +52,7 @@ const vCtxmenu = useCtxMenu({
       <h2>Mapper::文件类型</h2>
       <ul>
          <li class="list-item" v-for="(mapper, key) in mapperView" @dblclick="onOpenMapper(mapper)" :key="key">
-            <span>{{ queryPkgNameByKey(mapper.package) }}</span><span>/</span><span>{{ mapper.name }}</span>
+            <span>{{ packageNames[mapper.package] }}</span><span>/</span><span>{{ mapper.name }}</span>
          </li>
       </ul>
    </div>

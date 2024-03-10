@@ -27,6 +27,10 @@ export class PackageDao {
    @inject('mapper-dao') declare mapperDao: MapperDao
    @inject('object-dao') declare objectDao: ObjectDao
 
+   /**
+    * 读取一个项目文件夹的Info文件，返回一个package的基础信息
+    * 如果是一相对链接，则读取相对链接处的包
+    */
    readPackageInfoByPath(pkgPath: string) {
       const info = readJson(join(pkgPath, this.config.PACKAGE_INFO_FILE))
       if (isEmptyObject(info)) return undefined
@@ -44,6 +48,24 @@ export class PackageDao {
       return pkg
    }
 
+   /**
+    * 读取一个package文件夹下的全部引用
+    */
+   resolveReferences(pkgPath: string) {
+      // 读取packages目录
+      const referPath = escapePath(pkgPath, this.config.REFERENCE_DIR)
+      // 读取引用的包
+      const references: Record<string, Package> = {}
+      forDir(referPath, (path) => {
+         const pkg = this.readPackageInfoByPath(path)
+         pkg && (references[pkg.key] = pkg)
+      }, false)
+      return references
+   }
+
+   /**
+    * 直接读取一个项目文件夹，将其变为PackageVo对象，不涉及引用的读取
+    */
    readPackageByPath(pkgPath: string) {
       const pkg = this.readPackageInfoByPath(pkgPath)
       if (!pkg) return undefined

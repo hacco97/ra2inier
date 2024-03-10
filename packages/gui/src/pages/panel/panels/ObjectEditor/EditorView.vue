@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, shallowReactive } from 'vue';
 
-import ListBox from '@/components/ListBox.vue';
-import MapBox from '@/components/MapBox.vue';
+import ListBox from '@/components/dirty/ListBox.vue';
+import MapBox from '@/components/dirty/MapBox.vue';
 import { useFocus } from '@/hooks/focus';
 import { FlexArea, FlexInput } from '@ra2inier/wc';
 

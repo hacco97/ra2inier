@@ -3,8 +3,8 @@ import { reactive, ref } from 'vue';
 
 import editSvg from '@/asset/icons/edit.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
-import ListBox from '@/components/ListBox.vue';
-import MapBox from '@/components/MapBox.vue';
+import ListBox from '@/components/dirty/ListBox.vue';
+import MapBox from '@/components/dirty/MapBox.vue';
 import { PanelParam } from '@/states/panelList';
 import { MapperRo } from '@ra2inier/core';
 import { FlexArea, FlexInput, LazyButton } from '@ra2inier/wc';

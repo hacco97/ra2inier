@@ -35,7 +35,7 @@ function parseMd(markdoen: MarkdownRo) {
 }
 const data = shallowReactive(props.markdown)
 watch(() => props.markdown, () => {
-   copy(data, props.markdown)
+   copy(props.markdown, data)
    forIn(data.images, (key, buf) => {
       data.urls[key] = URL.createObjectURL(new Blob([buf], { type: 'image' }))
    })

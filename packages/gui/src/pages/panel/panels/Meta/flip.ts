@@ -20,6 +20,8 @@ export function useFilp(param: PanelParam, data: any) {
    }
 
    function onChanged() {
+      console.log(123)
+
       param.changed = true
       changed.value = true
    }

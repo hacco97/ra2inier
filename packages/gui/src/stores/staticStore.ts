@@ -10,6 +10,7 @@ const logger = useLog('static-store')
 
 /**
  * 获得全局的library中的本地包
+ * @returns pkg { 包名：路径 }
  */
 export function useGlobalPackages() {
    exec<Record<string, string>>('static/packages', { index: true })

@@ -3,7 +3,7 @@ import { computed, ref, shallowReactive } from 'vue';
 
 import editSvg from '@/asset/icons/edit.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
-import ListBox from '@/components/ListBox.vue';
+import ListBox from '@/components/dirty/ListBox.vue';
 import Markdown from '@/components/Markdown.vue';
 import { ask, DialogType } from '@/states/dialog';
 import { PanelParam } from '@/states/panelList';

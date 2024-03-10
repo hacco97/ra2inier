@@ -2,14 +2,15 @@ import { forIn, Package } from '@ra2inier/core/boot';
 
 /**
  * 解析项目的依赖，构建项目的依赖树
- * @returns [深度图，依赖树]
+ * @returns obj { graph: 深度图, tree: 依赖树的头, residue: 在packages中未用到的包  }
+ *
  */
 export function resolveReferences(root: string, packages: Record<string, Package>) {
    const dp: Record<string, ReferTreeNode> = {}
    /**
     * 构建依赖树
     */
-   function dfs(key: string, depth: number) {
+   const dfs = (key: string, depth: number) => {
       if (!packages[key]) return
       if (key in dp) {
          const tar = dp[key]
@@ -33,14 +34,30 @@ export function resolveReferences(root: string, packages: Record<string, Package
    if (tree) reDfs(tree)
 
    /**
-    * 输入深度图
+    * 输出深度图
     */
    const depthGraph: Package[][] = []
    forIn(dp, (key, node) => {
       if (!depthGraph[node.depth]) depthGraph[node.depth] = []
       depthGraph[node.depth].push(node.package)
    })
-   return [depthGraph, tree]
+
+   /**
+    * 输出剩余的冗余包
+    */
+   const residue: Package[] = []
+   forIn(packages, (key, val) => {
+      if (!(key in dp)) residue.push(val)
+   })
+
+   /**
+    * 输出剩余
+    */
+   return {
+      graph: depthGraph,
+      tree,
+      residue
+   }
 }
 
 function reDfs(node: ReferTreeNode) {

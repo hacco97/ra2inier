@@ -43,10 +43,13 @@ export function openProject(path?: string) {
    path = path ?? useConfig().PROJECT_PATH
    exec<ProjectVo>('project/open', { path }).then((res) => {
       const ipkg = res.data
+      console.log(res)
+
       if (!res.status || !ipkg) {
          project.loaded = false
          return logger.warn('加载项目失败', ipkg ?? "项目文件损坏")
       }
+
 
       updateProject(ipkg)
 
@@ -56,7 +59,9 @@ export function openProject(path?: string) {
 }
 
 export function reloadProject(path: string) {
-   exec<boolean>('project/check-path/' + path).then((res) => {
+   console.log(path)
+
+   exec<boolean>('project/check-path', { data: path }).then((res) => {
       if (res.data && res.status) {
          project.loaded = false
          openProject(path)

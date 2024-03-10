@@ -29,7 +29,9 @@ export class ProjServ {
    get path() { return this.projectDao.path }
 
    @mapping('check-path')
-   checkPath(@pathVar path: string) {
+   checkPath(@param('data') path: string) {
+      console.log(path)
+
       return this.projectDao.checkPath(path)
    }
 
@@ -70,7 +72,7 @@ export class ProjServ {
       this.projectDao.connectToProject(path)
       const project = this.projectDao.readProjectInfo(path)
       this.appConfig.addProjectHistory(projectPath)
-      return this.#projectCacheMap[path] = this.projectDao.resolveInfoToVo(project)
+      return this.#projectCacheMap[path] = this.projectDao.resolveProjectVo(project)
    }
 
    @mapping('new')
@@ -95,6 +97,17 @@ export class ProjServ {
       // TODO: 更多的保存任务
 
       return true
+   }
+
+   @mapping('open-package')
+   openPackage(@param('data') paths: string[]) {
+      console.log(paths)
+      const packages: Record<string, PackageVo> = {}
+      for (const path of paths) {
+         const pkg = this.packageDao.readPackageByPath(path)
+         pkg && (packages[pkg.path] = pkg)
+      }
+      return packages
    }
 
    @mapping('output')

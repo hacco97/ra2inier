@@ -5,24 +5,40 @@ import closeSvg from '@/asset/icons/close.svg?raw';
 import { PopupBox } from '@ra2inier/wc';
 
 const props = defineProps({
-   list: { type: Array<string>, required: true },
-   popups: { type: Array<string>, required: false },
+   list: { type: Array<Partial<IItem> | string>, required: true },
    deleteButton: { type: Boolean, default: true },
-   checkBox: { type: Boolean, default: true }
+   checkBox: { type: Boolean, default: true },
+   selectable: { type: Boolean, default: true },
 })
 
+type EmitType = [item: Item, order: number]
 const emit = defineEmits<{
-   select: [id: number, value: string]
+   select: EmitType,
+   'item-click': EmitType,
+   delete: EmitType
 }>()
 
-class Item {
+export interface IItem {
+   value: string
+   selected: boolean
+   popup: string
+}
+
+class Item implements IItem {
    id = ''
    value = ''
    selected = false
+   popup = ''
 
-   constructor(x: string) {
-      this.value = x
-      this.id = "(list-view-item):" + Math.floor(Math.random() * Date.now())
+   constructor(x: Partial<IItem> | string) {
+      if (typeof x === 'string') {
+         this.value = x
+      } else {
+         this.value = x.value || ''
+         this.popup = x.popup || ''
+         this.selected = !!x.selected
+         this.id = "(list-view-item):" + Math.floor(Math.random() * Date.now())
+      }
    }
 }
 
@@ -35,14 +51,19 @@ defineExpose({
 })
 
 function onSelectChange(item: Item, order: number) {
-   if (item.selected) {
-      emit('select', order, item.value)
-   }
+   emit('select', item, order)
 }
 
-function onDeleteClick(order: number) {
-   data.value.splice(order, 1)
+function onItemClick(item: Item, order: number) {
+   emit('item-click', item, order)
+   console.log(item)
 }
+
+function onDeleteClick(item: Item, order: number) {
+   data.value.splice(order, 1)
+   emit('delete', item, order)
+}
+
 </script>
 
 
@@ -52,17 +73,18 @@ function onDeleteClick(order: number) {
          <slot></slot>
       </header>
       <section>
-         <li v-for="(item, order) in data" class="reactive-h">
+         <li v-for="(item, order) in data" class="reactive-h" @click="onItemClick(item, order)">
             <input v-if="checkBox" type="checkbox" class="normal-button" :id="item.id" v-model="item.selected"
-               :selected="item.selected" @change="onSelectChange(item, order)">
+               :disabled="!selectable" :selected="item.selected" @change="onSelectChange(item, order)">
             <label :for="item.id">
                <popup-box>
                   {{ item.value }}
-                  <pre slot="pop" class="popup" v-if="popups && popups[order]" v-text="popups[order]"></pre>
+                  <pre slot="pop" class="popup" v-if="item.popup" v-text="item.popup"></pre>
                </popup-box>
             </label>
             <i></i>
-            <s v-if="deleteButton" v-svgicon="closeSvg" class="normal-button" @click="onDeleteClick(order)"></s>
+            <s v-if="deleteButton" v-svgicon="closeSvg" class="normal-button"
+               @click.stop="onDeleteClick(item, order)"></s>
          </li>
       </section>
       <footer>

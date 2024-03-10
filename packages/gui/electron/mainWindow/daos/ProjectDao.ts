@@ -3,11 +3,11 @@ import fs from 'node:fs';
 import { component, inject } from '~/mainWindow/ioc.config';
 
 import {
-  enhance, fromRaw, isUniqueObject, Package, Project,
-  ProjectVo,
+  enhance, fromRaw, isEmptyObject, isUniqueObject, Package,
+  Project, ProjectVo,
 } from '@ra2inier/core';
 import {
-  escapePath, forDir, readJson, writeFile, writeJson,
+  escapePath, readJson, writeFile, writeJson,
 } from '@ra2inier/core/node';
 
 import { DaoConfig } from './DaoConfig';
@@ -20,12 +20,13 @@ export class ProjectDao {
    #path = ''
    // 主包的键值
    #main = ''
-   // 包key值：包的文件路径
-   #packages?: Record<string, Package>
+
+   // 缓存，包key值：包的文件路径
+   #packages: Record<string, Package> = {}
 
    get path() { return this.#path }
    get main() { return this.#main }
-   get mainPkg() { return this.#packages ? this.#packages[this.#main] : undefined }
+   get mainPkg() { return this.#packages[this.#main] }
    get isConnected() { return !!this.#path }
 
    @inject('dao-config') declare config: DaoConfig
@@ -37,7 +38,7 @@ export class ProjectDao {
       if (projectPath === this.#path) return true
       this.#path = projectPath
       this.#main = ''
-      this.#packages = undefined
+      this.#packages = {}
       return true
    }
 
@@ -63,39 +64,31 @@ export class ProjectDao {
       return project
    }
 
-   readPackagesList() {
-      if (this.#packages) return this.#packages
+   private readPackagesList() {
+      if (!isEmptyObject(this.#packages)) return this.#packages
       if (!this.isConnected) throw Error('需要先打开项目，才能获得packages')
       const projectPath = this.#path
       // 读取主包
       const mainPkg = this.packageDao.readPackageInfoByPath(projectPath)!
       this.#main = mainPkg.key
-      const references = this.resolveReferences(projectPath)
-      const set = new Set(mainPkg.references.map((ref) => ref.split('\n')[0]))
-      // forIn(references, (key) => {
-      //    if (set.has(key)) return
-      //    delete references[key]
-      // })
+      const references = this.packageDao.resolveReferences(projectPath)
       return this.#packages = {
          [mainPkg.key]: mainPkg,
          ...references
       }
    }
 
-   resolveReferences(pkgPath: string) {
-      // 读取packages目录
-      const referPath = escapePath(pkgPath, this.config.REFERENCE_DIR)
-      // 读取引用的包
-      const references: Record<string, Package> = {}
-      forDir(referPath, (path) => {
-         const pkg = this.packageDao.readPackageInfoByPath(path)
-         pkg && (references[pkg.key] = pkg)
-      }, false)
-      return references
+   /**
+    * 为一个包添加一个引用
+    */
+   addReference(referPath: string) {
+      const refer = this.packageDao.readPackageInfoByPath(referPath)
+      if (!refer) return undefined
+      this.#packages[refer.path] = refer
+
    }
 
-
-   resolveInfoToVo(project: Project): ProjectVo {
+   resolveProjectVo(project: Project): ProjectVo {
       const projectVo: ProjectVo = enhance(project, {
          cache: {},
          path: this.path,
@@ -127,7 +120,5 @@ export class ProjectDao {
       writeJson(infoPath, project)
    }
 
-   createInfo() {
 
-   }
 }

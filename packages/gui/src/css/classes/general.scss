@@ -188,6 +188,8 @@
    @include font-family(code);
    transition: rotate 0.3s ease;
    @extend .text-center;
+   overflow: hidden;
+   vertical-align: top;
 
    &[folded="false"] {
       rotate: 90deg;
@@ -197,4 +199,5 @@
 .popup {
    padding: align-size(small) align-size(normal);
    @include fore-panel(true);
+   text-wrap: nowrap;
 }

@@ -84,26 +84,26 @@ export function expire(target?: string | RegExp | Function) {
 /**
  * 使用一个函数作为数据源，返回一对取值函数，get时将会调用数据源函数，如果计算过该值则
  */
-export function useComputedKey<T>(
+export function useMemo<T>(
    sourceFunction: (key: string) => T,
-   keyParser?: (key: string) => string,
    expiresTime?: number) {
 
-   const map: Record<string, T> = {}
-   const timeout: Record<string, number> = {}
+   const map = new Map<any, T>()
+   const timeout = new Map<any, number>()
    expiresTime || (expiresTime = 15 * 60 * 1000)
-   keyParser || (keyParser = x => x)
 
    return {
       get(key: string) {
-         if (key in map && Date.now() - timeout[key] < expiresTime!)
-            return map[key]
-         timeout[key] = Date.now()
-         return map[key] = sourceFunction(keyParser!(key))
+         if (map.has(key) && (Date.now() - timeout.get(key)!) < expiresTime!)
+            return map.get(key)!
+         timeout.set(key, Date.now())
+         const newOne = sourceFunction(key)
+         map.set(key, newOne)
+         return newOne
       },
       expire(key: string) {
-         delete map[key]
-         delete timeout[key]
+         map.delete(key)
+         timeout.delete(key)
       }
    }
 }

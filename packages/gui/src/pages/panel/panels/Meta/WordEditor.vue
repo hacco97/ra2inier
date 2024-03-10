@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import { ref, shallowReactive } from 'vue';
+import { computed, ref, shallowReactive } from 'vue';
 
 import editSvg from '@/asset/icons/edit.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
@@ -21,11 +21,13 @@ const param = props.param
 const word: WordRo = shallowReactive(props.param.data)
 const { onChanged, vFlip, disabled } = useFilp(param, word)
 
-const isNoMarkdown = ref(!word.markdown)
-if (isNoMarkdown.value) {
+const isMarkdownShowed = computed(() => {
+   return !!word.markdown && word.markdown.key
+})
+
+if (!isMarkdownShowed.value) {
    useMarkdown(word.detail).then(res => {
       word.markdown = res
-      isNoMarkdown.value = false
    })
 }
 
@@ -100,7 +102,7 @@ async function onTemplateClick() {
             <li><flex-area v-model.lazy="word.hookScript" :disabled="disabled"></flex-area></li>
             <!-- 底部详情区域 -->
             <h2><span>详细介绍</span><em>：</em></h2>
-            <li v-if="(!isNoMarkdown) && word.markdown!.key">
+            <li v-if="isMarkdownShowed">
                <Markdown ref="md" :markdown="word.markdown!" :disabled="disabled"></Markdown>
             </li>
          </main>

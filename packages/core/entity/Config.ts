@@ -103,6 +103,10 @@ export class Config extends ClientConfig {
     * vue开发工具目录
     */
    declare VITE_VUE_DEVTOOLS: string
+   /**
+    * 程序最大选项卡数目
+    */
+   declare MAX_TAB_AMOUNT: number
 }
 
 export interface Rectangle {

@@ -4,6 +4,7 @@ import { drager, dragStart, DragType } from '@/states/drager';
 import {
   closeTab, curPanel, panelList, PanelTab, selectTab,
 } from '@/states/panelList';
+import { useConfig } from '@/stores/config';
 
 import PanelLayout from './Layout.vue';
 import API from './panels/API.vue';
@@ -77,6 +78,8 @@ function getMainSlotName(tab: PanelTab) {
    return 'main-' + id
 }
 
+const config = useConfig()
+
 </script>
 
 <template>
@@ -95,7 +98,7 @@ function getMainSlotName(tab: PanelTab) {
       </template>
 
       <template v-for="panel in curPanel" v-slot:[getMainSlotName(panel)] :key="panel.id">
-         <KeepAlive>
+         <KeepAlive :max="config.MAX_TAB_AMOUNT">
             <component :is="panel.param.type" :param="panel.param" :key="panel.id" />
          </KeepAlive>
       </template>

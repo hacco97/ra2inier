@@ -14,14 +14,15 @@ const props = defineProps<{ dictionary: Record<string, WordRo> }>()
 const dictView: Record<string, WordRo> = shallowReactive(props.dictionary)
 
 function onSave(word: WordRo) {
+   console.log(123)
+
    const newOne = cloneTyped(word, WordRo)
    saveWord(newOne)
    dictView[newOne.key] = newOne
 }
 
 function openWordPanel(word: WordRo) {
-   const newWord = new WordRo
-   copy(word, newWord)
+   const newWord = cloneTyped(word, WordRo)
    const p = new PanelParam({
       label: word.name,
       type: PanelType.WordEditor,

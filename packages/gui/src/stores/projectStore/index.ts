@@ -8,7 +8,9 @@ import {
 
 import { useConfig } from '../config';
 import useLog from '../messageStore';
+import { saveObject } from './';
 import { clearAll, project, ValueSetKey, ValueSetType } from './boot';
+import { saveMapper, saveScope, saveWord } from './metaStore';
 
 export * from './metaStore'
 export * from './iniObjectStore'
@@ -96,6 +98,20 @@ export function createNewProject(path: string, name: string) {
       if (!status || !data) return logger.warn('新建项目失败', data)
       updateProject(data)
    })
+}
+
+
+/**
+ * 保存一个值，制定类型保存值
+ */
+export function saveValue<T extends ValueSetKey>(type: T, value: ValueSetType[T]) {
+   SAVE_MAP[type](value)
+}
+const SAVE_MAP: Record<ValueSetKey, Function> = {
+   mappers: saveMapper,
+   objects: saveObject,
+   dictionary: saveWord,
+   scopes: saveScope
 }
 
 

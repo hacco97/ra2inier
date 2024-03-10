@@ -18,10 +18,11 @@ function onSave(scope: ScopeRo) {
 }
 
 function openScopePanel(scope: ScopeRo) {
+   const newOne = cloneTyped(scope, ScopeRo)
    const p = new PanelParam({
       label: scope.name,
       type: PanelType.ScopeEditor,
-      data: scope,
+      data: newOne,
       readonly: isReadonly(scope)
    })
    if (!isReadonly(scope)) p.on('save', onSave)

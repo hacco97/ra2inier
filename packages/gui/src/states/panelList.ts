@@ -1,8 +1,10 @@
 import { shallowReactive } from 'vue';
 
 import { globalEvent } from '@/boot/apis';
-import { IS_DEV } from '@/stores/config';
-import { EventEmitter } from '@ra2inier/core';
+import { IS_DEV, useConfig } from '@/stores/config';
+import { EventEmitter, useMemo } from '@ra2inier/core';
+
+import { logger } from './log';
 
 /**
  * 内容主体页面的选项卡类型,每一个新的页面均需要注册到此
@@ -151,7 +153,18 @@ export function colseAllTabs(pos: 'left' | 'right') {
 }
 
 
-let nextID = 999
+const { get: getRandom } =
+   useMemo(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER), 999_999_999)
+function createId(param: PanelParam) {
+   const str = param.type
+   const str2 = param.data
+      ? (param.data.key ? param.data.key : 'k')
+      : param.label
+
+   return getRandom(str + str2)
+}
+
+
 /**
  * 添加一个新的页面，需要传入页面所需的必要参数
  */
@@ -169,8 +182,12 @@ export function addPanel(param: PanelParam) {
       selectTab(target)
       return false
    }
+   if (panelList.length > (useConfig().MAX_TAB_AMOUNT || 30)) {
+      logger.warn('打开的页面太多')
+      return false
+   }
    panelList.push({
-      id: nextID++,
+      id: createId(param),
       order: panelList.length,
       param: shallowReactive(param),
       position: true
@@ -178,4 +195,3 @@ export function addPanel(param: PanelParam) {
    selectTab(panelList[panelList.length - 1])
    return true
 }
-

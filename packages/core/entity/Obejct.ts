@@ -6,8 +6,8 @@ function seed(seed: number) { return SEED[seed % len] }
 const HASH = Symbol()
 
 export interface IUniqueObject {
-   id: number
-   seed: number
+   readonly id: number
+   readonly seed: number
    name: string
    version: number
    [HASH]?: number
@@ -16,13 +16,13 @@ export interface IUniqueObject {
 export class UniqueObject implements IUniqueObject {
    [key: string | symbol]: any
    /**
-    * id值，对象根据id值判断其创建的时间戳
+    * id值，对象可以根据id值判断其创建的时间戳
     */
-   id: number
+   readonly id: number
    /**
-    * 种子值，部分对象可能创建的时间时间戳，使用seed加以区分
+    * 种子值，部分对象可能具有相同的创建时间戳，使用seed加以区分
     */
-   seed: number
+   readonly seed: number
    /**
     * 对象的版本值，对象在修改的时候的时间戳
     */
@@ -46,6 +46,9 @@ export class UniqueObject implements IUniqueObject {
       return `${this.id}!${this.seed}`
    }
 
+   /**
+    * 对象的唯一身份标识，简化版
+    */
    get hash() {
       if (this[HASH]) return this[HASH]
       const id = seed(this.id) * seed(this.seed)
@@ -95,17 +98,6 @@ export interface Entry {
    wordKey?: string
 }
 
-export interface IIniObject extends IUniqueObject {
-   group: string
-   scope: string
-   entry: Entry[]
-   inline: string[]
-   copy: string[]
-   detail: string
-   envVariable: Record<string, string>
-}
-
-export interface IniObject extends IIniObject { }
 export class IniObject extends UniqueObject {
    /**
     * 两级分组

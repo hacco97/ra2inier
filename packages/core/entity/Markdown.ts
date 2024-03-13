@@ -1,7 +1,5 @@
 import { IUniqueObject, UniqueObject } from "./Obejct";
 
-
-export interface Markdown extends IUniqueObject { }
 export class Markdown extends UniqueObject {
 
    raw: string = ''

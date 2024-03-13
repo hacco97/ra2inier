@@ -1,7 +1,7 @@
-import { IProject } from '../entity/Project';
+import { Project } from '../entity/Project';
 import { PackageVo } from './PackageVo';
 
-export interface ProjectVo extends IProject {
+export interface ProjectVo extends Project {
    /**
     * 主包的名字
     */
@@ -15,3 +15,10 @@ export interface ProjectVo extends IProject {
    path: string
 }
 
+export const EMPTY_PROJECTVO = {
+   cache: {},
+   path: '',
+   workspace: '',
+   main: '',
+   packages: {},
+}

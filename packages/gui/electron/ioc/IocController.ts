@@ -4,7 +4,6 @@ import { addQuitCallback } from "~/boot/final"
 import { useLogger } from "~/boot/logger"
 import { Constructor, ControllerCtx, Info, Key, Task } from "./ControllerCtx"
 import { tryExec } from "@ra2inier/core"
-import { k } from "vite/dist/node/types.d-jgA8ss1A"
 
 export const PATH_VARIABLE = '_pathVariable'
 

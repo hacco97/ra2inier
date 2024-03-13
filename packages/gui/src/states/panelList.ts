@@ -154,7 +154,7 @@ export function colseAllTabs(pos: 'left' | 'right') {
 
 
 const { get: getRandom } =
-   useMemo(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER), 999_999_999)
+   useMemo((a) => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER), undefined, 999_999_999)
 function createId(param: PanelParam) {
    const str = param.type
    const str2 = param.data

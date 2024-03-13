@@ -27,12 +27,12 @@ export class ProjServ {
    @inject('package-dao') declare packageDao: PackageDao
    @inject('app-config') declare appConfig: Config
 
-   get path() { return this.projectDao.path }
+   // 项目的文件路径
+   #path = ''
+   get path() { return this.#path }
 
    @mapping('check-path')
    checkPath(@param('data') path: string) {
-      console.log(path)
-
       return this.projectDao.checkPath(path)
    }
 
@@ -41,6 +41,7 @@ export class ProjServ {
     * ProjectPath : Project
     */
    #projectCacheMap: Record<string, ProjectVo> = {}
+
    /**
     * 返回当前项目的主包
     */
@@ -50,9 +51,9 @@ export class ProjServ {
    }
 
    /**
-    * 每隔5分钟清理一次项目缓存
+    * 每隔3分钟清理一次项目缓存
     */
-   @task(300)
+   @task(60 * 3)
    @mapping('clear-cache')
    clearCache() {
       for (const path in this.#projectCacheMap) {
@@ -66,14 +67,13 @@ export class ProjServ {
     */
    @mapping('open')
    openProject(@param('path') projectPath: string) {
-      const path = projectPath || this.appConfig.PROJECT_PATH
+      const path = this.#path = projectPath || this.appConfig.PROJECT_PATH
       if (path in this.#projectCacheMap) return this.#projectCacheMap[path]
       if (!this.projectDao.checkPath(path)) throw Error('该项目路径可能是错误的：' + path)
       this.appConfig.setByKey('PROJECT_PATH', path)
-      this.projectDao.connectToProject(path)
       const project = this.projectDao.readProjectInfo(path)
       this.appConfig.addProjectHistory(projectPath)
-      return this.#projectCacheMap[path] = this.projectDao.resolveProjectVo(project)
+      return this.#projectCacheMap[path] = this.projectDao.resolveProjectVo(project, path)
    }
 
    @mapping('new')
@@ -86,14 +86,14 @@ export class ProjServ {
       }
       this.appConfig.addProjectHistory(newProjectPath)
       const project = new Project(name)
-      this.projectDao.writeProjectInfo(project, newProjectPath)
+      this.projectDao.writeProjectInfoByPath(project, newProjectPath)
       this.packageDao.writePackageInfoByPath(new Package(name), newProjectPath)
       return this.openProject(newProjectPath)
    }
 
    @mapping('save')
    saveProject(@param('data') project: ProjectDto) {
-      this.projectDao.writeProjectInfo(fromRaw(project, Project))
+      this.projectDao.writeProjectInfoByPath(fromRaw(project, Project), this.path)
       this.packageDao.writePackageInfoByPath(fromRaw(project.main, Package), this.path)
       // TODO: 更多的保存任务
 
@@ -101,7 +101,7 @@ export class ProjServ {
    }
 
    @mapping('save-pkginfo')
-   saveProjectInfo(pkgInfo: Package,) {
+   saveProjectInfo(@param('data') pkgInfo: Package) {
 
    }
 
@@ -114,14 +114,30 @@ export class ProjServ {
    }
 
    @mapping('load-package')
-   openPackage(@param('references') refers: Reference[]) {
-      const packages: Record<string, PackageVo> = {}
-      for (const refer of refers) {
-         const path = refer.path
-         const pkg = this.packageDao.readPackageByPath(path)
-         pkg && (packages[pkg.path] = pkg)
+   loadPackages(@pathVar pos: "local" | "remote", @param('references') refers: Reference[]) {
+      if (pos === 'remote') {
+
+      } else {
+         const packages: Record<string, PackageVo> = {}
+         const total: Record<string, string> = {}
+         for (const refer of refers) {
+            const path = refer.path
+            const pkg = this.packageDao.readPackageByPath(path)
+            if (!pkg) continue
+            packages[pkg.path] = pkg
+
+         }
+         return packages
       }
-      return packages
+   }
+
+   loadPackage(refer: Reference) {
+      // 尝试从本地读取
+      const path = escapePath(refer.path)
+      const pkg = this.packageDao.readPackageByPath(path)
+      if (!pkg) return undefined
+      const refers = pkg.references
+
    }
 
    @mapping('output')
@@ -144,12 +160,8 @@ export class ProjServ {
    }
 
    updateObject(key: string, object: IniObject) {
-      if (!this.main) {
-         if (this.projectDao.isConnected)
-            this.openProject(this.appConfig.PROJECT_PATH)
-         else throw Error('请打开一个项目')
-      }
-      const objects = this.main!.objects
+      if (!this.main) throw Error('请打开一个项目')
+      const objects = this.main.objects
       delete objects[key]
       this.packageDao.deleteObjectByPath(this.path, key)
       objects[object.key] = object

@@ -84,26 +84,36 @@ export function expire(target?: string | RegExp | Function) {
 /**
  * 使用一个函数作为数据源，返回一对取值函数，get时将会调用数据源函数，如果计算过该值则返回缓存
  */
-export function useMemo<T>(
-   sourceFunction: (key: string) => T,
-   expiresTime?: number) {
+export function useMemo<T, A extends any[]>(
+   sourceFunction: (...args: A) => T,
+   getKey?: (...args: A) => string,
+   expiresTime?: number,
+) {
 
-   const map = new Map<any, T>()
+   const map = new Map<string, T>()
    const timeout = new Map<any, number>()
-   expiresTime || (expiresTime = 15 * 60 * 1000)
+   expiresTime || (expiresTime = 1000 * 60 * 15)
+   const _getKey = getKey || ((...x: A) => <string>x[0])
 
    return {
-      get(key: string) {
+      get(...args: A) {
+         const key = _getKey(...args)
          if (map.has(key) && (Date.now() - timeout.get(key)!) < expiresTime!)
             return map.get(key)!
          timeout.set(key, Date.now())
-         const newOne = sourceFunction(key)
+         const newOne = sourceFunction(...args)
          map.set(key, newOne)
          return newOne
       },
-      expire(key: string) {
-         map.delete(key)
-         timeout.delete(key)
+      expire(key: string | RegExp) {
+         if (typeof key === 'string') {
+            map.delete(key)
+            timeout.delete(key)
+         } else {
+            for (const _key of map.keys()) {
+               if (_key.match(key)) map.delete(_key)
+            }
+         }
       }
    }
 }

@@ -39,8 +39,6 @@ export class ProjectInfo {
       this.name = project.name
       this.author = main.author
       this.target = main.target
-      this.references = main.references.map((key) => {
-         return new Reference(project.packages[key])
-      })
+      this.references = main.references
    }
 }

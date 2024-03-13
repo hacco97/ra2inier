@@ -16,11 +16,11 @@ import { EditorState } from './eidtorState';
 
 defineOptions({ name: 'ObjectEditor' })
 const props = defineProps<{ param: PanelParam }>()
-const param = props.param
+const param: PanelParam = props.param
 const state = shallowReactive(
    new EditorState(param.data)
 )
-const data = state.data
+const data = param.result = state.data
 
 function onNameChange() {
    param.label = data.name
@@ -28,7 +28,7 @@ function onNameChange() {
 
 function submit() {
    const value = state.value()
-   param.data = value
+   param.result = value
 }
 param.on('before-closed', submit)
 
@@ -40,11 +40,6 @@ function onSaveClick() {
 
 function ondeleteClick() {
    state.removeSelected()
-}
-
-// 注释添加逻辑
-function onCommentInsert() {
-   state.emit('comment-insert-require')
 }
 
 const pName = projectName
@@ -86,8 +81,6 @@ function onCheckClick() {
                      <lazy-button @click="onCheckClick">
                         <s title="检查(Ctrl + A)" v-svgicon="checkSvg" class="fore-button"></s>
                      </lazy-button>
-                     <s @click="onCommentInsert" title="注释(Ctrl + /)" padding="20%" v-svgicon="commentSvg"
-                        class="fore-button"></s>
                      <s title="分栏" padding="15%" v-svgicon="columnSvg" class="fore-button" :column="state.columnCount"
                         :class="$style.column" @click="onColumnClick"></s>
                      <em></em>

@@ -194,7 +194,7 @@ export function addReference(toAdd: Reference[]) {
 /**
  * 从磁盘加载包，如果本地没有则会根据所提供的url在远程下载
  */
-export function loadPackage(references: Reference[]) {
+export function loadLocalPackage(references: Reference[]) {
    exec('project/load-package', { references }).then(({ status, data }) => {
       if (!status) return void logger.warn('加载包出错', data)
       console.log(data)
@@ -210,7 +210,7 @@ export function setReference(list: Reference[]) {
    const [toKeep, toAdd, toDel] =
       diffArray(list, projectInfo.value.references, (a, b) => a.key === b.key)
    // addReference(toAdd)
-   loadPackage(toAdd)
+   loadLocalPackage(toAdd)
 }
 
 /**

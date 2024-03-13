@@ -1,5 +1,5 @@
 import {
-  BrowserWindow, ipcMain, MessageChannelMain, MessagePortMain,
+   BrowserWindow, ipcMain, MessageChannelMain, MessagePortMain,
 } from 'electron';
 import config from '~/boot/config';
 import { useLogger } from '~/boot/logger';
@@ -8,6 +8,7 @@ import { servReject, servSolve } from '@ra2inier/core';
 
 import { getWindowByName } from '../windows';
 import { createIocController, PATH_VARIABLE } from './IocController';
+import { createFrontEmitter, FrontLogger } from './frontEnd';
 
 type IocContainerInfo = ReturnType<typeof createIocController>
 
@@ -44,6 +45,8 @@ function attachController(window: BrowserWindow, iocController: IocContainerInfo
    container.bind('app-config').toConstantValue(config)
    container.bind('client-config').toConstantValue(config.getClientConfig())
    container.bind('window').toConstantValue(window)
+   container.bind('front-console').toConstantValue(new FrontLogger(window))
+   container.bind('front-emitter').toFunction(createFrontEmitter(window))
 
    // 监听渲染窗口
    createPortConnection(window, iocController, CHANNEL_1)

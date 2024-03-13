@@ -1,11 +1,11 @@
 
 
-import { IPackage } from "../entity/Package"
+import { Package } from "../entity/Package"
 import { IniObjectVo, MapperVo, ResourceVo, ScopeVo, WordVo } from "./ObjectVo"
 
 
 
-export interface PackageVo extends IPackage {
+export interface PackageVo extends Package {
    // 辅助属性，在加载时确定
    // 包的路径，
 
@@ -20,3 +20,13 @@ export interface PackageVo extends IPackage {
    dictionary: Record<string, WordVo>             // 后加载
 }
 
+export const EMPTY_PACKAGEVO = <PackageVo>{
+   objects: {},
+   resources: {},  // 后加载
+   extras: {},     // 后加载
+
+   // 元数据
+   scopes: {},
+   mappers: {},    // 后加载
+   dictionary: {},
+}

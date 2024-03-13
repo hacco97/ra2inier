@@ -10,7 +10,7 @@ import Prompt from '../Prompt/Prompt.vue';
 import { PromptState } from '../Prompt/promptState';
 import { useEditorKeymap } from './editorKeymap';
 import {
-  EditorState, useCursorCoord, usePromptCoord, useQueryObject,
+   EditorState, useCursorCoord, usePromptCoord, useQueryObject,
 } from './eidtorState';
 import { EntryRo } from './Entry';
 
@@ -109,16 +109,7 @@ function onLabelAuxClick() {
 
 
 // 注释逻辑
-const THE_NEW_COMMENT_ID = 99999
 const isDetailFolded = ref(false)
-state.on('comment-insert-require', () => {
-   state.commentById(current.value, '')
-   const e = state.get(current.value)
-   e && (e.isSubFolded = false)
-   if (current.value === THE_NEW_COMMENT_ID) {
-      isDetailFolded.value = false
-   }
-})
 
 // 子面板逻辑
 function onSubFoldClick(entry: EntryRo) {
@@ -176,7 +167,7 @@ const columCount = computed(() => ({ columns: state.columnCount }))
                </li>
 
                <!-- 新词条输入框 -->
-               <li @flex-focus="onRowFocus" @click="onRowClick(THE_NEW_COMMENT_ID)">
+               <li @flex-focus="onRowFocus">
                   <p>
                      <i></i><span>&nbsp;</span><em>&lt;</em>
                      <flex-input :class="$style['the-new']" v-model.lazy="state.theNew" @focus="onNewInputFocused"

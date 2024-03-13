@@ -1,12 +1,12 @@
 import fs from 'node:fs';
 import { join } from 'node:path';
 
-import { component, final, inject, task } from '~/mainWindow/ioc.config';
+import { component, inject } from '~/mainWindow/ioc.config';
 
 import {
-  Config, enhance, forIn, fromRaw, IniObject,
-  isEmptyObject, Mapper, MapperDto, Markdown, Package,
-  PackageVo, Scope, WordDto, WordRo, WordVo,
+   Config, enhance, fromRaw, IniObject,
+   isEmptyObject, Mapper, MapperDto, Markdown, Package,
+   PackageVo, Scope, useMemo, WordDto, WordRo, WordVo,
 } from '@ra2inier/core';
 import { escapePath, forDir, readJson, writeJson } from '@ra2inier/core/node';
 
@@ -29,42 +29,19 @@ export class PackageDao {
 
    /**
     * 读取一个项目文件夹的Info文件，返回一个package的基础信息
-    * 如果是一相对链接，则读取相对链接处的包
+    * 如果是相对路径，则读取相对路径处的包
+    * 该方法只用于本地
     */
-   readPackageInfoByPath(pkgPath: string) {
+   readPackageInfoByPath = useMemo((pkgPath: string) => {
       const info = readJson(join(pkgPath, this.config.PACKAGE_INFO_FILE))
       if (isEmptyObject(info)) return undefined
-      let pkg = fromRaw(info, Package)
-      if ((pkg.path += '').startsWith('~')) {
-         let path = pkg.path.replace('~', this.appConfig.GLOBAL_PACKAGE_DIR)
-         path = escapePath(this.appConfig.CWD, path)
-         const info = readJson(escapePath(path, this.config.PACKAGE_INFO_FILE))
-         if (isEmptyObject(info)) return undefined
-         pkg = fromRaw(info, Package)
-         pkg.path = path
-      } else {
-         pkg.path = pkgPath
-      }
+      const pkg = fromRaw(info, Package)
+      pkg.path = pkgPath
       return pkg
-   }
+   }).get
 
    /**
-    * 读取一个package文件夹下的全部引用
-    */
-   resolveReferences(pkgPath: string) {
-      // 读取packages目录
-      const referPath = escapePath(pkgPath, this.config.REFERENCE_DIR)
-      // 读取引用的包
-      const references: Record<string, Package> = {}
-      forDir(referPath, (path) => {
-         const pkg = this.readPackageInfoByPath(path)
-         pkg && (references[pkg.key] = pkg)
-      }, false)
-      return references
-   }
-
-   /**
-    * 直接读取一个项目文件夹，将其变为PackageVo对象，不涉及引用的读取
+    * 直接读取一个包文件夹，将其变为PackageVo对象，不涉及引用的读取
     */
    readPackageByPath(pkgPath: string) {
       const pkg = this.readPackageInfoByPath(pkgPath)
@@ -90,7 +67,7 @@ export class PackageDao {
 
    // 读写object逻辑
    // object的key值：object的文件路径
-   objectsPathMap: Record<string, string> = {}
+   #objectsPathMap: Record<string, string> = {}
    readObjectsByPath(pkgPath: string) {
       const objects: Record<string, IniObject> = {}
       const objectDir = escapePath(pkgPath, this.config.OBJECT_DIR)
@@ -102,50 +79,37 @@ export class PackageDao {
    }
 
    writeObjectByPath(pkgPath: string, object: IniObject) {
-      const objectPath = this.objectsPathMap[object.key] ||
+      const objectPath = this.#objectsPathMap[object.key] ||
          escapePath(pkgPath, this.config.OBJECT_DIR, object.key)
       return this.objectDao.writeObjectByPath(objectPath, object)
    }
 
    deleteObjectByPath(pkgPath: string, key: string) {
-      const path = this.objectsPathMap[key]
+      const path = this.#objectsPathMap[key]
       if (path && path.startsWith(escapePath(pkgPath))) {
          fs.rmSync(path)
-         delete this.objectsPathMap[key]
+         delete this.#objectsPathMap[key]
          return true
       }
       return false
    }
 
    // scope的读写逻辑
-   // scope的缓存机制，每改6次，只写一次盘
-   // 路径：
-   scopesPathMap: Record<string, Record<string, Scope>> = {}
-   scopeCount = 0
+   // 缓存：路径：scopes集合
+   #scopesPathMap: Record<string, Record<string, Scope>> = {}
    readScopesByPath(pkgPath: string) {
       const file = escapePath(pkgPath, this.config.SCOPE_FILE)
-      if (this.scopesPathMap[file])
-         return this.scopesPathMap[file]
+      if (this.#scopesPathMap[file])
+         return this.#scopesPathMap[file]
       const res = this.scopeDao.readScopesByPath(file)
-      return this.scopesPathMap[file] = res
+      return this.#scopesPathMap[file] = res
    }
 
    writeScopeByPath(pkgPath: string, scope: Scope) {
       const file = escapePath(pkgPath, this.config.SCOPE_FILE)
-      const scopes = this.scopesPathMap[file]
-      scopes[scope.key] = scope
-      if (this.scopeCount++ > 6) {
-         this.scopeDao.writeScopesByPath(file, scopes)
-         this.scopeCount = 0
-      }
-   }
-
-   @task(60 * 3)
-   @final
-   writeScopesCache() {
-      forIn(this.scopesPathMap, (key, val) => {
-         this.scopeDao.writeScopesByPath(key, val)
-      })
+      const scopes = this.#scopesPathMap[file]
+      scopes[scope.key] = fromRaw(scope, Scope)
+      this.scopeDao.writeScopesByPath(file, scopes)
    }
 
    // word和字典相关的逻辑
@@ -188,31 +152,18 @@ export class PackageDao {
       return true
    }
 
-
    // Mapper相关的逻辑
-   // 包路径：结果
-   mappersPathMap: Record<string, Record<string, Mapper>> = {}
-   mapperCacheCount = 0
+   // 包路径：mappers集合
+   #mappersPathMap: Record<string, Record<string, Mapper>> = {}
    readMappersByPath(pkgPath: string) {
       const path = escapePath(pkgPath, this.config.MAPPER_DIR)
-      if (path in this.mappersPathMap) return this.mappersPathMap[path]
-      return this.mappersPathMap[path] = this.mapperDao.readMappersByPath(path)
+      if (path in this.#mappersPathMap) return this.#mappersPathMap[path]
+      return this.#mappersPathMap[path] = this.mapperDao.readMappersByPath(path)
    }
 
    writeMappersByPath(pkgPath: string, mapper: MapperDto) {
       pkgPath = escapePath(pkgPath, this.config.MAPPER_DIR)
-      this.mappersPathMap[pkgPath][mapper.key] = fromRaw(mapper, Mapper)
-      if (this.mapperCacheCount++ > 6) {
-         this.writeMapperCache()
-         this.mapperCacheCount = 0
-      }
-   }
-
-   @task(60 * 3)
-   @final
-   writeMapperCache() {
-      forIn(this.mappersPathMap, (path, mappers) => {
-         this.mapperDao.writeMappersByPath(path, mappers)
-      })
+      this.#mappersPathMap[pkgPath][mapper.key] = fromRaw(mapper, Mapper)
+      this.mapperDao.writeMappersByPath(pkgPath, mapper)
    }
 }

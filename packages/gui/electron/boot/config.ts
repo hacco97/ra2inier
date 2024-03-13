@@ -20,6 +20,7 @@ const defaultConfig: Partial<Config> = {
    LOG_FILE_DIR: escapePath('./custom/log'),
    GLOBAL_ADDONS_DIR: escapePath('./library/addons'),
    GLOBAL_PACKAGE_DIR: escapePath('./library/reference'),
+   GLOBAL_PACKAGE_CACHE: escapePath('./custom/reference'),
    GLOBAL_TUTORIAL_DIR: escapePath('./library/tutorial'),
    CWD: escapePath(process.cwd()),
    MAIN_WINDOW_NAME: import.meta.env.VITE_MAIN_PARTITION,

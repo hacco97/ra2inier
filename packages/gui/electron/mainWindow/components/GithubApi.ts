@@ -1,5 +1,5 @@
 import { component, inject } from "../ioc.config";
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosProgressEvent } from "axios";
 import { Config } from "@ra2inier/core";
 import { createWriteStream } from "node:fs";
 
@@ -27,15 +27,24 @@ export class GithubApi {
       })
    }
 
-   downloadPackage(url: string, path: string) {
+   /**
+    * @param url github的仓库地址
+    * @param path 下载到的本地路径
+    */
+   async downloadPackage(
+      url: string,
+      path: string,
+      onProgress?: (progressEvent: AxiosProgressEvent) => void,
+   ) {
       const ws = createWriteStream(path)
-      this.#api(url, {
+      return this.#api(url, {
          responseType: 'stream',
-         onDownloadProgress(progressEvent) {
-            console.log(progressEvent)
-         },
+         onDownloadProgress: onProgress
       }).then(r => {
          r.data.pipe?.(ws)
-      })
+         return true
+      }).catch(() => {
+         return false
+      }).finally(() => { ws.close() })
    }
 }

@@ -3,44 +3,28 @@ import fs from 'node:fs';
 import { component, inject } from '~/mainWindow/ioc.config';
 
 import {
-  enhance, fromRaw, isEmptyObject, isUniqueObject, Package,
-  Project, ProjectVo,
+   Config,
+   EMPTY_PACKAGEVO,
+   EMPTY_PROJECTVO,
+   enhance, fromRaw, isEmptyObject, isUniqueObject, Package,
+   PackageVo,
+   Project, ProjectVo, Reference, UniqueObject,
 } from '@ra2inier/core';
 import {
-  escapePath, readJson, writeFile, writeJson,
+   escapePath, readJson, writeFile, writeJson,
 } from '@ra2inier/core/node';
 
 import { DaoConfig } from './DaoConfig';
 import { PackageDao } from './PackageDao';
+import { StaticDao } from './StaticDao';
+import { GithubApi } from '../components/GithubApi';
 
 @component('project-dao')
 export class ProjectDao {
-
-   // 项目的文件路径
-   #path = ''
-   // 主包的键值
-   #main = ''
-
-   // 缓存，包key值：包的文件路径
-   #packages: Record<string, Package> = {}
-
-   get path() { return this.#path }
-   get main() { return this.#main }
-   get mainPkg() { return this.#packages[this.#main] }
-   get isConnected() { return !!this.#path }
-
    @inject('dao-config') declare config: DaoConfig
+   @inject('app-config') declare appConfig: Config
    @inject('package-dao') declare packageDao: PackageDao
-
-   // 连接至
-   connectToProject(projectPath: string) {
-      if (!this.checkPath(projectPath)) return false
-      if (projectPath === this.#path) return true
-      this.#path = projectPath
-      this.#main = ''
-      this.#packages = {}
-      return true
-   }
+   @inject('static-dao') declare staticDao: StaticDao
 
    checkPath(path: string) {
       path = escapePath(path, this.config.PROJECT_INFO_FILE)
@@ -52,30 +36,58 @@ export class ProjectDao {
    /**
     * 读取项目的info文件
     */
-   readProjectInfo(path?: string) {
-      const projectPath = path || this.#path
+   readProjectInfo(projectPath: string) {
       // 返回项目的info文件信息
       const projectInfoFile = escapePath(projectPath, this.config.PROJECT_INFO_FILE)
       const project = fromRaw(readJson(projectInfoFile), Project)
-      this.readPackagesList()
-
-      // TODO: 添加更多project的属性
-
+      // TODO: 添加更多属性
       return project
    }
 
-   private readPackagesList() {
-      if (!isEmptyObject(this.#packages)) return this.#packages
-      if (!this.isConnected) throw Error('需要先打开项目，才能获得packages')
-      const projectPath = this.#path
-      // 读取主包
-      const mainPkg = this.packageDao.readPackageInfoByPath(projectPath)!
-      this.#main = mainPkg.key
-      const references = this.packageDao.resolveReferences(projectPath)
-      return this.#packages = {
-         [mainPkg.key]: mainPkg,
-         ...references
+   /**
+    * 读取项目的所有资源文件，创建一个Vo对象
+    */
+   resolveProjectVo(project: Project, projectPath: string): ProjectVo {
+      const projectVo: ProjectVo = enhance(project, EMPTY_PROJECTVO)
+      // 读取并装载每个package的属性
+      let main = this.packageDao.readPackageByPath(projectPath)
+      if (!main) main = enhance<PackageVo>(new Package, EMPTY_PACKAGEVO)
+      projectVo.main = UniqueObject.getKey(main)
+      projectVo.path = projectPath
+
+      const [refers, remotes] = this.resolveReferences(main)
+      for (const referPkg of Object.values(refers)) {
+         const pkg = this.packageDao.readPackageByPath(referPkg.path)
+         pkg && (projectVo.packages[referPkg.key] = pkg)
       }
+      for (const remoteRefer of Object.values(remotes)) {
+         this.staticDao.downloadPackage(remoteRefer.url)
+      }
+      return projectVo
+   }
+
+   /**
+    * 从本地读取一个package的全部引用，包括引用的引用
+    */
+   resolveReferences(pkg: Package) {
+      const globalPackages = this.staticDao.readGlobalPackages()
+      const references: Record<string, Package> = {}
+      const remote: Record<string, Reference> = {}
+      function dfs(pkg: Package) {
+         for (const refer of pkg.references) {
+            // 尝试从本地读取
+            if (refer.key in references) continue
+            if (refer.key in globalPackages) {
+               const newPkg = references[refer.key] = globalPackages[refer.key]
+               dfs(newPkg)
+               continue
+            }
+            // 尝试从远程获取
+            if (refer.url && refer.key) remote[refer.key] = refer
+         }
+      }
+      dfs(pkg)
+      return [references, remote] as const
    }
 
    /**
@@ -84,28 +96,9 @@ export class ProjectDao {
    addReference(referPath: string) {
       const refer = this.packageDao.readPackageInfoByPath(referPath)
       if (!refer) return undefined
-      this.#packages[refer.path] = refer
-
+      // this.#packages[refer.path] = refer
    }
 
-   resolveProjectVo(project: Project): ProjectVo {
-      const projectVo: ProjectVo = enhance(project, {
-         cache: {},
-         path: this.path,
-         workspace: '',
-         main: this.main,
-         packages: {},
-      })
-      // 读取并装载每个package的属性
-
-      const pkgs = this.readPackagesList()
-      projectVo.main = this.main
-      for (const key in pkgs) {
-         const pkg = this.packageDao.readPackageByPath(pkgs[key].path)
-         pkg && (projectVo.packages[key] = pkg)
-      }
-      return projectVo
-   }
 
    writeBuildResult(path: string, result: any) {
       // if (fs.existsSync(path)) throw Error('目标文件已经存在')
@@ -114,11 +107,8 @@ export class ProjectDao {
    }
 
 
-   writeProjectInfo(project: Project, path?: string,) {
-      const projectPath = path || this.#path
+   writeProjectInfoByPath(project: Project, projectPath: string,) {
       const infoPath = escapePath(projectPath, this.config.PROJECT_INFO_FILE)
       writeJson(infoPath, project)
    }
-
-
 }

@@ -80,6 +80,10 @@ export class Config extends ClientConfig {
     */
    declare GLOBAL_PACKAGE_DIR: string
    /**
+    * 全局包缓存位置
+    */
+   declare GLOBAL_PACKAGE_CACHE: string
+   /**
     * 全局教程文件的位置
     */
    declare GLOBAL_TUTORIAL_DIR: string

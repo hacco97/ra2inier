@@ -14,7 +14,6 @@ import HeaderLayout from '../HeaderLayout.vue'
 import { useReferList } from './state';
 import { Reference } from '@ra2inier/core';
 import { openDirectory } from '@/boot/apis';
-import { useClipboard } from '@vueuse/core';
 
 
 defineOptions({ name: 'ProjectInfo' })
@@ -37,8 +36,8 @@ function onFlushClick() {
 }
 
 async function onOpenClick() {
-   const [dir] = <string[]>await openDirectory()
-   newPath.value = dir
+   const [dir, d2] = <string[]>await openDirectory()
+
 }
 
 async function onCopyClick() {

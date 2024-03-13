@@ -20,7 +20,6 @@ export interface GameEnv {
  */
 export type ScopeType = 'singleton' | 'prototype' | 'inherit' | 'override'
 
-export interface Scope extends IUniqueObject { }
 export class Scope extends UniqueObject {
    brief: string = ''
    files: string[] = []

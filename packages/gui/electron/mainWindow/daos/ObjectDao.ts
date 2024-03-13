@@ -10,13 +10,13 @@ import { DaoConfig } from './DaoConfig';
 export class ObjectDao {
    @inject('dao-config') declare config: DaoConfig
 
-   // object的key值：object的文件路径
-   objectsPathMap: Record<string, string> = {}
+   // 缓存 object的key值：object的文件路径
+   #objectsPathMap: Record<string, string> = {}
    readObjectByPath(objectPath: string) {
       try {
          let tmp: any = fs.readFileSync(objectPath, 'utf-8')
          tmp = fromRaw(JSON.parse(tmp, this.parseV1), IniObject)
-         this.objectsPathMap[tmp.key] = objectPath
+         this.#objectsPathMap[tmp.key] = objectPath
          return <IniObject>tmp
       } catch (error) { return undefined }
    }
@@ -28,10 +28,10 @@ export class ObjectDao {
    }
 
    deleteObjectByPath(pkgPath: string, key: string) {
-      const path = this.objectsPathMap[key]
+      const path = this.#objectsPathMap[key]
       if (path && path.startsWith(escapePath(pkgPath))) {
          fs.rmSync(path)
-         delete this.objectsPathMap[key]
+         delete this.#objectsPathMap[key]
          return true
       }
       return false

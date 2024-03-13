@@ -1,8 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 window.addEventListener('load', async () => {
-   console.log(123)
-
    ipcRenderer.send('establish-renderer-port')
    ipcRenderer.send('establish-worker-port')
 })
@@ -16,8 +14,8 @@ ipcRenderer.on('establish-worker-port-response', async (event) => {
 })
 
 contextBridge.exposeInMainWorld('eApi', {
-   exec(command: string, ...args: any[]) {
-      return ipcRenderer.invoke('exec', command, ...args)
+   exec(channel: string, ...args: any[]) {
+      return ipcRenderer.invoke(channel, ...args)
    },
    send(channel: string, ...args: any[]) {
       ipcRenderer.send(channel, ...args)
@@ -29,7 +27,6 @@ contextBridge.exposeInMainWorld('eApi', {
 
 
 // safe dom animation
-
 function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
    return new Promise((resolve) => {
       if (condition.includes(document.readyState)) {

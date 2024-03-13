@@ -84,9 +84,11 @@ export default function useLog(sender: string) {
 
 registerLog(useLog('api-center'))
 
-on('send-log', (event: IpcRendererEvent, sender: string, msg: string, remark?: any) => {
-   pushMsg(sender, LogLevel.info, msg, remark)
+on('log-from-backend', (event: IpcRendererEvent, l: LogLevel, msg: string, remark?: any) => {
+   (l in LogLevel) || (l = LogLevel.info)
+   pushMsg('backend', l, msg, remark)
 })
+
 
 listen('send-log', ({ msg, level, remark }) => {
    pushMsg('worker', level, msg, remark)

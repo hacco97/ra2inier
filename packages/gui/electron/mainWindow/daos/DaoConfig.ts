@@ -28,8 +28,6 @@ export class DaoConfig {
    CACHE_DIR = 'cache'
    // 项目的临时工作区位置
    WORKSPACE = 'desk'
-   // 引用包的文件夹
-   REFERENCE_DIR = 'refer'
    // 其他文件的位置
    OTHER_FILES_DIR = 'extra'
 

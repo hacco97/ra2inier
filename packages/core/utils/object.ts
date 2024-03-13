@@ -100,6 +100,17 @@ export function forIn<T>(object: Record<string, T>, cb: (key: string, val: T) =>
 }
 
 /**
+ *对象类型的map
+ */
+export function MapIn<K extends string | number | symbol, V, T>(object: Record<K, V>, cb: (key: K, val: V) => T) {
+   const tmp: any = {}
+   for (const key in object) {
+      tmp[key] = cb(key, object[key])
+   }
+   return <Record<K, T>>tmp
+}
+
+/**
  * 从一个删除一个key值
  */
 export function delKey(object: Record<string, any>, key: string) {

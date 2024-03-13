@@ -3,11 +3,11 @@ import { enhance } from './object';
 /**
  * 尝试执行一个函数
  */
-export function tryExec<T>(exec: () => T, callback?: () => any) {
+export function tryExec<T>(exec: () => T, callback?: (e: any) => any) {
    try {
       return exec()
    } catch (error) {
-      return callback?.()
+      return callback?.(error)
    }
 }
 
@@ -110,4 +110,26 @@ export function isEmptyObject(o: Object) {
       return false
    }
    return true
+}
+
+
+const f = (a: any, b: any) => a === b
+/**
+ * 比较两个数组的重复部分
+ */
+export function diffArray<T, R>(a: T[], b: R[], predicate?: (oa: T, ob: R) => boolean) {
+   const isInA = [], isInB = [...b], bothIn = []
+   predicate || (predicate = f)
+   for (let x = 0; x < a.length; ++x) {
+      isInA.push(a[x])
+      for (let y = 0; y < isInB.length; ++y) {
+         if (predicate!(a[x], isInB[y])) {
+            bothIn.push(a[x])
+            isInA.pop()
+            isInB.splice(y, 1)
+            break
+         }
+      }
+   }
+   return [bothIn, isInA, isInB]
 }

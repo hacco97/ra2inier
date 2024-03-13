@@ -33,6 +33,27 @@
    @include normal-label();
 }
 
+.input {
+   @include plane-radius(normal);
+   padding: 0 align-size(normal);
+   min-width: 4em;
+}
+
+.normal-input {
+   @include normal-panel();
+   @extend .input;
+}
+
+.fore-input {
+   @include fore-panel();
+   @extend .input;
+}
+
+.back-input {
+   @include back-panel();
+   @extend .input;
+}
+
 .fore-button {
    @include fore-button();
 }

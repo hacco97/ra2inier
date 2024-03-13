@@ -3,6 +3,8 @@ import { Container, inject, injectable } from "inversify"
 import { addQuitCallback } from "~/boot/final"
 import { useLogger } from "~/boot/logger"
 import { Constructor, ControllerCtx, Info, Key, Task } from "./ControllerCtx"
+import { tryExec } from "@ra2inier/core"
+import { k } from "vite/dist/node/types.d-jgA8ss1A"
 
 export const PATH_VARIABLE = '_pathVariable'
 
@@ -51,6 +53,23 @@ export function createIocController() {
       }
    }
 
+
+   /**
+    * 用于将一个类注册为工厂类，该类必须实现一个create方法，该方法用于构造一个常量，并注入到容器中
+    */
+   function factory(key: string) {
+      if (key in components)
+         throw Error('重复注册的组件：' + key.toString())
+      return (target: Constructor) => {
+         injectable()(target)
+         tryExec(() => {
+            container.bind(key).toConstantValue((new target).create())
+         }, (e) => { throw Error(`工厂函数'${key}初始化错误：${e}'`) })
+         const info = components[key] = touch(target.prototype)
+         info.key = key
+         return info as any
+      }
+   }
 
    /**
     * 用于注册服务处理方法的注解，用于controller类的方法
@@ -178,6 +197,7 @@ export function createIocController() {
       component,
       controller,
       test,
+      factory,
       mapping,
       param,
       pathVar,

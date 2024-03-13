@@ -16,7 +16,7 @@ import NewProject from './panels/NewProject.vue';
 import None from './panels/None.vue';
 import ObjectEditor from './panels/ObjectEditor/Index.vue';
 import ObjectViewer from './panels/ObjectEditor/ObjectViewer.vue';
-import ProjectInfo from './panels/ProjectInfo.vue';
+import ProjectInfo from './panels/ProjectInfo/Index.vue';
 import Setting from './panels/Setting.vue';
 import Welcome from './panels/Welcome.vue';
 

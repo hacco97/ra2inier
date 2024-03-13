@@ -68,7 +68,6 @@ function createPortConnection(window: BrowserWindow, iocController: IocContainer
       const { port1, port2 } = new MessageChannelMain
       window.webContents.postMessage(channel + '-response', null, [port2])
       port = port1
-
       port1.addListener('message', (ev) => {
          const { id, command, options } = ev.data
          handler(id, command, options)

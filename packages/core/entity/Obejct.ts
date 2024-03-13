@@ -61,6 +61,10 @@ export class UniqueObject implements IUniqueObject {
    get fullname() {
       return `${this.name}(${this.hash})`
    }
+
+   static getKey(object: UniqueObject) {
+      return `${object.id}!${object.seed}`
+   }
 }
 
 export function isUniqueObject(object: any) {

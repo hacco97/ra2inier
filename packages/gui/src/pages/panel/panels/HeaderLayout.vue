@@ -35,6 +35,8 @@ $height: line-height(normal);
    }
 
    main {
+      position: relative;
+      @include z-index(main);
       padding-top: $height;
    }
 

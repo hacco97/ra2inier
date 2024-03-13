@@ -145,3 +145,13 @@ window.addEventListener('message', (ev) => {
 // ******************* Event bus，全局事件订阅逻辑 **********************
 
 export const globalEvent = new EventEmitter
+
+
+
+/**
+ * 打开文件系统
+ */
+export async function openDirectory() {
+   const { status, data } = await exec<string[]>('dialog/open/dir', { modal: true })
+   if (status) return data
+}

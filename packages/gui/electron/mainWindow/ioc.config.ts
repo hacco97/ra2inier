@@ -15,7 +15,8 @@ export const {
    task,
    final,
    components,
-   test
+   test,
+   factory
 } = ioc
 
 export default ioc.init

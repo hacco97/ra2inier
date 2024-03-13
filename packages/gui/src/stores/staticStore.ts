@@ -3,8 +3,9 @@ import { reactive } from 'vue';
 import { exec } from '@/boot/apis';
 
 import useLog from './messageStore';
+import { Package, forIn, fromRaw } from '@ra2inier/core';
 
-const globalPackages = reactive({})
+const globalPackages: Record<string, Package> = reactive({})
 
 const logger = useLog('static-store')
 
@@ -13,11 +14,16 @@ const logger = useLog('static-store')
  * @returns pkg { 包名：路径 }
  */
 export function useGlobalPackages() {
-   exec<Record<string, string>>('static/packages', { index: true })
+   exec<Record<string, Package>>('static/packages', { index: true })
       .then(({ status, data }) => {
          if (!status) return logger.debug('查询全局包失败', data)
-         Object.assign(globalPackages, data)
+         forIn(data, (key, pkg) => {
+            globalPackages[key] = fromRaw(pkg, Package)
+         })
       })
-   return <Readonly<Record<string, string>>>globalPackages
+   return <Readonly<Record<string, Package>>>globalPackages
 }
 
+export function openD() {
+
+}

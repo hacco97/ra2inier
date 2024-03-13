@@ -38,7 +38,7 @@ export function createMainWindow() {
 
 // 加载服务处理函数
 function useServices(win: BrowserWindow) {
-   import('./ioc.boot').then((ioc) => { ioc.init() })
+   import('./ioc.boot').then(({ createIoc }) => createIoc())
 }
 
 

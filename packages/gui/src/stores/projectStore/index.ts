@@ -2,8 +2,10 @@ import { computed, ComputedGetter, ref } from 'vue';
 
 import { exec, globalEvent, work } from '@/boot/apis';
 import {
-  forIn, IniObjectRo, MapperRo, PackageRo, parseProjectVo,
-  ProjectInfo, ProjectVo, ScopeRo, WordRo,
+   date,
+   diffArray,
+   forIn, IniObjectRo, MapperRo, Package, PackageRo, parseProjectVo,
+   ProjectInfo, ProjectVo, Reference, ScopeRo, WordRo,
 } from '@ra2inier/core';
 
 import { useConfig } from '../config';
@@ -43,13 +45,10 @@ export function openProject(path?: string) {
    path = path ?? useConfig().PROJECT_PATH
    exec<ProjectVo>('project/open', { path }).then((res) => {
       const ipkg = res.data
-      console.log(res)
-
       if (!res.status || !ipkg) {
          project.loaded = false
          return logger.warn('加载项目失败', ipkg ?? "项目文件损坏")
       }
-
 
       updateProject(ipkg)
 
@@ -171,6 +170,48 @@ export const projectInfo = loaderComputed(() => {
    return new ProjectInfo(project)
 })
 
+/**
+ * 保存项目的info文件
+ */
+export function savePackageInfo(pkg: Package) {
+   if (!pkg) return
+   return exec('project/save-pkginfo', { data: pkg }).then(({ status, data }) => {
+      if (!status) return void logger.warn('保存包信息失败', data)
+      return true
+   })
+}
+
+export function addReference(toAdd: Reference[]) {
+   savePackageInfo(mainPackage.value)?.then((ret) => {
+      if (ret) exec('project/save-refer', { toAdd })
+         .then(({ status, data }) => {
+            if (!status) logger.warn('添加引用包失败', data)
+         })
+   })
+}
+
+
+/**
+ * 从磁盘加载包，如果本地没有则会根据所提供的url在远程下载
+ */
+export function loadPackage(references: Reference[]) {
+   exec('project/load-package', { references }).then(({ status, data }) => {
+      if (!status) return void logger.warn('加载包出错', data)
+      console.log(data)
+
+   })
+}
+
+
+/**
+ * 修改引用
+ */
+export function setReference(list: Reference[]) {
+   const [toKeep, toAdd, toDel] =
+      diffArray(list, projectInfo.value.references, (a, b) => a.key === b.key)
+   // addReference(toAdd)
+   loadPackage(toAdd)
+}
 
 /**
  * 通过包的键值获得包名

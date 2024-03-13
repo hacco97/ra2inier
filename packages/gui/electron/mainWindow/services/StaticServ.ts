@@ -10,7 +10,8 @@ export class StaticServ {
    @mapping('packages')
    getGlobalPackages(@param('index') isIndex: string) {
       if (isIndex) {
-         return this.staticDao.readGlobalPackagesList()
+         const tmp = this.staticDao.readGlobalPackagesList()
+         return tmp
       } else {
          return {
             hello: 'world'

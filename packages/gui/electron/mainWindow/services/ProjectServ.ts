@@ -2,14 +2,15 @@ import { existsSync, readdirSync } from 'node:fs';
 
 import config from '~/boot/config';
 import {
-  controller, inject, mapping, param, pathVar,
-  task,
+   controller, inject, mapping, param, pathVar,
+   task,
 } from '~/mainWindow/ioc.config';
 
 import {
-  Config, fromRaw, IniObject, isUniqueObject, MapperDto,
-  Package, PackageVo, Project, ProjectDto, ProjectVo,
-  Scope, ScopeDto, WordDto,
+   Config, fromRaw, IniObject, isUniqueObject, MapperDto,
+   Package, PackageVo, Project, ProjectDto, ProjectVo,
+   Reference,
+   Scope, ScopeDto, WordDto,
 } from '@ra2inier/core';
 import { escapePath } from '@ra2inier/core/node';
 
@@ -99,11 +100,24 @@ export class ProjServ {
       return true
    }
 
-   @mapping('open-package')
-   openPackage(@param('data') paths: string[]) {
-      console.log(paths)
+   @mapping('save-pkginfo')
+   saveProjectInfo(pkgInfo: Package,) {
+
+   }
+
+   @mapping('add-refer')
+   addReference(@param('data') refer: Reference[]) {
+      if (refer.length <= 0) return
+
+
+      // TODO: 远程添加
+   }
+
+   @mapping('load-package')
+   openPackage(@param('references') refers: Reference[]) {
       const packages: Record<string, PackageVo> = {}
-      for (const path of paths) {
+      for (const refer of refers) {
+         const path = refer.path
          const pkg = this.packageDao.readPackageByPath(path)
          pkg && (packages[pkg.path] = pkg)
       }

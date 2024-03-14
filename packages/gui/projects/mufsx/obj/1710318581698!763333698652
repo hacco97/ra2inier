@@ -1,1 +1,19 @@
-{"id":1710318581698,"seed":763333698652,"version":1710318581698,"name":"WFEF","group":"#0","scope":"VehicleTypes","entry":["Laser\n\ns","Name\n\n","Emp\n\n123","Sight\n\n7","Asfd\n\n342"],"inline":[],"copy":[],"detail":"强大！！","envVariable":{}}
+{
+   "id": 1710318581698,
+   "seed": 763333698652,
+   "version": 1710318581698,
+   "name": "WFEF",
+   "group": "#0",
+   "scope": "VehicleTypes",
+   "entry": [
+      "Laser\n\ns",
+      "Name\n\n",
+      "Emp\n\n123",
+      "Sight\n\n7",
+      "Asfd\n\n342"
+   ],
+   "inline": [],
+   "copy": [],
+   "detail": "强大！！",
+   "envVariable": {}
+}

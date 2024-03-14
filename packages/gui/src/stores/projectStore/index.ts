@@ -2,7 +2,6 @@ import { computed, ComputedGetter, ref } from 'vue';
 
 import { exec, globalEvent, work } from '@/boot/apis';
 import {
-   date,
    diffArray,
    forIn, IniObjectRo, MapperRo, Package, PackageRo, parseProjectVo,
    ProjectInfo, ProjectVo, Reference, ScopeRo, WordRo,
@@ -11,7 +10,7 @@ import {
 import { useConfig } from '../config';
 import useLog from '../messageStore';
 import { saveObject } from './';
-import { clearAll, project, ValueSetKey, ValueSetType } from './boot';
+import { clearAll, mainKey, project, ValueSetKey, ValueSetType } from './boot';
 import { saveMapper, saveScope, saveWord } from './metaStore';
 
 export * from './metaStore'
@@ -42,24 +41,22 @@ function updateProject(ipkg: ProjectVo) {
 export function openProject(path?: string) {
    if (project.loaded) return logger.info('项目已经加载')
    project.loading = true
-   path = path ?? useConfig().PROJECT_PATH
+   path = path || useConfig().PROJECT_PATH
+   console.log('123')
+
    exec<ProjectVo>('project/open', { path }).then((res) => {
       const ipkg = res.data
       if (!res.status || !ipkg) {
          project.loaded = false
          return logger.warn('加载项目失败', ipkg ?? "项目文件损坏")
       }
-
       updateProject(ipkg)
-
       project.loaded = true
       project.loading = false
    })
 }
 
 export function reloadProject(path: string) {
-   console.log(path)
-
    exec<boolean>('project/check-path', { data: path }).then((res) => {
       if (res.data && res.status) {
          project.loaded = false
@@ -160,6 +157,12 @@ export const projectName = loaderComputed(() => {
 
 export const mainPackage = loaderComputed(() => {
    return project.main ? project.main : new PackageRo
+})
+
+export const referPackages = loaderComputed(() => {
+   const refers = { ...project.packages }
+   delete refers[mainKey()]
+   return refers
 })
 
 export const packages = loaderComputed(() => {

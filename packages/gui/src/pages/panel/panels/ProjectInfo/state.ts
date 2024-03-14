@@ -1,8 +1,8 @@
-import { IItem, Item } from '@/components/ListViewState';
+import { IItem } from '@/components/ListViewState';
 import { projectInfo as info } from '@/stores/projectStore';
 import { useGlobalPackages } from '@/stores/staticStore';
-import { forIn, MapIn, Package, Reference } from '@ra2inier/core';
-import { Ref, ref, toRaw, watch } from 'vue';
+import { forIn, Package, Reference } from '@ra2inier/core';
+import { ref, watch } from 'vue';
 
 interface Refer extends IItem, Reference {
    path: string,
@@ -16,7 +16,7 @@ export function useReferList() {
     */
    const list = ref<Partial<Refer>[]>([])
    const refer2Item = (x: Reference) => ({
-      value: x.name,
+      value: x.name || '匿名',
       popup: createPopup(x),
       path: x.path,
       key: x.key,
@@ -68,8 +68,6 @@ export function useReferList() {
 
    function onLocalSelect(item: IItem, order: number) {
       const target = localList.value.find(x => x.key === item.key)!
-      console.log(target)
-
       if (item.selected) {
          addRefer(target)
       } else {

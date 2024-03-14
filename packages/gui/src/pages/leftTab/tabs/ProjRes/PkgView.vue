@@ -4,7 +4,7 @@ import { shallowReactive, watch } from 'vue';
 import addSvg from '@/asset/icons/add.svg?raw';
 import { addPanel, PanelParam, PanelType } from '@/states/panelList';
 import {
-  cloneIniObject, createIniObject, saveObject,
+   cloneIniObject, createIniObject, saveObject,
 } from '@/stores/projectStore';
 import { IniObjectRo, isUniqueObject, PackageRo } from '@ra2inier/core';
 
@@ -47,10 +47,7 @@ function openObjectPanel(object: IniObjectRo) {
       data: opened,
       readonly: !props.isMain
    })
-   if (props.isMain) {
-      p.on('closed', onSave)
-      p.on('save', onSave)
-   }
+   if (props.isMain) { p.on('save', onSave) }
    addPanel(p)
 }
 

@@ -36,8 +36,8 @@ export class ProjectInfo {
    constructor(project?: ProjectRo) {
       if (!project) return
       const main = project.main!
-      this.name = project.name
-      this.author = main.author
+      this.name = project.name || '(unknown name)'
+      this.author = main.author || '(unknown author)'
       this.target = main.target
       this.references = main.references
    }

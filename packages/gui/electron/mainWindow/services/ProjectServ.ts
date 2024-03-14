@@ -67,7 +67,7 @@ export class ProjServ {
     */
    @mapping('open')
    openProject(@param('path') projectPath: string) {
-      const path = this.#path = projectPath || this.appConfig.PROJECT_PATH
+      const path = this.#path = escapePath(projectPath || this.appConfig.PROJECT_PATH)
       if (path in this.#projectCacheMap) return this.#projectCacheMap[path]
       if (!this.projectDao.checkPath(path)) throw Error('该项目路径可能是错误的：' + path)
       this.appConfig.setByKey('PROJECT_PATH', path)

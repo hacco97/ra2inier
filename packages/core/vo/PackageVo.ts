@@ -20,13 +20,13 @@ export interface PackageVo extends Package {
    dictionary: Record<string, WordVo>             // 后加载
 }
 
-export const EMPTY_PACKAGEVO = <PackageVo>{
-   objects: {},
-   resources: {},  // 后加载
-   extras: {},     // 后加载
+export class EMPTY_PACKAGEVO implements Partial<PackageVo>{
+   objects = {}
+   resources = {}
+   extras = {}
 
    // 元数据
-   scopes: {},
-   mappers: {},    // 后加载
-   dictionary: {},
+   scopes = {}
+   mappers = {}
+   dictionary = {}
 }

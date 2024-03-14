@@ -4,6 +4,11 @@ import Home from '@/pages/home/Index.vue';
 
 import.meta.glob('@/css/global/**/*', { eager: true })
 import.meta.glob('@/css/classes/**/*', { eager: true })
+import { projectInfo, packages, all } from '@/stores/projectStore'
+
+const projectInfo_ = projectInfo
+const packages_ = packages
+const all_ = all
 
 document.body.addEventListener('contextmenu', (ev) => {
    ev.stopPropagation()

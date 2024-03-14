@@ -3,7 +3,7 @@ import { fromRaw, IniObjectRo } from '@ra2inier/core';
 
 import { useHistory } from '../history';
 import useLog from '../messageStore';
-import { project, setValue } from './boot';
+import { mainKey, project, setValue } from './boot';
 
 const log = useLog('object-store')
 
@@ -17,7 +17,7 @@ const { push } = useHistory(({ type, object }: Backup) => {
  */
 export function createIniObject() {
    const newOne: IniObjectRo = new IniObjectRo
-   newOne.package = project.main!.key
+   newOne.package = mainKey()
    return newOne
 }
 
@@ -26,7 +26,7 @@ export function createIniObject() {
  */
 export function cloneIniObject(object: IniObjectRo) {
    const newOne: IniObjectRo = fromRaw(object, IniObjectRo, true)
-   newOne.package = project.main!.key
+   newOne.package = mainKey()
    return newOne
 }
 

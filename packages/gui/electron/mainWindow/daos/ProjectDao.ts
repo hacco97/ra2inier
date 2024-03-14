@@ -6,7 +6,7 @@ import {
    Config,
    EMPTY_PACKAGEVO,
    EMPTY_PROJECTVO,
-   enhance, fromRaw, isEmptyObject, isUniqueObject, Package,
+   enhance, fromRaw, isUniqueObject, Package,
    PackageVo,
    Project, ProjectVo, Reference, UniqueObject,
 } from '@ra2inier/core';
@@ -17,7 +17,6 @@ import {
 import { DaoConfig } from './DaoConfig';
 import { PackageDao } from './PackageDao';
 import { StaticDao } from './StaticDao';
-import { GithubApi } from '../components/GithubApi';
 
 @component('project-dao')
 export class ProjectDao {
@@ -48,21 +47,19 @@ export class ProjectDao {
     * 读取项目的所有资源文件，创建一个Vo对象
     */
    resolveProjectVo(project: Project, projectPath: string): ProjectVo {
-      const projectVo: ProjectVo = enhance(project, EMPTY_PROJECTVO)
+      const projectVo: ProjectVo = enhance(project, new EMPTY_PROJECTVO)
       // 读取并装载每个package的属性
       let main = this.packageDao.readPackageByPath(projectPath)
-      if (!main) main = enhance<PackageVo>(new Package, EMPTY_PACKAGEVO)
+      if (!main) main = enhance<PackageVo>(new Package, new EMPTY_PACKAGEVO)
       projectVo.main = UniqueObject.getKey(main)
       projectVo.path = projectPath
 
-      const [refers, remotes] = this.resolveReferences(main)
+      const [refers, remote] = this.resolveReferences(main)
       for (const referPkg of Object.values(refers)) {
          const pkg = this.packageDao.readPackageByPath(referPkg.path)
          pkg && (projectVo.packages[referPkg.key] = pkg)
       }
-      for (const remoteRefer of Object.values(remotes)) {
-         this.staticDao.downloadPackage(remoteRefer.url)
-      }
+      projectVo.remote = remote
       return projectVo
    }
 
@@ -71,7 +68,9 @@ export class ProjectDao {
     */
    resolveReferences(pkg: Package) {
       const globalPackages = this.staticDao.readGlobalPackages()
-      const references: Record<string, Package> = {}
+      const references: Record<string, Package> = {
+         [UniqueObject.getKey(pkg)]: pkg
+      }
       const remote: Record<string, Reference> = {}
       function dfs(pkg: Package) {
          for (const refer of pkg.references) {

@@ -1,7 +1,7 @@
 <script lang='ts' setup>
 import { computed, ref } from 'vue';
 
-import { loadingVersion, mainPackage, packages } from '@/stores/projectStore';
+import { loadingVersion, mainPackage, referPackages } from '@/stores/projectStore';
 
 import LeftTabLayout from '../Layout.vue';
 import { usePanelHeight } from './panelHeight';
@@ -39,7 +39,8 @@ const {
                   <em><span class="folder" :folded="isReferFolded">&gt;</span><span>引用</span></em>
                </h2>
                <section class="scroll">
-                  <PkgView v-for="pkg in packages" :pkg="pkg"></PkgView>
+                  <PkgView v-for="pkg in referPackages" :pkg="pkg"></PkgView>
+                  <h3><span>暂无引用</span></h3>
                </section>
                </p>
             </ul>
@@ -121,6 +122,10 @@ const {
       section {
          height: calc(100% - 1lh);
       }
+   }
+
+   h3 {
+      padding-left: align-size(normal);
    }
 }
 </style>

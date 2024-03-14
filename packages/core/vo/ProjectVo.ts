@@ -1,3 +1,4 @@
+import { Reference } from '..';
 import { Project } from '../entity/Project';
 import { PackageVo } from './PackageVo';
 
@@ -13,12 +14,15 @@ export interface ProjectVo extends Project {
    workspace: string
 
    path: string
+
+   remote: Record<string, Reference>
 }
 
-export const EMPTY_PROJECTVO = {
-   cache: {},
-   path: '',
-   workspace: '',
-   main: '',
-   packages: {},
+export class EMPTY_PROJECTVO implements Partial<ProjectVo> {
+   cache = {}
+   path = ''
+   workspace = ''
+   main = ''
+   packages = {}
+   remote = {}
 }

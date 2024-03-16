@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { component, inject } from '~/mainWindow/ioc.config';
 
 import {
-   Config, enhance, forIn, fromRaw, IniObject,
+   Config, enhance, fromRaw, IniObject,
    isEmptyObject, Mapper, MapperDto, Markdown, Package,
    PackageVo, Reference, Scope, useMemo, WordDto, WordRo, WordVo,
 } from '@ra2inier/core';

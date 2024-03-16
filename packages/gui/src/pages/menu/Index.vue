@@ -128,7 +128,6 @@ on('unmaximize', () => {
 <style scoped module="$layout" lang="scss">
 $height: layout-size(menu);
 $icon-length: layout-size(lefttab);
-/* $icon-offset: -10px; */
 
 .menubar {
    display: flex;

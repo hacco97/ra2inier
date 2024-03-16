@@ -52,6 +52,7 @@ document.body.addEventListener('click', (e: MouseEvent) => {
    overflow-y: hidden;
 
    li {
+      min-width: 10em;
       padding: align-size(small) align-size(large);
    }
 }

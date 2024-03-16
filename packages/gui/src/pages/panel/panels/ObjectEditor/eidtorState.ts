@@ -2,8 +2,8 @@ import { computed, ref, shallowReactive, StyleValue } from 'vue';
 
 import { queryObject, validateWord } from '@/stores/projectStore';
 import {
-  cloneTyped, Entry, EventEmitter, IniObjectRo, removeFrom,
-  WordValueType,
+   cloneTyped, Entry, EventEmitter, IniObjectRo, removeFrom,
+   WordValueType,
 } from '@ra2inier/core';
 import { FlexInput } from '@ra2inier/wc';
 
@@ -38,7 +38,7 @@ export class EditorState extends EventEmitter {
 
    constructor(object: IniObjectRo) {
       super()
-      const word: IniObjectRo = this.data = object
+      const word: IniObjectRo = this.data = cloneTyped(object, IniObjectRo)
       for (let i = 0, len = word.entry.length; i < len; ++i) {
          const tmp = shallowReactive(new EntryRo(word.entry[i]))
          this.entrys.push(tmp)
@@ -105,7 +105,7 @@ export class EditorState extends EventEmitter {
    /**
     * 最终保存和提交数据的函数
     */
-   value() {
+   get value() {
       // 拷贝数据到原对象中
       if (!this.data) return
       const ret = cloneTyped(this.data, IniObjectRo)

@@ -31,10 +31,9 @@ function select(tab: LeftTab) {
 function onTabClick(tab: LeftTab) {
    if (selected.id === tab.id) {
       if (leftTabSize.width === 0) {
-         leftTabSize.width = leftTabSize.memory
+         leftTabSize.open()
       } else {
-         leftTabSize.memory = leftTabSize.width
-         leftTabSize.width = 0
+         leftTabSize.close()
       }
    }
    select(tab)

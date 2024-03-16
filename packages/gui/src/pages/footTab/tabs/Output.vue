@@ -48,7 +48,7 @@ const mounted = <Ref<boolean>>inject('foottab-mounted')
       </li>
    </div>
    <Teleport v-if="mounted" to="#foottab-tools" :disabled="selected.type !== FootTabType.Output">
-      <lazy-button class="fore-button" style="margin: 0 align-size(tiny);" @click="onOutputClick">
+      <lazy-button class="fore-button" :class="$style['icon-margin']" @click="onOutputClick">
          <s v-svgicon="playSvg"></s>
       </lazy-button>
    </Teleport>
@@ -83,5 +83,10 @@ $height: line-height(normal);
       height: 100%;
       aspect-ratio: 1;
    }
+}
+
+
+.icon-margin {
+   margin: 0 align-size(tiny);
 }
 </style>

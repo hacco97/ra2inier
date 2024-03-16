@@ -149,11 +149,13 @@ export class ProjServ {
    }
 
    updateObject(key: string, object: IniObject) {
-      if (!this.main) throw Error('请打开一个项目')
-      const objects = this.main.objects
-      delete objects[key]
+      if (!this.path) throw Error('请打开一个项目')
       this.packageDao.deleteObjectByPath(this.path, key)
-      objects[object.key] = object
+      if (this.main) {
+         const objects = this.main.objects
+         delete objects[key]
+         objects[object.key] = object
+      }
       this.packageDao.writeObjectByPath(this.path, object)
    }
 

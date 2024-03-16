@@ -1,6 +1,6 @@
 import { reactive } from "vue";
 import { footTabSize } from '@/states/layout'
-import { FootTabType, selectFootTabByType } from '@/states/footTabList'
+import { FootTabType, useFootSelect } from '@/states/footTabList'
 
 export enum DialogType {
    askIf,
@@ -37,10 +37,12 @@ export function addDialog(question: string, type = DialogType.askIf) {
    return p
 }
 
+const { selectByType } = useFootSelect()
+
 export function ask(question: string, type: DialogType = DialogType.askIf, modal = true) {
    if (modal) {
       footTabSize.max()
-      selectFootTabByType(FootTabType.Dialog)
+      selectByType(FootTabType.Dialog)
    }
    return addDialog(question, type).then((res) => {
       modal && footTabSize.recover()

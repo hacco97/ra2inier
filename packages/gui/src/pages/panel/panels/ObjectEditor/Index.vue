@@ -1,9 +1,8 @@
 <script lang='ts' setup>
-import { reactive, ref, shallowReactive } from 'vue';
+import { ref, shallowReactive, watch } from 'vue';
 
 import checkSvg from '@/asset/icons/check.svg?raw';
 import columnSvg from '@/asset/icons/column.svg?raw';
-import commentSvg from '@/asset/icons/comment.svg?raw';
 import delSvg from '@/asset/icons/delete.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
 import { PanelParam } from '@/states/panelList';
@@ -16,30 +15,30 @@ import { EditorState } from './eidtorState';
 
 defineOptions({ name: 'ObjectEditor' })
 const props = defineProps<{ param: PanelParam }>()
-const param: PanelParam = props.param
+let param: PanelParam = props.param
 const state = shallowReactive(new EditorState(param.data))
-const data = ref(state.data)
-
 const changed = ref(false)
-function submit() {
-   if (!changed.value) return
-   const val = state.value()
-   if (val) {
-      param.changed = changed.value
-      data.value = param.result = val
-      changed.value = false
-   }
-}
-param.on('before-closed', submit)
+
+watch(() => props.param, () => {
+   changed.value = false
+   param = props.param
+   param.on('before-closed', () => {
+      if (!changed.value) return
+      param.submit(state.value)
+   })
+}, { immediate: true })
 
 function onSaveClick() {
-   submit()
-   param.emit('save', param.result)
+   if (!changed.value) return
+   param.save(state.value)
+   changed.value = false
 }
 
-
-function onNameChange() { param.label = data.value.name }
-function ondeleteClick() { state.removeSelected() }
+function onNameChange() { param.label = state.data.name }
+function ondeleteClick() {
+   changed.value = true
+   state.removeSelected()
+}
 function onColumnClick() { state.columnCount = (state.columnCount + 1) % 5 }
 function onCheckClick() { state.validateWordById(0) }
 const labelHelper = ref<HTMLElement>()
@@ -55,9 +54,9 @@ const labelHelper = ref<HTMLElement>()
                <ul>
                   <h2>
                      <em>./</em><span>{{ projectName }}</span><em>/</em>
-                     <i></i><flex-input v-model.lazy.trim="data.name" @change="onNameChange" placeholder="OBJECT" />
+                     <i></i><flex-input v-model.lazy.trim="state.data.name" @change="onNameChange" placeholder="OBJECT" />
                      <em>.</em>
-                     <flex-input v-model.lazy.trim="data.scope" placeholder="NullTypes" /><i></i>
+                     <flex-input v-model.lazy.trim="state.data.scope" placeholder="NullTypes" /><i></i>
                      <em>/</em><i @click="labelHelper?.focus()"></i>
                      <flex-input ref="labelHelper" v-model.lazy.trim="state.currentChild" placeholder="root" />
                   </h2>

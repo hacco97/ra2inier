@@ -1,30 +1,25 @@
 <script lang='ts' setup>
 import { computed, ref, StyleValue, watchEffect } from 'vue';
 
-import { work } from '@/boot/apis';
 import { setStatus } from '@/pages/footer/state';
-import { useCtxMenu } from '@/states/ctxMenu';
 import { IniObjectRo } from '@ra2inier/core';
+import { useObjectCtxmenu, CtxItem } from './objectCtxmenu'
 
 const props = defineProps<{ object: IniObjectRo }>()
 const emit = defineEmits(['open'])
 const object = ref(props.object)
 watchEffect(() => { object.value = props.object })
-
-const vCtxmenu = useCtxMenu({
-   '编辑对象'() {
+const ctxItem: CtxItem = {
+   object: object.value,
+   openHandle() {
       emit('open', props.object)
-   },
-   '翻译对象'() {
-      console.log('dance')
-      work('object/translate', { objectKey: object.value.key })
    }
-})
+}
+const vCtxmenu = useObjectCtxmenu()
 
 function onTitleDbClick() {
    emit('open', props.object)
 }
-
 
 function onMouseEnter(msg: string) {
    setStatus(msg)
@@ -39,7 +34,7 @@ const rotateStyle = computed<StyleValue>(() => ({
 
 
 <template>
-   <div :class="$style.objview" v-ctxmenu>
+   <div :class="$style.objview" v-ctxmenu="ctxItem">
       <h2 @click="isSubitemShowed = !isSubitemShowed" @dblclick="onTitleDbClick"
          @mouseenter="onMouseEnter(object.fullname)" class="list-item">
          <q :style="rotateStyle" class="folder" :folded="!isSubitemShowed">&gt;</q>

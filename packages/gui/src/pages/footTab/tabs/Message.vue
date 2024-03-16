@@ -1,23 +1,51 @@
 <script lang='ts' setup>
-import { setMessageBadge } from '@/states/footTabList';
+import { useMessageTab, useFootSelect, FootTabType } from '@/states/footTabList';
 import { messageList } from '@/stores/messageStore';
+import { Ref, inject } from 'vue';
+import { clearAll, readAll } from '@/stores/messageStore'
+import clearSvg from '@/asset/icons/clear.svg?raw';
+import readSvg from '@/asset/icons/submit.svg?raw';
+
 
 defineOptions({ name: 'Message' })
+const { setMessageBadge } = useMessageTab()
 setMessageBadge(messageList.length)
+
+
+const { selected } = useFootSelect()
+const mounted = <Ref<boolean>>inject('foottab-mounted')
+
+function onClearClick() {
+   clearAll()
+   setMessageBadge(0)
+}
+
+function onReadClick() {
+   readAll()
+   setMessageBadge(0)
+}
 </script>
 
 
 <template>
    <div class="scroll" :class="[$style.message, $theme.message]">
       <li v-for="msg in messageList" :key="msg.id" :level="msg.level">
-         <em :read="msg.read">{{ msg.id + 1 }}.</em><i>{{ msg.sender }}</i>:&nbsp;<b>[{{ msg.time }}]</b>
+         <em>{{ msg.id + 1 }}.</em><i>{{ msg.sender }}</i>:&nbsp;<b :read="msg.read">[{{ msg.time }}]</b>
          <div><i>{{ msg.content }}</i></div>
          <pre v-if="msg.remark"><span>{{ msg.remark }}</span></pre>
       </li>
    </div>
+   <Teleport v-if="mounted" to="#foottab-tools" :disabled="selected.type !== FootTabType.Message">
+      <lazy-button class="fore-button" :class="$style['icon-margin']" @click="onClearClick">
+         <s v-svgicon="clearSvg" padding="5%"></s>
+      </lazy-button>
+      <lazy-button class="fore-button" :class="$style['icon-margin']" @click="onReadClick">
+         <s v-svgicon="readSvg" padding="5%"></s>
+      </lazy-button>
+   </Teleport>
 </template>
 
-<style scoped src="@css/foottab.scss" module="$theme" />
+<style scoped src="@css/foottab-message.scss" module="$theme" />
 <style scoped lang='scss' module>
 $align: align-size(normal);
 
@@ -48,5 +76,9 @@ $align: align-size(normal);
    pre {
       text-wrap: wrap;
    }
+}
+
+.icon-margin {
+   margin: 0 align-size(tiny);
 }
 </style>

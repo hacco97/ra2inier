@@ -1,4 +1,4 @@
-import { shallowReactive } from 'vue';
+import { reactive, shallowReactive } from 'vue';
 
 import { IpcRendererEvent } from 'electron/renderer';
 
@@ -6,7 +6,7 @@ import { listen, on, registerLog } from '@/boot/apis';
 import { LogLevel, Message } from '@ra2inier/core';
 
 // 消息通知模块的仓库
-export const messageList = shallowReactive<Message[]>([
+export const messageList = reactive<Message[]>([
    {
       id: 0,
       content: "欢迎使用ra2 inier",
@@ -96,4 +96,8 @@ listen('send-log', ({ msg, level, remark }) => {
 
 export function readAll() {
    for (let msg of messageList) { msg.read = true }
+}
+
+export function clearAll() {
+   messageList.splice(0)
 }

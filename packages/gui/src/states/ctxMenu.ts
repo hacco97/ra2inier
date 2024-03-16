@@ -3,61 +3,32 @@ import { Directive, reactive, ref } from 'vue';
 import { forIn } from '@ra2inier/core';
 
 // 右键菜单逻辑
-export const contextIsShowed = ref(false)
-export enum ContextmenuType {
-   Global,
-   Package,
-   Object,
-   Inline,
-   Word,
-   Scope,
-   Mapper
-}
-export const contextmenuType = ref(ContextmenuType.Global)
-export const size = {
-   width: 100,
-   height: 200
-}
-export const position = reactive({
-   top: '100px',
-   left: '100px'
-})
-
-export async function showContextMenu(e: MouseEvent, type: number) {
-   contextmenuType.value = type
-   contextIsShowed.value = true
-   const width = window.innerWidth, height = window.innerHeight
-   if (height - e.pageY < size.height) position.top = height - size.height - 20 + 'px'
-   else position.top = e.pageY - 20 + 'px'
-   if (width - e.pageX < size.width) position.left = width - size.width - 20 + 'px'
-   else position.left = e.pageX - 20 + 'px'
-   e.stopPropagation()
-}
-
-// 右键菜单逻辑
 const isCtxMenuShowed = ref(false)
 const ctxMenuPostion = reactive({
    translate: `100px 100px`
 })
+
 let nextId = 0
 class CtxMemuItem {
    id: number = nextId++
    label: string = ''
    enabled: boolean = false
    data: any
-   declare callback: Function
+   declare callback: () => void
 
-   constructor(label: string, cb: Function) {
+   constructor(label: string, cb: () => void) {
       this.label = label
       this.callback = cb
    }
 }
+
 function closeCtxMenu() {
    for (const item of ctxMemuItems) {
       item.enabled = false
    }
    isCtxMenuShowed.value = false
 }
+
 function openCtxMenu(ev: MouseEvent) {
    ctxMenuPostion.translate = `${ev.clientX}px ${ev.clientY}px`
    isCtxMenuShowed.value = true
@@ -74,9 +45,7 @@ const vCtxmenu = <Directive<HTMLElement>>{
       el.addEventListener('mousemove', () => el?.focus())
    }
 }
-const ctxMemuItems = reactive<CtxMemuItem[]>([
-   new CtxMemuItem('item1', function (this: CtxMemuItem, data: any) { console.log(this.label, data) })
-])
+const ctxMemuItems = reactive<CtxMemuItem[]>([])
 
 const vCtxRoot = <Directive<HTMLElement>>{
    mounted(el) {
@@ -99,20 +68,22 @@ export function useCtxMenuInfo() {
    }
 }
 
+export type CtxCallback<T extends any> = (data: T, el?: HTMLElement) => void
+
 /**
  * 普通元素注册右键菜单
  */
-export function useCtxMenu(ctxMenuMap: Record<string, Function>) {
+export function useCtxMenu<T extends any>(ctxMenuMap: Record<string, CtxCallback<T>>) {
    const thisList: CtxMemuItem[] = []
    const elMap = new Map<HTMLElement, any>()
-   const idSet = new Set<number>()
+   const ctxItemIdSet = new Set<number>()
    let target: HTMLElement
    forIn(ctxMenuMap, (key, cb) => {
       if (typeof cb !== 'function') return
       const tmp = new CtxMemuItem(key, () => {
-         cb(elMap.get(target))
+         cb(elMap.get(target), target)
       })
-      idSet.add(tmp.id)
+      ctxItemIdSet.add(tmp.id)
       ctxMemuItems.push(tmp)
       thisList.push(tmp)
    })
@@ -132,10 +103,12 @@ export function useCtxMenu(ctxMenuMap: Record<string, Function>) {
       updated(el, { value }) {
          elMap.set(el, value)
       },
-      unmounted() {
+      unmounted(el) {
+         elMap.delete(el)
+         if (elMap.size) return
          for (let id = 0; id < ctxMemuItems.length; id++) {
             const item = ctxMemuItems[id];
-            if (idSet.has(item.id)) ctxMemuItems.splice(id--, 1)
+            if (ctxItemIdSet.has(item.id)) ctxMemuItems.splice(id--, 1)
          }
       }
    }

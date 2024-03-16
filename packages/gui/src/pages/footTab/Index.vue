@@ -3,9 +3,10 @@ import { KeepAlive, onMounted, provide, ref } from 'vue';
 
 import arrowDown from '@/asset/icons/arrowDown.svg?raw';
 import arrowUp from '@/asset/icons/arrowUp.svg?raw';
+import minSvg from '@/asset/icons/min.svg?raw';
 import fix from '@/asset/icons/fix.svg?raw';
 import { FootTab, footTabList, useFootSelect } from '@/states/footTabList';
-import { footTabSize } from '@/states/layout';
+import { footTabSize, tryUnFocusFoottab } from '@/states/layout';
 
 import Dialog from './tabs/Dialog.vue';
 import Message from './tabs/Message.vue';
@@ -83,17 +84,16 @@ function onDownClick() {
 }
 
 const isFixSelected = ref(false)
-const tryUnFocus = () => {
-   if (footTabSize.active) return
-   footTabSize.min()
-   footTabSize.active = false
-}
+
 function onFocusout() {
    footTabSize.active = false
    if (isFixSelected.value) return
-   setTimeout(tryUnFocus, 20)
+   setTimeout(tryUnFocusFoottab, 20)
 }
-
+const focusHandle = ref<HTMLElement>()
+footTabSize.on('resized', () => {
+   focusHandle.value?.focus()
+})
 
 // 给子组件提供通知，启动Teleport的渲染
 const mounted = ref(false)
@@ -102,7 +102,8 @@ onMounted(() => { mounted.value = true })
 </script>
 
 <template>
-   <div id="foottab" :class="$style.foottab" @focusout="onFocusout" @focusin="footTabSize.active = true" tabindex="-1">
+   <div id="foottab" ref="focusHandle" :class="$style.foottab" @focusout="onFocusout" @focusin="footTabSize.active = true"
+      tabindex="-1">
       <nav class="scrollx" :class="$theme['foottab-nav']" v-scrollx>
          <ul :class="$theme['foottab-nav-label']">
             <b></b>
@@ -121,6 +122,8 @@ onMounted(() => { mounted.value = true })
             <p v-svgicon="arrowUp" @click="onUpClick"></p>
             <p v-svgicon="arrowDown" @click="onDownClick"></p>
             <q v-svgicon="fix" :selected="isFixSelected" @click="isFixSelected = !isFixSelected"></q>
+            <q v-svgicon="minSvg" padding="15%" :selected="footTabSize.canHidden"
+               @click="footTabSize.canHidden = !footTabSize.canHidden"></q>
             <span id="foottab-tools" :class="$style['foottab-tools']"></span>
          </ul>
       </nav>

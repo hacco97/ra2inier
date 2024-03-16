@@ -50,28 +50,3 @@ $height: layout-size(foottab);
       @include selection();
    }
 }
-
-.message {
-   b {
-      @include font-size(small);
-
-      &::after {
-         @include selection();
-      }
-   }
-
-   li {
-      &[level="debug"] {
-         color: info-color(success);
-      }
-      &[level="info"] {
-         color: info-color(detail);
-      }
-      &[level="warn"] {
-         color: info-color(warn);
-      }
-      &[level="error"] {
-         color: info-color(error);
-      }
-   }
-}

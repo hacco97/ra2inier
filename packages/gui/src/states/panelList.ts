@@ -25,6 +25,11 @@ export enum PanelType {
    ObjectViewer = 'ObjectViewer'
 }
 
+
+const CHANGED = Symbol()
+const DATA = Symbol()
+const RESULT = Symbol()
+
 /**
  * 用以创建一个新的页面所需的参数
  */
@@ -36,30 +41,55 @@ export class PanelParam extends EventEmitter {
    /**
     * 页面的类型
     */
-   type: string = PanelType.Welcome
+   type: string = PanelType.Welcome;
+
+   [DATA]: any
    /**
     * 传递给页面组件数据
     */
-   data: any
+   get data() { return this[DATA] }
    /**
     * 告诉派生组件，该数据不可修改
     */
-   readonly: boolean = false
+   readonly: boolean = false;
+
+   [CHANGED] = false
    /**
     * 预示着数据发生了改变
     */
-   changed: boolean = false
+   get changed() { return this[CHANGED] };
+
+   [RESULT]: any
    /**
     * 处理结果
     */
-   result: any
+   get result() { return this[RESULT] }
 
    constructor(init: Partial<PanelParam>) {
       super()
-      this.data = init.data || ''
+      this[DATA] = init.data || ''
       this.label = init.label || 'NEW_LABEL'
       this.type = init.type || PanelType.Welcome
       this.readonly = !!init.readonly
+   }
+
+   /**
+    * 由派生组件调用，触发保存动作
+    */
+   save(data: any) {
+      if (!data) return
+      this[RESULT] = data
+      this.emit('save', data)
+      this[CHANGED] = false
+   }
+
+   /**
+    * 由派生组件调用，提交数据
+    */
+   submit(data: any) {
+      if (!data) return
+      this[RESULT] = data
+      this[CHANGED] = true
    }
 }
 
@@ -122,11 +152,7 @@ export function closeTab(id: number) {
    let rm: PanelTab = {}
    for (let i = 0; 0 < panelList.length; ++i) {
       if (id === panelList[i].id) {
-         rm = panelList.splice(i, 1)[0]
-         const p = rm.param
-         p.emit('before-closed', p.result)
-         if (!p.readonly && p.changed) p.emit('save', p.result)
-         p.emit('closed', p.result)
+         doCloseTab(rm = panelList.splice(i, 1)[0])
          break
       }
    }
@@ -140,6 +166,16 @@ export function closeTab(id: number) {
       const position = rm.position ? 0 : 1
       selectTab(NONE[position])
    }
+}
+
+export function doCloseTab(rm: PanelTab) {
+   const p = rm.param
+   p.emit('before-closed', p.result)
+   if (!p.readonly && p.changed) {
+      p[CHANGED] = false
+      p.emit('save', p.result)
+   }
+   p.emit('closed', p.result)
 }
 
 /**

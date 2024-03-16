@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
-import {
-  ContextmenuType, showContextMenu, useCtxMenuInfo,
-} from '@/states/ctxMenu';
-import { footTabSize, leftTabSize, useMask } from '@/states/layout';
+import { useCtxMenuInfo, } from '@/states/ctxMenu';
+import { footTabSize, leftTabSize, tryUnFocusFoottab, useMask } from '@/states/layout';
 import { useConfig } from '@/stores/config';
 
 //左侧拖拽逻辑
@@ -24,6 +22,7 @@ function onFootDragStart() {
    display2.value = true
    setTimeout(() => footTabSize.active = true)
 }
+
 function onFootDrag(e: MouseEvent) {
    // @ts-ignore
    const tmp = e.target.offsetParent, x = tmp.clientHeight - e.layerY
@@ -31,6 +30,12 @@ function onFootDrag(e: MouseEvent) {
    if (x < 100) footTabSize.min()
    else footTabSize.height = x
 }
+
+function onFootDargEnd() {
+   display2.value = false
+   footTabSize.emit('resized')
+}
+
 
 // 右键菜单逻辑
 const { vCtxRoot } = useCtxMenuInfo()
@@ -58,16 +63,16 @@ const { isMasked } = useMask()
             </div>
          </aside>
          <!-- 右侧主要内容区域 -->
-         <main :class="$theme.panel" >
+         <main :class="$theme.panel">
             <!-- 右下边栏 -->
-            <aside :style="footTabSize.heightS">
+            <aside :style="footTabSize.heightS" :class="[footTabSize.canHidden || $style['foottab-size']]">
                <slot name="footSide"></slot>
                <div :class="[$style.drager2, $theme['drager-hover']]" :dragging="display2">
                   <p @mousedown="onFootDragStart"></p>
                </div>
             </aside>
-            <b :class="$style['drager2-panel']" v-show="display2" @mousemove="onFootDrag" @mouseleave="display2 = false"
-               @mouseup="display2 = false"></b>
+            <b :class="$style['drager2-panel']" v-show="display2" @mousemove="onFootDrag" @mouseleave="onFootDargEnd"
+               @mouseup="onFootDargEnd"></b>
             <!-- 面板主体 -->
             <article id="main">
                <slot name="main"></slot>
@@ -126,6 +131,10 @@ $footer-height: layout-size(footer);
       @include z-index(footer);
       flex: 0 0 $footer-height;
    }
+}
+
+.foottab-size {
+   min-height: layout-size(foottab);
 }
 
 @import './drager.scss';

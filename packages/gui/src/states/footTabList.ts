@@ -63,26 +63,40 @@ export const footTabList = reactive<FootTab[]>([
    }
 ])
 
-const messageTab = footTabList[3]
-export function setMessageBadge(n: string | number) {
-   messageTab.badge = n + ''
-}
-onMessage(() => { setMessageBadge(messageList.length) })
-setMessageBadge(messageList.length)
 
-export function selectFootTabByType(type: FootTabType) {
+/**
+ * 使用message tab
+ */
+export function useMessageTab() {
+   const messageTab = footTabList.find(x => x.type === FootTabType.Message)!
+   function setMessageBadge(n: string | number) {
+      messageTab.badge = n ? n.toString() : ''
+   }
+   onMessage(() => { setMessageBadge(messageList.length) })
+   setMessageBadge(messageList.length)
+
+   return {
+      setMessageBadge
+   }
+}
+useMessageTab().setMessageBadge(footTabList.length)
+
+/**
+ * tab选择逻辑
+ */
+const selected = reactive({
+   id: footTabList[0].id,
+   type: footTabList[0].type
+})
+
+function selectFootTabByType(type: FootTabType) {
    for (const tab of footTabList) {
       if (tab.type = type)
          return selectFootTab(tab)
    }
 }
 
-const selected = reactive({
-   id: footTabList[0].id,
-   type: footTabList[0].type
-})
-
-export function selectFootTab(tab: FootTab) {
+function selectFootTab(tab: FootTab) {
    selected.id = tab.id
    selected.type = tab.type
 }
@@ -90,7 +104,8 @@ export function selectFootTab(tab: FootTab) {
 export function useFootSelect() {
    return {
       selected,
-      select: selectFootTab
+      select: selectFootTab,
+      selectByType: selectFootTabByType
    }
 }
 

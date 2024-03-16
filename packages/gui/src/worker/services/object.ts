@@ -11,7 +11,6 @@ on('object/sync', async ({ data }: { data: IniObject[] }) => {
    for (let object of data) {
       if (!isUniqueObject(object)) continue
       const tmp = fromRaw(object, IniObjectRo)
-      // objects[tmp.key] = tmp
       setObject(tmp.key, tmp)
    }
 })

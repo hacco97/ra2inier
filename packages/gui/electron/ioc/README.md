@@ -3,7 +3,7 @@
 app-config：整个程序的设置
 client-config：用户的设置
 window：当前window实例
-front-console：向前端的控制台打印消息
+front-logger：向前端的控制台打印消息
 front-emitter：向前度推送事件
 
 

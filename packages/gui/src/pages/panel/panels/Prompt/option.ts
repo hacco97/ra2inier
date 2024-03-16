@@ -95,7 +95,6 @@ export function useObjects(state: PromptState) {
    return {
       objects,
       getObjectPath,
-      cursor,
-
+      cursor
    }
 }

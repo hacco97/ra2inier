@@ -14,8 +14,6 @@ export interface ProjectVo extends Project {
    workspace: string
 
    path: string
-
-   remote: Record<string, Reference>
 }
 
 export class EMPTY_PROJECTVO implements Partial<ProjectVo> {
@@ -26,3 +24,4 @@ export class EMPTY_PROJECTVO implements Partial<ProjectVo> {
    packages = {}
    remote = {}
 }
+

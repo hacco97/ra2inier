@@ -2,68 +2,52 @@ import { IItem } from '@/components/ListViewState';
 import { projectInfo as info } from '@/stores/projectStore';
 import { useGlobalPackages } from '@/stores/staticStore';
 import { forIn, Package, Reference } from '@ra2inier/core';
+import { defaultApp } from 'process';
 import { ref, watch } from 'vue';
 
-interface Refer extends IItem, Reference {
+export interface ReferItem extends IItem, Reference {
    path: string,
-   key: string
+   key: string,
+   missing: boolean
+   unknown: boolean
 }
-
 
 export function useReferList() {
    /**
     * 当前依赖项
     */
-   const list = ref<Partial<Refer>[]>([])
-   const refer2Item = (x: Reference) => ({
-      value: x.name || '匿名',
-      popup: createPopup(x),
-      path: x.path,
-      key: x.key,
-      url: x.url
-   })
+   const referList = ref<Partial<ReferItem>[]>([])
+
    watch(info, () => {
-      list.value = info.value.references.map(refer2Item)
+      referList.value = Object.values(info.value.references).map(refer2ReferItem)
    }, { immediate: true })
 
-   function createPopup(x: any) {
-      return `${x.url ? x.url + '\n' : ''}本地路径：${x.path}`
-   }
-   function addRefer(newOne: Partial<Refer>) {
-      for (const r of list.value) {
+
+   function addRefer(newOne: Partial<ReferItem>) {
+      for (const r of referList.value) {
          if (r.key === newOne.key) return r
       }
-      list.value.push(newOne)
+      referList.value.push(newOne)
       return newOne
    }
-
 
    /**
     * 全局包
     */
    const globalPackages = useGlobalPackages()
-   const localList = ref<Partial<Refer>[]>([])
-   watch([globalPackages], () => {
-      const tmp: Partial<Refer>[] = []
+   const localList = ref<Partial<ReferItem>[]>([])
+   watch(globalPackages, () => {
+      const tmp: Partial<ReferItem>[] = []
       forIn(globalPackages, (key, pkg) => tmp.push(pkg2Item(pkg)))
       localList.value = tmp
    }, { immediate: true })
-   function pkg2Item(pkg: Package) {
-      return {
-         value: pkg.name,
-         popup: createPopup({ path: pkg.path }),
-         selected: true,
-         path: pkg.path,
-         key: pkg.key,
-         url: pkg.link
-      }
-   }
+
 
    function onReferDelete(item: IItem, order: number) {
-      const i = <Refer>item
+      const i = <ReferItem>item
       const target = localList.value.find(x => x.key === i.key)
       if (target) target.selected = false
-      list.value = list.value.filter(x => x.key !== item.key)
+      referList.value = referList.value.filter(x => x.key !== item.key)
    }
 
    function onLocalSelect(item: IItem, order: number) {
@@ -71,17 +55,44 @@ export function useReferList() {
       if (item.selected) {
          addRefer(target)
       } else {
-         list.value = list.value.filter(x => x.key !== item.key)
+         referList.value = referList.value.filter(x => x.key !== item.key)
       }
       target.selected = item.selected
    }
 
-
    return {
-      list,
+      referList,
       localList,
       onLocalSelect,
       onReferDelete
    }
+}
 
+function createPopup(x: any) {
+   const url = `\n仓库链接：<a href="${x.url}" class="link">\
+${(x.url && x.url.startsWith('https://github.com')) ? x.url : '?'}</a>`
+   return `本地路径：${x.path || '?'}${url}`
+}
+
+function refer2ReferItem(x: Reference) {
+   let popup = createPopup(x)
+   return <ReferItem>{
+      value: x.name || '匿名',
+      popup,
+      path: x.path,
+      key: x.key,
+      url: x.url,
+      get unknown() { return !this.url && !this.path }
+   }
+}
+
+function pkg2Item(pkg: Package) {
+   return {
+      value: pkg.name,
+      popup: createPopup({ path: pkg.path }),
+      selected: true,
+      path: pkg.path,
+      key: pkg.key,
+      url: pkg.link
+   }
 }

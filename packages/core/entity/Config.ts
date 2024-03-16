@@ -111,6 +111,10 @@ export class Config extends ClientConfig {
     * 程序最大选项卡数目
     */
    declare MAX_TAB_AMOUNT: number
+   /**
+    * 开启调试模式，在非调试模式下隐藏部分功能
+    */
+   declare DEBUG_MODE: boolean
 }
 
 export interface Rectangle {

@@ -1,6 +1,6 @@
 <script lang='ts' setup>
 import { Ref, ref, toRaw, watch } from 'vue';
-import { projectInfo as info, setReference } from '@/stores/projectStore';
+import { downloadRemotePackage, flushReference, projectInfo as info, loadLocalPackage } from '@/stores/projectStore';
 import openSvg from '@/asset/icons/openDir.svg?raw';
 import reloadSvg from '@/asset/icons/reload.svg?raw';
 import githubSvg from '@/asset/icons/github.svg?raw';
@@ -14,25 +14,35 @@ import HeaderLayout from '../HeaderLayout.vue'
 import { useReferList } from './state';
 import { Reference } from '@ra2inier/core';
 import { openDirectory } from '@/boot/apis';
+import { DialogType, ask } from '@/states/dialog';
 
 
 defineOptions({ name: 'ProjectInfo' })
 
-const { list, localList, onReferDelete, onLocalSelect } = useReferList()
+const { referList, localList, onReferDelete, onLocalSelect } = useReferList()
 const isLocalShowed = ref(false)
 const newPath = ref('')
 const newUrl = ref('')
 const listView = ref<InstanceType<typeof ListView>>()
 const localView = ref<InstanceType<typeof ListView>>()
 
-function onFlushClick() {
-   const referList = list.value.map((x) => <Reference>({
-      name: x.value,
-      path: x.path,
-      key: x.key,
-      url: x.url
-   }))
-   setReference(referList)
+async function onFlushClick() {
+   const tmp: Record<string, Reference> = {}
+   referList.value.forEach((x) => {
+      if (x.key) tmp[x.key] = <Reference>({
+         name: x.value,
+         path: x.path,
+         key: x.key,
+         url: x.url
+      })
+   })
+   const toAdd = flushReference(tmp)
+   console.log(toAdd)
+   const msg = toAdd.map(x => x.name).join('\n')
+   const res = await ask('即将下载远程包：' + msg, DialogType.askIf, true)
+   if (!res) return
+   const ret = await downloadRemotePackage(toAdd)
+   loadLocalPackage(ret)
 }
 
 async function onOpenClick() {
@@ -63,7 +73,7 @@ async function onCopyClick() {
          <li class="line"><span>项目作者：</span><span>{{ info.author }}</span></li>
          <li class="line"><span>目标环境：</span><span>{{ info.target }}</span></li>
          <ul>
-            <ListView ref="listView" :list :check-box="false" @delete="onReferDelete">
+            <ListView ref="listView" :list="referList" :check-box="false" @delete="onReferDelete">
                <h2>
                   <span>引用：</span>
                   <s class="normal-button" @click="isLocalShowed = !isLocalShowed">

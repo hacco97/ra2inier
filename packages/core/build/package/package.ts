@@ -19,11 +19,11 @@ export function resolveReferences(root: string, packages: Record<string, Package
       }
       const node = new ReferTreeNode(key, depth, packages[key])
       dp[key] = node
-      for (const child of packages[key].references) {
-         const tmp = dfs(child.key, depth + 1)
+      for (const rkey in packages[key].references) {
+         const tmp = dfs(rkey, depth + 1)
          if (!tmp) return
          node.depth = depth
-         node.children[child.key] = tmp
+         node.children[rkey] = tmp
       }
       return node
    }

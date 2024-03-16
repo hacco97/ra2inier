@@ -6,6 +6,7 @@ import { loadingVersion, mainPackage, referPackages } from '@/stores/projectStor
 import LeftTabLayout from '../Layout.vue';
 import { usePanelHeight } from './panelHeight';
 import PkgView from './PkgView.vue';
+import { isEmptyObject } from '@ra2inier/core';
 
 const {
    onReferClick,
@@ -40,7 +41,7 @@ const {
                </h2>
                <section class="scroll">
                   <PkgView v-for="pkg in referPackages" :pkg="pkg"></PkgView>
-                  <h3><span>暂无引用</span></h3>
+                  <h3 v-if="isEmptyObject(referPackages)"><span>暂无引用</span></h3>
                </section>
                </p>
             </ul>

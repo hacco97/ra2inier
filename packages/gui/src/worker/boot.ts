@@ -1,9 +1,15 @@
 import {
-  All, createAll, IniObjectRo, MapperRo, PackageRo,
-  ScopeRo, WordRo,
+   createAll, IniObjectRo, MapperRo, PackageRo,
+   ScopeRo, WordRo, AllType, AllTypeKey
 } from '@ra2inier/core';
-
 const all = createAll()
+const {
+   objects: objects_,
+   scopes: scopes_,
+   mappers: mappers_,
+   dictionary: dictionary_,
+   main: main_,
+} = all
 
 export const {
    objects,
@@ -12,43 +18,45 @@ export const {
    dictionary,
    main
 } = {
-   objects: <Readonly<Record<string, IniObjectRo>>>all.objects,
-   scopes: <Readonly<Record<string, ScopeRo>>>all.scopes,
-   mappers: <Readonly<Record<string, MapperRo>>>all.mappers,
-   dictionary: <Readonly<Record<string, WordRo>>>all.dictionary,
-   main: <Readonly<Record<string, PackageRo>>>all.main,
+   objects: <Readonly<Record<string, IniObjectRo>>>objects_,
+   scopes: <Readonly<Record<string, ScopeRo>>>scopes_,
+   mappers: <Readonly<Record<string, MapperRo>>>mappers_,
+   dictionary: <Readonly<Record<string, WordRo>>>dictionary_,
+   main: <Readonly<Record<string, PackageRo>>>main_,
 }
 
-export default <Readonly<All>>all
+export default <Readonly<AllType>>all
+
+export function setValue<T extends AllTypeKey>(type: T, key: string, data: AllType[T]) {
+   all[type][key] = data
+}
 
 export function setObject(key: string, obejct: IniObjectRo) {
-   // @ts-ignore
-   objects[key] = obejct
+   objects_[key] = obejct
 }
 
 export function setWord(key: string, word: WordRo) {
-   // @ts-ignore
-   dictionary[key] = word
+   dictionary_[key] = word
 }
 
 export function setScope(key: string, scope: ScopeRo) {
-   // @ts-ignore
-   scopes[key] = scope
+   scopes_[key] = scope
 }
 
 export function setMapper(key: string, mapper: MapperRo) {
-   // @ts-ignore
-   mappers[key] = mapper
+   mappers_[key] = mapper
 }
 
+const types: AllTypeKey[] = ['objects', 'scopes', 'mappers', 'dictionary']
 
 export function clearAll() {
-   // @ts-ignore
-   for (const key in objects) delete objects[key]
-   // @ts-ignore
-   for (const key in scopes) delete scopes[key]
-   // @ts-ignore
-   for (const key in mappers) delete mappers[key]
-   // @ts-ignore
-   for (const key in dictionary) delete dictionary[key]
+   for (const type of types)
+      for (const key in all[type]) delete all[type][key]
+}
+
+export function clearAllByPkgKey(pkgKey: string) {
+   for (const type of types)
+      for (const key in all[type])
+         if (all[type][key].package === pkgKey)
+            delete all[type][key]
 }

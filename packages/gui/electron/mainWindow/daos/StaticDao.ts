@@ -1,4 +1,4 @@
-import { Config, Package } from '@ra2inier/core';
+import { Config, Package, PackageVo } from '@ra2inier/core';
 import { escapePath, forDir } from '@ra2inier/core/node';
 
 import { component, inject } from '../ioc.config';
@@ -44,19 +44,11 @@ export class StaticDao {
    }
 
    private _readPackages(dir: string) {
-      const packages: Record<string, Package> = {}
+      const packages: Record<string, PackageVo> = {}
       forDir(dir, (path, dirent) => {
          const pkg = this.packageDao.readPackageInfoByPath(path)
          pkg && (packages[pkg.key] = pkg)
       }, false)
       return packages
-   }
-
-   downloadPackage(url: string) {
-      if (!url) return
-      const path = escapePath(this.appConfig.GLOBAL_PACKAGE_CACHE)
-      this.githubApi.downloadPackage(url, path).then((ret) => {
-
-      })
    }
 }

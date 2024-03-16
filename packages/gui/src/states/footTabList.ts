@@ -39,7 +39,7 @@ export const footTabList = reactive<FootTab[]>([
       order: 1,
       label: taskSvg,
       type: FootTabType.TaskQueue,
-      name: '任务队列',
+      name: '历史记录',
       badge: '',
       toolButtons: []
    },

@@ -45,7 +45,7 @@ function attachController(window: BrowserWindow, iocController: IocContainerInfo
    container.bind('app-config').toConstantValue(config)
    container.bind('client-config').toConstantValue(config.getClientConfig())
    container.bind('window').toConstantValue(window)
-   container.bind('front-console').toConstantValue(new FrontLogger(window))
+   container.bind('front-logger').toConstantValue(new FrontLogger(window))
    container.bind('front-emitter').toFunction(createFrontEmitter(window))
 
    // 监听渲染窗口

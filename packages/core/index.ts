@@ -7,7 +7,6 @@ import {
 export * from './boot'
 export * from './build'
 
-export type All = ReturnType<typeof createAll>
 
 
 /**

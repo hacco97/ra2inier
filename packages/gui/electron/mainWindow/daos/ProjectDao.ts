@@ -54,12 +54,11 @@ export class ProjectDao {
       projectVo.main = UniqueObject.getKey(main)
       projectVo.path = projectPath
 
-      const [refers, remote] = this.resolveReferences(main)
-      for (const referPkg of Object.values(refers)) {
-         const pkg = this.packageDao.readPackageByPath(referPkg.path)
-         pkg && (projectVo.packages[referPkg.key] = pkg)
+      const refers = this.resolveReferences(main)
+      for (const referkey in refers) {
+         const pkg = this.packageDao.readPackageByPath(refers[referkey].path)
+         pkg && (projectVo.packages[referkey] = pkg)
       }
-      projectVo.remote = remote
       return projectVo
    }
 
@@ -71,22 +70,20 @@ export class ProjectDao {
       const references: Record<string, Package> = {
          [UniqueObject.getKey(pkg)]: pkg
       }
-      const remote: Record<string, Reference> = {}
       function dfs(pkg: Package) {
-         for (const refer of pkg.references) {
+         for (const [key, refer] of Object.entries(pkg.references)) {
             // 尝试从本地读取
-            if (refer.key in references) continue
-            if (refer.key in globalPackages) {
-               const newPkg = references[refer.key] = globalPackages[refer.key]
+            if (key in references) continue
+            if (key in globalPackages) {
+               const newPkg = references[key] = globalPackages[key]
+               refer.path = newPkg.path
                dfs(newPkg)
                continue
             }
-            // 尝试从远程获取
-            if (refer.url && refer.key) remote[refer.key] = refer
          }
       }
       dfs(pkg)
-      return [references, remote] as const
+      return references
    }
 
    /**

@@ -10,12 +10,13 @@ import {
    Config, fromRaw, IniObject, isUniqueObject, MapperDto,
    Package, PackageVo, Project, ProjectDto, ProjectVo,
    Reference,
-   Scope, ScopeDto, WordDto,
+   Scope, ScopeDto, UniqueObject, WordDto,
 } from '@ra2inier/core';
 import { escapePath } from '@ra2inier/core/node';
 
 import { PackageDao } from '../daos/PackageDao';
 import { ProjectDao } from '../daos/ProjectDao';
+import { StaticDao } from '../daos/StaticDao';
 
 /**
  * project service
@@ -26,6 +27,7 @@ export class ProjServ {
    @inject('project-dao') declare projectDao: ProjectDao
    @inject('package-dao') declare packageDao: PackageDao
    @inject('app-config') declare appConfig: Config
+   @inject('static-dao') declare private staticDao: StaticDao
 
    // 项目的文件路径
    #path = ''
@@ -114,30 +116,17 @@ export class ProjServ {
    }
 
    @mapping('load-package')
-   loadPackages(@pathVar pos: "local" | "remote", @param('references') refers: Reference[]) {
-      if (pos === 'remote') {
-
-      } else {
-         const packages: Record<string, PackageVo> = {}
-         const total: Record<string, string> = {}
-         for (const refer of refers) {
-            const path = refer.path
-            const pkg = this.packageDao.readPackageByPath(path)
-            if (!pkg) continue
-            packages[pkg.path] = pkg
-
-         }
-         return packages
+   loadPackages(@param('references') refers: Reference[]) {
+      const packages: Record<string, PackageVo> = {}
+      for (const refer of refers) {
+         const path = escapePath(refer.path)
+         const locals = this.staticDao.readGlobalPackages()
+         if (!(refer.key in locals)) continue
+         const pkg = this.packageDao.readPackageByPath(path)
+         if (!pkg) continue
+         packages[UniqueObject.getKey(pkg)] = pkg
       }
-   }
-
-   loadPackage(refer: Reference) {
-      // 尝试从本地读取
-      const path = escapePath(refer.path)
-      const pkg = this.packageDao.readPackageByPath(path)
-      if (!pkg) return undefined
-      const refers = pkg.references
-
+      return packages
    }
 
    @mapping('output')

@@ -4,9 +4,9 @@ import { join } from 'node:path';
 import { component, inject } from '~/mainWindow/ioc.config';
 
 import {
-   Config, enhance, fromRaw, IniObject,
+   Config, enhance, forIn, fromRaw, IniObject,
    isEmptyObject, Mapper, MapperDto, Markdown, Package,
-   PackageVo, Scope, useMemo, WordDto, WordRo, WordVo,
+   PackageVo, Reference, Scope, useMemo, WordDto, WordRo, WordVo,
 } from '@ra2inier/core';
 import { escapePath, forDir, readJson, writeJson } from '@ra2inier/core/node';
 
@@ -37,7 +37,10 @@ export class PackageDao {
       if (isEmptyObject(info)) return undefined
       const pkg = fromRaw(info, Package)
       pkg.path = pkgPath
-      return pkg
+      for (const key in pkg.references) {
+         pkg.references[key] = Reference.parser(<any>pkg.references[key])
+      }
+      return <PackageVo>pkg
    }).get
 
    /**

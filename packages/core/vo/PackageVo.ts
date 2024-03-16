@@ -18,6 +18,11 @@ export interface PackageVo extends Package {
    scopes: Record<string, ScopeVo>
    mappers: Record<string, MapperVo>              // 后加载
    dictionary: Record<string, WordVo>             // 后加载
+
+   /**
+    * 包的本地路径
+    */
+   path: string
 }
 
 export class EMPTY_PACKAGEVO implements Partial<PackageVo>{
@@ -29,4 +34,10 @@ export class EMPTY_PACKAGEVO implements Partial<PackageVo>{
    scopes = {}
    mappers = {}
    dictionary = {}
+
+   /**
+    * 包的本地路径
+    */
+   path: string = ''
 }
+

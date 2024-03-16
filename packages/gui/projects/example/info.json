@@ -5,10 +5,11 @@
    "name": "example",
    "target": "",
    "author": "xxx <33243@gmail.com> (https://dfs.xyz)",
-   "references": [
-      "10001!1",
-      "1!1"
-   ],
+   "references": {
+      "10001!1": "weizhi\n10001!1\nhttps://github.com/ra2inier/debug-project\n",
+      "1!1": "root\n1!1\nhttps://github.com/ra2inier/debug-project\n",
+      "61!5": "site\n61!5\n\n"
+   },
    "loaderVersion": "v1",
    "envVariable": {},
    "link": "",

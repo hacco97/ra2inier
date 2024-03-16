@@ -1,6 +1,6 @@
 import {
-  copy, createProject, IniObjectRo, MapperRo, ScopeRo,
-  WordRo,
+   copy, createProject, IniObjectRo, MapperRo, PackageRo, ScopeRo,
+   WordRo,
 } from '@ra2inier/core';
 
 export const project = createProject()
@@ -13,11 +13,11 @@ export const all = {
 }
 
 export type ValueSetType = {
-   objects: IniObjectRo;
-   dictionary: WordRo;
-   mappers: MapperRo;
+   objects: IniObjectRo
+   dictionary: WordRo
+   mappers: MapperRo
    scopes: ScopeRo
-};
+}
 export type ValueSetKey = keyof ValueSetType
 
 /**
@@ -33,6 +33,10 @@ export function setValue<V extends ValueSetKey, T extends ValueSetType[V]>(type:
    return tmp as T
 }
 
+export function setPackage(key: string, pkg?: PackageRo) {
+   if (pkg) { project.packages[key] = pkg }
+   else delete project.packages[key]
+}
 
 export function clearAll() {
    copy(createProject(), project)

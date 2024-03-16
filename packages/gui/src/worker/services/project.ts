@@ -1,12 +1,12 @@
 import {
-  forIn, IniObjectRo, MapperRo, mergeMappers, mergeObjects,
-  mergeScopes, mergeWords, ProjectVo, WordValidity,
+   forIn, IniObjectRo, MapperRo, mergeMappers, mergeObjects,
+   mergeScopes, mergeWords, ProjectVo, WordValidity,
 } from '@ra2inier/core';
 
 import { exec, log, on } from '../apis';
 import {
-  clearAll, dictionary, mappers, objects, scopes,
-  setMapper,
+   clearAll, clearAllByPkgKey, dictionary, mappers, objects, scopes,
+   setMapper,
 } from '../boot';
 import { checkWordHook, createCtx, doBuild } from './build';
 
@@ -57,4 +57,10 @@ on('project/build', (buildList: string[]) => {
 on('mapper/sync', (mapper: MapperRo) => {
    // mappers[mapper.key] = mapper
    setMapper(mapper.key, mapper)
+})
+
+on('package/remove', (pkgs: string[]) => {
+   for (const key of pkgs) {
+      clearAllByPkgKey(key)
+   }
 })

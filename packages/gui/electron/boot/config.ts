@@ -25,11 +25,12 @@ const defaultConfig: Partial<Config> = {
    CWD: escapePath(process.cwd()),
    MAIN_WINDOW_NAME: import.meta.env.VITE_MAIN_PARTITION,
    IS_DEV: import.meta.env.DEV,
-   DEV_URL: import.meta.env.VITE_DEV_SERVER_URL ?? "",
+   DEV_URL: import.meta.env.VITE_DEV_SERVER_URL || "",
    CONFIG_AUTOSAVE_INTERVAL: 1000 * 60 * 6,
    VITE_VUE_DEVTOOLS: escapePath(import.meta.env.VITE_VUE_DEVTOOLS),
    DEFAULT_PROJECT_DIR: escapePath('./projects'),
-   MAX_TAB_AMOUNT: 30
+   MAX_TAB_AMOUNT: 30,
+   DEBUG_MODE: import.meta.env.DEV
 }
 
 // 读取用户已经保存的配置

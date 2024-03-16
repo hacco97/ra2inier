@@ -1,6 +1,6 @@
 import {
-  IniObjectRo, MapperRo, PackageRo, ProjectRo, ScopeRo,
-  WordRo,
+   IniObjectRo, MapperRo, PackageRo, ProjectRo, ScopeRo,
+   WordRo,
 } from './ro';
 
 export * from './dto'
@@ -52,3 +52,6 @@ export function createAll() {
       main: new PackageRo
    }
 }
+
+export type AllType = ReturnType<typeof createAll>
+export type AllTypeKey = keyof ReturnType<typeof createAll>

@@ -3,7 +3,7 @@ import { fromRaw, IniObjectRo } from '@ra2inier/core';
 
 import { useHistory } from '../history';
 import useLog from '../messageStore';
-import { mainKey, project, setValue } from './boot';
+import { mainKey, setValue } from './boot';
 
 const log = useLog('object-store')
 

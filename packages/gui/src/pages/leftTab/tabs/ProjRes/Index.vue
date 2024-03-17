@@ -1,8 +1,5 @@
 <script lang='ts' setup>
-import { computed, ref } from 'vue';
-
 import { loadingVersion, mainPackage, referPackages } from '@/stores/projectStore';
-
 import LeftTabLayout from '../Layout.vue';
 import { usePanelHeight } from './panelHeight';
 import PkgView from './PkgView.vue';
@@ -27,6 +24,7 @@ const {
       </template>
       <template #panel :key="loadingVersion">
          <div :class="$style.panel">
+
             <ul>
                <p class="scroll">
                   <PkgView :pkg="mainPackage" :isMain="true"></PkgView>
@@ -45,8 +43,8 @@ const {
                </section>
                </p>
             </ul>
-            <i @mouseup="isDragerPanelShowed = false" @mouseout="isDragerPanelShowed = false"
-               v-show="isDragerPanelShowed" @mousemove="onDragerMousemove"></i>
+            <i @mouseup="isDragerPanelShowed = false" @mouseout="isDragerPanelShowed = false" v-show="isDragerPanelShowed"
+               @mousemove="onDragerMousemove"></i>
          </div>
       </template>
    </LeftTabLayout>

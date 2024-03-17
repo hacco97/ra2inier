@@ -99,7 +99,7 @@ export class MarkdownDao {
 
    writeMarkdownByPath(mdPath: string, md: Markdown) {
       this.#markdownPathMap[mdPath] = md
-      writeFile(mdPath, md.raw)
+      if (md.raw) writeFile(mdPath, md.raw)
       const dir = escapePath(mdPath, '..')
       forIn(md.images, (key, val) => {
          fs.writeFileSync(escapePath(dir, key), val)

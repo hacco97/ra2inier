@@ -28,7 +28,7 @@ export class LazyButton extends HTMLElement implements WebComponent {
    #div: HTMLDivElement
 
    #update() {
-      this.#div.setAttribute('disabled', this.#forceDisabled || this.#disabled ? 'true' : 'false')
+      this.#div.setAttribute('disabled', (this.#forceDisabled || this.#disabled) ? 'true' : 'false')
    }
 
    get disabled() { return this.#forceDisabled }
@@ -52,17 +52,15 @@ export class LazyButton extends HTMLElement implements WebComponent {
       shadow.innerHTML = html`<div><slot></slot></div>`
       const div = this.#div = shadow.querySelector('div')!
       div.addEventListener('click', (e: Event) => {
-         if (this.#forceDisabled || this.#disabled) {
+         if (this.#disabled || this.#forceDisabled) {
             e.preventDefault()
             e.stopPropagation()
          } else {
             this.#disabled = true
             this.#update()
             setTimeout(() => {
-               if (!this.#forceDisabled) {
-                  this.#disabled = false
-                  this.#update()
-               }
+               this.#disabled = false
+               this.#update()
             }, this.delay * 1000)
          }
       })

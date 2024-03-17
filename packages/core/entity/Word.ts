@@ -123,12 +123,4 @@ function adjust(entrys, ctx) {
 
 function output(val, ctx) {
 
-}
-
-export default {
-   validate,
-   translate,
-   adjust,
-   output
-}
-`
+}`

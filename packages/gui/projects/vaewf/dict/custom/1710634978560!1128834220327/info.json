@@ -1,0 +1,25 @@
+{
+   "id": 1710634978560,
+   "seed": 1128834220327,
+   "version": 1710634978560,
+   "name": "Sight",
+   "brief": "dfa",
+   "default": "fdasf",
+   "author": "",
+   "files": [
+      "uesf"
+   ],
+   "values": "int",
+   "valueParam": [
+      {
+         "type": "int",
+         "exp": "int()",
+         "min": -2147483648,
+         "max": 2147483647,
+         "repeat": 1
+      }
+   ],
+   "scopes": [
+      "af"
+   ]
+}

@@ -16,7 +16,7 @@ defineOptions({ name: 'ScopeEditor' })
 const props = defineProps<{ param: PanelParam }>()
 const scope: ScopeRo = shallowReactive(props.param.data!)
 const param = props.param
-const { onChanged, disabled, changed, vFlip } = useFilp(param, scope)
+const { onChanged, disabled, vFlip } = useFilp(props, scope)
 
 
 

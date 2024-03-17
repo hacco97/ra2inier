@@ -1,0 +1,1 @@
+{"id":1710595598444,"seed":541014454166,"version":1710595598444,"name":"Emp","brief":"水电费","default":"1","author":"","files":["rules"],"values":"float","valueParam":[{"type":"float","exp":"float()","min":-3.4028234663852886e+38,"max":3.4028234663852886e+38,"repeat":1}],"scopes":["v"]}

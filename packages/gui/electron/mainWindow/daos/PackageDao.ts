@@ -167,6 +167,6 @@ export class PackageDao {
    writeMappersByPath(pkgPath: string, mapper: MapperDto) {
       pkgPath = escapePath(pkgPath, this.config.MAPPER_DIR)
       this.#mappersPathMap[pkgPath][mapper.key] = fromRaw(mapper, Mapper)
-      this.mapperDao.writeMappersByPath(pkgPath, mapper)
+      this.mapperDao.writeMappersByPath(pkgPath, this.#mappersPathMap[pkgPath])
    }
 }

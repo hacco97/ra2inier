@@ -2,7 +2,7 @@ import { component, inject } from '~/mainWindow/ioc.config';
 
 import { forIn, fromRaw, isUniqueObject, Mapper } from '@ra2inier/core';
 import {
-  escapePath, readFile, readJson, writeFile, writeJson,
+   escapePath, readFile, readJson, writeFile, writeJson,
 } from '@ra2inier/core/node';
 
 import { DaoConfig } from './DaoConfig';
@@ -31,7 +31,8 @@ export class MapperDao {
       let t: any
       forIn(mappers, (key, mapper) => {
          t = fromRaw(mapper, Mapper)
-         writeFile(escapePath(mapperDir, key + '.js'), mapper.handlerScript)
+         if (mapper.handlerScript)
+            writeFile(escapePath(mapperDir, key + '.js'), mapper.handlerScript)
          t.handlerScript = undefined
          tmp.push(t)
       })

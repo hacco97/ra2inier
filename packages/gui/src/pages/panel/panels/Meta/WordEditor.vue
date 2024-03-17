@@ -9,7 +9,7 @@ import { ask, DialogType } from '@/states/dialog';
 import { PanelParam } from '@/states/panelList';
 import { useMarkdown } from '@/stores/markdownStore';
 import {
-  copy, HOOK_FILE_TEMPLATE, MarkdownRo, parseValueTypeExp, WordRo,
+   copy, HOOK_FILE_TEMPLATE, MarkdownRo, parseValueTypeExp, WordRo,
 } from '@ra2inier/core';
 import { FlexArea, FlexInput, LazyButton } from '@ra2inier/wc';
 
@@ -19,7 +19,7 @@ import { useFilp } from './flip';
 const props = defineProps<{ param: PanelParam }>()
 const param = props.param
 const word: WordRo = shallowReactive(props.param.data)
-const { onChanged, vFlip, disabled } = useFilp(param, word)
+const { onChanged, vFlip, disabled } = useFilp(props, word)
 
 const isMarkdownShowed = computed(() => {
    return !!word.markdown && word.markdown.key
@@ -72,7 +72,8 @@ async function onTemplateClick() {
             <ul>
                <h2>
                   <span class="required">词条</span><em>：</em>
-                  <flex-input :disabled="disabled" v-model.lazy="word.name"></flex-input>
+                  <flex-input :disabled="disabled" v-model.lazy="word.name"
+                     @change="props.param.label = word.name"></flex-input>
                </h2>
                <h2 title="词条的用途简明说明，请控制在20字以内">
                   <span>概要</span><em>：</em>

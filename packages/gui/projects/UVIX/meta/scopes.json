@@ -1,0 +1,18 @@
+[
+   {
+      "id": 1710593021026,
+      "seed": 1306262035378,
+      "version": 1710593021026,
+      "name": "VehicleTypes",
+      "brief": "载具类型",
+      "files": [
+         "rulesmo.ini",
+         "artmo.ini"
+      ],
+      "env": {
+         "mo3": "yes"
+      },
+      "detail": "代表了载具类型的定义",
+      "mappers": []
+   }
+]

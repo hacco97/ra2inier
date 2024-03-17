@@ -1,0 +1,1 @@
+{"id":1710635272172,"seed":278063310949,"version":1710635272172,"name":"Laser","brief":"cvz","default":"0,0,0","author":"","files":["ruels"],"values":"color","valueParam":[{"type":"color","exp":"color()","repeat":1}],"scopes":["weapontyeps"]}

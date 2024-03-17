@@ -16,12 +16,11 @@ const props = defineProps<{ param: PanelParam }>()
 const mapper: MapperRo = reactive(props.param.data)
 const param = props.param
 
-const { onChanged, disabled, vFlip } = useFilp(param, mapper)
+const { onChanged, disabled, vFlip } = useFilp(props, mapper)
 
 function onNameChange() {
    param.label = mapper.name
 }
-
 
 </script>
 

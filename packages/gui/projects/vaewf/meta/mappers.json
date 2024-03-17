@@ -1,0 +1,32 @@
+[
+   {
+      "id": 1710634920808,
+      "seed": 1463153877327,
+      "version": 1710634920808,
+      "name": "rules.ni",
+      "detail": "fa",
+      "targetPath": "./fds.ini",
+      "inputList": {
+         "head": "cxv"
+      },
+      "outputList": [
+         "favczx"
+      ]
+   },
+   {
+      "id": 1710638485001,
+      "seed": 848485596902,
+      "version": 1710638485001,
+      "name": "artmo",
+      "detail": "默认规则文件",
+      "targetPath": "./artmo.ini",
+      "inputList": {
+         "VehicleTypes": "vHandler",
+         "InfantryTypes": "iHandler"
+      },
+      "outputList": [
+         "OHandler",
+         "register"
+      ]
+   }
+]

@@ -119,7 +119,7 @@ watch(() => props.disabled, () => {
             </li>
          </ul>
          <h2>
-            <flex-area v-model.lazy="data.raw" placeholder="添加markdown文本"></flex-area>
+            <flex-area class="normal-rpanel" v-model.lazy="data.raw" placeholder="添加markdown文本"></flex-area>
          </h2>
       </template>
    </div>

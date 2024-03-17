@@ -4,7 +4,7 @@ import { component, inject } from '~/mainWindow/ioc.config';
 
 import { fromRaw, isUniqueObject, Word } from '@ra2inier/core';
 import {
-  escapePath, readFile, readJson, writeFile, writeJson,
+   escapePath, readFile, readJson, writeFile, writeJson,
 } from '@ra2inier/core/node';
 
 import { DaoConfig } from './DaoConfig';
@@ -26,7 +26,8 @@ export class WordDao {
    writeWordByPath(wordDir: string, word: Record<string, any>) {
       const tmp: Record<string, any> = fromRaw(word, Word)
       //   保存hooks文件
-      writeFile(escapePath(wordDir, this.daoConfig.WORD_HOOK_FILE), tmp.hookScript)
+      if (tmp.hookScript)
+         writeFile(escapePath(wordDir, this.daoConfig.WORD_HOOK_FILE), tmp.hookScript)
       tmp.hookScript = tmp.dictionary = undefined
       writeJson(escapePath(wordDir, this.daoConfig.WORD_INFO_FILE), tmp)
    }

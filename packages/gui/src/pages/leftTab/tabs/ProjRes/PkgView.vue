@@ -65,7 +65,7 @@ function onObjectOpen(object: IniObjectRo) {
 <template>
    <div :class="$style.pkgview">
       <h1>
-         <q><span>package</span><em>::</em><span>{{ pkg.name }}</span></q>
+         <q><span>当前包</span><em>：</em><span>{{ pkg.name }}</span></q>
          <s v-svgicon="addSvg" class="fore-button" v-if="isMain" @click="onAddClick"></s>
       </h1>
       <ul v-for="(group, gkey) of view" :key="gkey">

@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 
 import { PanelParam } from '@/states/panelList';
 import { useMemo } from '@ra2inier/core';
@@ -19,6 +19,20 @@ const f = useMemo(x => {
 
 const list2 = useArrayMap(list, f.get)
 
+const user = {
+   name: 'zs',
+   age: 38,
+   son: {
+      name: 'ls',
+      age: 12
+   },
+   ds: undefined
+}
+
+const r = reactive(user)
+
+
+
 </script>
 
 
@@ -34,8 +48,9 @@ const list2 = useArrayMap(list, f.get)
          </section>
       </ul>
       <h2>dsvz</h2>
+      <input disabled="true" contenteditable="false" type="text" value="dfccxva">
+      <section contenteditable="false">dfgdfs</section>
    </div>
-
 </template>
 
 <style module scoped lang='scss'>
@@ -45,6 +60,15 @@ const list2 = useArrayMap(list, f.get)
    flex-direction: column;
    min-height: 1em;
    // background: rgb(183, 149, 149);
+
+   input {
+      // user-select: none;
+      pointer-events: none;
+   }
+
+   section {
+      user-select: none;
+   }
 
    h1 {}
 

@@ -4,9 +4,7 @@ import { forIn } from '@ra2inier/core';
 
 // 右键菜单逻辑
 const isCtxMenuShowed = ref(false)
-const ctxMenuPostion = reactive({
-   translate: `100px 100px`
-})
+const ctxMenuPostion = reactive({ translate: `100px 100px` })
 
 let nextId = 0
 class CtxMemuItem {
@@ -68,24 +66,29 @@ export function useCtxMenuInfo() {
    }
 }
 
-export type CtxCallback<T extends any> = (data: T, el?: HTMLElement) => void
+export type CtxCallback<T extends any> = (data: T, el: HTMLElement) => void
 
 /**
  * 普通元素注册右键菜单
  */
 export function useCtxMenu<T extends any>(ctxMenuMap: Record<string, CtxCallback<T>>) {
-   const thisList: CtxMemuItem[] = []
+   const itemList: CtxMemuItem[] = []
+   const itemIdList = new Set<number>()
+
+   /**
+    * 让一个指令可以被应用于多个不同的元素，记录不同的元素的指令参数
+    * 元素：指令参数
+    */
    const elMap = new Map<HTMLElement, any>()
-   const ctxItemIdSet = new Set<number>()
    let target: HTMLElement
    forIn(ctxMenuMap, (key, cb) => {
       if (typeof cb !== 'function') return
       const tmp = new CtxMemuItem(key, () => {
          cb(elMap.get(target), target)
       })
-      ctxItemIdSet.add(tmp.id)
+      itemIdList.add(tmp.id)
       ctxMemuItems.push(tmp)
-      thisList.push(tmp)
+      itemList.push(tmp)
    })
 
 
@@ -93,7 +96,7 @@ export function useCtxMenu<T extends any>(ctxMenuMap: Record<string, CtxCallback
       mounted(el, { value }) {
          elMap.set(el, value)
          el.addEventListener('contextmenu', (ev) => {
-            for (const item of thisList) {
+            for (const item of itemList) {
                item.enabled = true
                item.data = value
             }
@@ -108,7 +111,7 @@ export function useCtxMenu<T extends any>(ctxMenuMap: Record<string, CtxCallback
          if (elMap.size) return
          for (let id = 0; id < ctxMemuItems.length; id++) {
             const item = ctxMemuItems[id];
-            if (ctxItemIdSet.has(item.id)) ctxMemuItems.splice(id--, 1)
+            if (itemIdList.has(item.id)) ctxMemuItems.splice(id--, 1)
          }
       }
    }

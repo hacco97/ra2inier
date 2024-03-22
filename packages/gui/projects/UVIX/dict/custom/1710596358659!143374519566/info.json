@@ -1,1 +1,0 @@
-{"id":1710596358659,"seed":143374519566,"version":1710596358659,"name":"Laser","brief":"sfa","default":"0,0,0","author":"","files":["fda"],"values":"color","valueParam":[{"type":"color","exp":"color()","repeat":1}],"scopes":["fas"]}

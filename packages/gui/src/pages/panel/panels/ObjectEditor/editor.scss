@@ -6,13 +6,13 @@ $height: line-height(normal);
    z-index: 0;
 
    // 上部页面标题
-   > h1 {
+   >h1 {
       height: $height;
       width: 100%;
       position: absolute;
       @include z-index(menu);
 
-      > ul {
+      >ul {
          display: flex;
          width: fit-content;
          height: 100%;

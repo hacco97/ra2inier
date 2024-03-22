@@ -4,7 +4,7 @@ import { messageList } from '@/stores/messageStore';
 import { Ref, inject } from 'vue';
 import { clearAll, readAll } from '@/stores/messageStore'
 import clearSvg from '@/asset/icons/clear.svg?raw';
-import readSvg from '@/asset/icons/submit.svg?raw';
+import forbidSvg from '@/asset/icons/forbid.svg?raw';
 
 
 defineOptions({ name: 'Message' })
@@ -40,7 +40,7 @@ function onReadClick() {
          <s v-svgicon="clearSvg" padding="5%"></s>
       </lazy-button>
       <lazy-button class="fore-button" :class="$style['icon-margin']" @click="onReadClick">
-         <s v-svgicon="readSvg" padding="5%"></s>
+         <s v-svgicon="forbidSvg" padding="15%"></s>
       </lazy-button>
    </Teleport>
 </template>

@@ -17,6 +17,7 @@ export function createMainWindow() {
          sandbox: true,
          preload: escapePath(__dirname, './preload.js')
       },
+      backgroundColor: "rgb(40, 43, 50)",
       ...(windowSize.getSize()),
    })
 

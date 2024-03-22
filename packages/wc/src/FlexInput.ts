@@ -20,6 +20,7 @@ export const styleSheet = css`
       width: 100%;
       height: 100%;
       text-decoration: inherit;
+      user-select: inherit;
    }
 
    span {
@@ -39,6 +40,7 @@ export const styleSheet = css`
       bottom: 0;
       width: 100%;
       text-decoration: inherit;
+      user-select: inherit;
    }
 `
 
@@ -96,14 +98,14 @@ export class FlexInput extends HTMLElement implements WebComponent {
       setTimeout(() => this.checkPlaceholder())
    }
 
-   static observedAttributes = ["text", 'placeholder']
+   static observedAttributes = ["text", 'placeholder', 'disabled']
    attributeChangedCallback(name: string, ov: string, nv: string) {
       if (name === 'text') {
          this.value = nv
       } else if (name === 'placeholder') {
          this.#input.placeholder = nv
       } else if (name === 'disabled') {
-         this.#input.disabled = !!nv
+         this.#input.disabled = nv === 'true'
       }
    }
 }

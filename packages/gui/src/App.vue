@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import ContextMenu from '@/pages/contextmenu/Index.vue';
 import Home from '@/pages/home/Index.vue';
+import '@/components/FileLink'
 
 import.meta.glob('@/css/global/**/*', { eager: true })
 import.meta.glob('@/css/classes/**/*', { eager: true })

@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import { Ref, ref, toRaw, watch } from 'vue';
+import { ref } from 'vue';
 import { downloadRemotePackage, flushReference, projectInfo as info, loadLocalPackage } from '@/stores/projectStore';
 import openSvg from '@/asset/icons/openDir.svg?raw';
 import reloadSvg from '@/asset/icons/reload.svg?raw';
@@ -16,10 +16,9 @@ import { Reference } from '@ra2inier/core';
 import { openDirectory } from '@/boot/apis';
 import { DialogType, ask } from '@/states/dialog';
 
-
 defineOptions({ name: 'ProjectInfo' })
 
-const { referList, localList, onReferDelete, onLocalSelect } = useReferList()
+const { referList, localList, onReferDelete, onLocalSelect, globalPackages } = useReferList()
 const isLocalShowed = ref(false)
 const newPath = ref('')
 const newUrl = ref('')
@@ -38,21 +37,30 @@ async function onFlushClick() {
    })
    const toAdd = flushReference(tmp)
    console.log(toAdd)
+   if (!toAdd.length) return
    const msg = toAdd.map(x => x.name).join('\n')
    const res = await ask('即将下载远程包：' + msg, DialogType.askIf, true)
    if (!res) return
-   const ret = await downloadRemotePackage(toAdd)
-   loadLocalPackage(ret)
+   await downloadRemotePackage(toAdd)
+   loadLocalPackage(toAdd)
 }
 
 async function onOpenClick() {
-   const [dir, d2] = <string[]>await openDirectory()
+   const dirs = <string[]>await openDirectory()
+   console.log(dirs)
 
 }
 
 async function onCopyClick() {
    const text = await navigator.clipboard.readText()
    newUrl.value = text.replaceAll('\n', '')
+}
+
+async function onTClick() {
+   const site = <Reference>referList.value[0]
+   console.log(site)
+   loadLocalPackage([site])
+
 }
 
 </script>
@@ -78,7 +86,8 @@ async function onCopyClick() {
                   <span>引用：</span>
                   <s class="normal-button" @click="isLocalShowed = !isLocalShowed">
                      <popup-box>
-                        <em class="folder" v-svgicon="rightSvg" padding="15%" :folded="!isLocalShowed"></em>
+                        <em class="folder" v-svgicon="rightSvg" padding="15%" style="width: 100%;"
+                           :folded="!isLocalShowed"></em>
                         <span slot="pop" class="popup">添加引用</span>
                      </popup-box>
                   </s>
@@ -88,6 +97,7 @@ async function onCopyClick() {
                         <span slot="pop" class="popup">刷新引用</span>
                      </popup-box>
                   </lazy-button>
+                  <s @click="onTClick">添加</s>
                </h2>
             </ListView>
             <main class="normal-rpanel" v-show="isLocalShowed">
@@ -171,6 +181,12 @@ $align: align-size(normal);
       flex: 0 0 auto;
       height: 1lh;
       aspect-ratio: 1;
+   }
+
+   popup-box {
+      display: block;
+      width: 100%;
+      height: 100%;
    }
 
    main {

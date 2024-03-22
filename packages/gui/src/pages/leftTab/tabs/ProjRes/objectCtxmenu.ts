@@ -10,25 +10,21 @@ export type CtxItem = {
    openHandle: () => void
 }
 
-let vCtxmenu: Directive<HTMLElement, any> | undefined
-
-globalEvent.on('project-loaded', () => vCtxmenu = undefined)
-
+let objectCtx: Directive<HTMLElement, any> | undefined
+globalEvent.on('project-loaded', () => objectCtx = undefined)
 export function useObjectCtxmenu() {
-   if (!vCtxmenu) vCtxmenu = useCtxMenu<CtxItem>({
-      '编辑'(item) {
+   if (!objectCtx) objectCtx = useCtxMenu<CtxItem>({
+      '编辑对象'(item) {
          item.openHandle()
       },
-      '翻译'(item) {
+      '翻译对象'(item) {
          console.log('dance')
          work('object/translate', { objectKey: item.object.key })
       },
-      '删除'(item) {
+      '删除对象'(item) {
          console.log(item)
       },
-      '复制'() { },
-      '粘贴'() { },
+      '克隆对象'() { },
    })
-   return vCtxmenu!
+   return objectCtx!
 }
-

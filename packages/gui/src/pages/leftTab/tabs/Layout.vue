@@ -24,14 +24,17 @@ defineOptions({
 <style src="@css/lefttab.scss" scoped module="$theme" />
 <style scoped lang='scss' module>
 $header-height: line-height(normal);
+$padding: align-size(large);
 
 .layout {
    overflow: hidden;
    height: 100%;
 
    >h2 {
+      position: relative;
+      @include z-index(menu);
       height: $header-height;
-      padding-left: align-size(large);
+      padding-left: $padding;
 
       >div {
          display: flex;
@@ -42,6 +45,8 @@ $header-height: line-height(normal);
    }
 
    >main {
+      position: relative;
+      @include z-index(main);
       overflow-x: hidden;
       overflow-y: auto;
       height: calc(100% - $header-height);
@@ -57,7 +62,5 @@ $header-height: line-height(normal);
          }
       }
    }
-
-
 }
 </style>

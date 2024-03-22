@@ -97,7 +97,7 @@ export function queryObject<T extends ValueSetKey>(type: T,
 }
 
 /**
- * 刷新
+ * 刷新当前项目的依赖项，不涉及包的下载逻辑
  */
 export function flushReference(references: Record<string, Reference>) {
    // 删去多余的包

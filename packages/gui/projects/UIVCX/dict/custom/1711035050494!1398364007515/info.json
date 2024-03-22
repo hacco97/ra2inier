@@ -1,0 +1,1 @@
+{"id":1711035050494,"seed":1398364007515,"version":1711035050494,"name":"Sight","brief":"视野打下","default":"5","author":"","files":[],"values":"int(0,)","valueParam":[{"type":"int","exp":"int(0,)","min":0,"max":2147483647,"repeat":1}],"scopes":[]}

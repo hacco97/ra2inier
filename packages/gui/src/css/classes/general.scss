@@ -184,7 +184,7 @@
 .folder {
    display: inline-block;
    height: 1lh;
-   aspect-ratio: 1;
+   width: 1.5ch;
    @include font-family(code);
    transition: rotate 0.3s ease;
    @extend .text-center;

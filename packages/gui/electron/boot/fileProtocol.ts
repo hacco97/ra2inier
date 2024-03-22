@@ -1,6 +1,6 @@
 import config from './config'
 import fs from 'node:fs'
-import { app, net, protocol } from 'electron'
+import { app, net, protocol, shell } from 'electron'
 import { escapePath } from '@ra2inier/core/node'
 
 // 开启文件传输协议
@@ -20,6 +20,7 @@ const diskCode = /^[cdefgh]{1}\//
 // 处理文件传输协议的内容
 app.whenReady().then(() => import('node:url')).then(nodeUrl => {
    const pathToFileURL = nodeUrl.pathToFileURL
+   // 处理lfp文件获取协议
    protocol.handle(config.FILE_PROTOCOL, (req) => {
       // 处理文件请求，将url改为文件地址
       let url = req.url.slice(config.FILE_PROTOCOL.length + 3)

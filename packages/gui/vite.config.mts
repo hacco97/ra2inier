@@ -78,7 +78,7 @@ function useElectron(env: Record<string, string>) {
          plugins
       },
       onstart({ startup }) {
-         startup(['.', '--remote-debugging-port=19222'])
+         startup(['.', '--remote-debugging-port=19222', '--trace-warnings'])
       }
    })
 }

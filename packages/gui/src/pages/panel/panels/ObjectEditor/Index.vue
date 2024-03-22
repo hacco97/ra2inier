@@ -54,7 +54,10 @@ const labelHelper = ref<HTMLElement>()
                <ul>
                   <h2>
                      <em>./</em><span>{{ projectName }}</span><em>/</em>
-                     <i></i><flex-input v-model.lazy.trim="state.data.name" @change="onNameChange" placeholder="OBJECT" />
+                     <i></i><flex-input v-model.lazy.trim="state.data.group" placeholder="GROUP_NAME" /><i></i>
+                     <em>/</em>
+                     <i></i>
+                     <flex-input v-model.lazy.trim="state.data.name" @change="onNameChange" placeholder="OBJECT" />
                      <em>.</em>
                      <flex-input v-model.lazy.trim="state.data.scope" placeholder="NullTypes" /><i></i>
                      <em>/</em><i @click="labelHelper?.focus()"></i>

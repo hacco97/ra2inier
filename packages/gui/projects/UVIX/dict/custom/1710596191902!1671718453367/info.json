@@ -1,1 +1,0 @@
-{"id":1710596191902,"seed":1671718453367,"version":1710596191902,"name":"Sight","brief":"vcz","default":"5","author":"","files":[],"values":"int","valueParam":[{"type":"int","exp":"int()","min":-2147483648,"max":2147483647,"repeat":1}],"scopes":["sv"]}

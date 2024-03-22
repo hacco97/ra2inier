@@ -1,0 +1,1 @@
+{"id":1711034893052,"seed":12443135040,"version":1711034893052,"name":"Name","brief":"对象的名字","default":"fac","author":"","files":[],"values":"str","valueParam":[{"type":"str","exp":"str()","repeat":1}],"scopes":["VehicleTypes"]}

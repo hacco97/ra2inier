@@ -1,10 +1,9 @@
-import { IIniObject } from "../entity/Obejct";
-import { UniqueObject } from "../entity/Obejct";
+import { IniObject, UniqueObject } from "../entity/Obejct";
 import { Scope } from "../entity/Scope";
 import { Word } from "../entity/Word";
 import { Mapper } from "../entity/Mapper";
 
-export interface IniObjectVo extends IIniObject { }
+export interface IniObjectVo extends IniObject { }
 
 
 export interface ResourceVo extends UniqueObject { }

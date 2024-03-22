@@ -117,7 +117,7 @@ export function savePackageInfo(pkg: Package) {
 }
 
 /**
- * 从磁盘加载包，如果本地没有则会根据所提供的url在远程下载
+ * 从磁盘加载包
  */
 export function loadLocalPackage(references: Reference[]) {
    exec('project/load-package', { references }).then(({ status, data }) => {
@@ -127,12 +127,13 @@ export function loadLocalPackage(references: Reference[]) {
    })
 }
 
-
+/**
+ * 下载远程包，下载的时候会检查是否存在url属性如果不存在
+ */
 export async function downloadRemotePackage(refers: Reference[]) {
    const tmp = refers.filter(x => !!x.url)
+   if (!tmp.length) return []
    const { status, data } = await exec('download/remote-package', { data: tmp })
    if (!status) return void logger.warn('下载包失败') || []
-   console.log(data)
-
    return <Reference[]>data
 }

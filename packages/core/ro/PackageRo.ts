@@ -18,6 +18,8 @@ export class PackageRo extends Package implements ToDto {
    mappers: Record<string, MapperRo> = {}           // 后加载
    dictionary: Record<string, WordRo> = {}              // 后加载
 
+   path: string = ''
+
    toDto() {
       return <ToDto>fromRaw(this, PackageDto)
    }

@@ -1,0 +1,16 @@
+[
+   {
+      "id": 1711033530345,
+      "seed": 368923903423,
+      "version": 1711033530345,
+      "name": "rules",
+      "detail": "afsd",
+      "targetPath": "./rulesmo.ini",
+      "inputList": {
+         "IFS": "fa"
+      },
+      "outputList": [
+         "itsfa"
+      ]
+   }
+]

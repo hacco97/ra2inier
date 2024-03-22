@@ -3,7 +3,7 @@ import { reactive } from 'vue';
 import { exec } from '@/boot/apis';
 
 import useLog from './messageStore';
-import { Package, forIn, fromRaw } from '@ra2inier/core';
+import { Package, cloneTyped, forIn, fromRaw } from '@ra2inier/core';
 
 const globalPackages: Record<string, Package> = reactive({})
 
@@ -18,7 +18,7 @@ export function useGlobalPackages() {
       .then(({ status, data }) => {
          if (!status) return logger.debug('查询全局包失败', data)
          forIn(data, (key, pkg) => {
-            globalPackages[key] = fromRaw(pkg, Package)
+            globalPackages[key] = cloneTyped(pkg, Package)
          })
       })
    return <Readonly<Record<string, Package>>>globalPackages

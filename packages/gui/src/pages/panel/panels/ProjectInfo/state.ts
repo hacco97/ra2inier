@@ -2,7 +2,6 @@ import { IItem } from '@/components/ListViewState';
 import { projectInfo as info } from '@/stores/projectStore';
 import { useGlobalPackages } from '@/stores/staticStore';
 import { forIn, Package, Reference } from '@ra2inier/core';
-import { defaultApp } from 'process';
 import { ref, watch } from 'vue';
 
 export interface ReferItem extends IItem, Reference {
@@ -38,7 +37,12 @@ export function useReferList() {
    const localList = ref<Partial<ReferItem>[]>([])
    watch(globalPackages, () => {
       const tmp: Partial<ReferItem>[] = []
-      forIn(globalPackages, (key, pkg) => tmp.push(pkg2Item(pkg)))
+      forIn(globalPackages, (key, pkg) => {
+         const newOne = pkg2Item(pkg)
+         const target = referList.value.find(x => newOne.key === x.key)
+         newOne.selected = !!target
+         tmp.push(newOne)
+      })
       localList.value = tmp
    }, { immediate: true })
 
@@ -46,7 +50,7 @@ export function useReferList() {
    function onReferDelete(item: IItem, order: number) {
       const i = <ReferItem>item
       const target = localList.value.find(x => x.key === i.key)
-      if (target) target.selected = false
+      if (target) target.selected = true
       referList.value = referList.value.filter(x => x.key !== item.key)
    }
 
@@ -64,14 +68,16 @@ export function useReferList() {
       referList,
       localList,
       onLocalSelect,
-      onReferDelete
+      onReferDelete,
+      globalPackages
    }
 }
 
 function createPopup(x: any) {
-   const url = `\n仓库链接：<a href="${x.url}" class="link">\
+   const path = `本地路径：<file-link style="height: fit-content;" path="${x.path}" class="link">${x.path || '?'}</file-link>`
+   const url = `仓库链接：<a href="${x.url}" class="link">\
 ${(x.url && x.url.startsWith('https://github.com')) ? x.url : '?'}</a>`
-   return `本地路径：${x.path || '?'}${url}`
+   return `${path}\n${url}`
 }
 
 function refer2ReferItem(x: Reference) {
@@ -90,9 +96,10 @@ function pkg2Item(pkg: Package) {
    return {
       value: pkg.name,
       popup: createPopup({ path: pkg.path }),
-      selected: true,
+      selected: false,
       path: pkg.path,
       key: pkg.key,
       url: pkg.link
    }
 }
+

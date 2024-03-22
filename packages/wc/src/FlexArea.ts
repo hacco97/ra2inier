@@ -99,7 +99,7 @@ export class FlexArea extends HTMLElement implements WebComponent {
          return (new Array(this.tabsize)).fill(' ').join('')
       }
 
-      let prev = false
+      let prev = true
       textarea.addEventListener('keydown', (e: KeyboardEvent) => {
          if (e.key === 'Tab') {
             if (e.ctrlKey) return prev = !prev

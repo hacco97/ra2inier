@@ -20,7 +20,9 @@ export const dialogs: Dialog[] = reactive([])
 let nextID = 0
 
 export function addDialog(question: string, type = DialogType.askIf) {
-   const p: Promise<any> = new Promise((solve, reject) => {
+   let rejectHandler: Function
+   const p: Promise<any> = new Promise((solve) => {
+      rejectHandler = () => solve(undefined)
       dialogs.push({
          callback(res: any) {
             solve(res)
@@ -33,7 +35,7 @@ export function addDialog(question: string, type = DialogType.askIf) {
          res: ''
       })
    })
-
+   setTimeout(rejectHandler!, 10_000)
    return p
 }
 

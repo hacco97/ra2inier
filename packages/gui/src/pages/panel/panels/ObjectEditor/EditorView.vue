@@ -140,10 +140,10 @@ const columCount = computed(() => ({ columns: state.columnCount }))
                <p>局部变量：</p>
                <MapBox :map="object.envVariable" :disabled="false"></MapBox>
                <p>备注：</p>
-               <flex-area v-show="!isDetailFolded" class="scroll" v-model.lazy="state.detail"
+               <flex-area v-show="!isDetailFolded" class="normal-rpanel" v-model.lazy="state.detail"
                   placeholder="添加对象备注"></flex-area>
             </h2>
-
+            <hr style="height: 10px;">
             <ul :style="columCount">
                <!-- 词条编辑框 -->
                <li v-for="(entry, eid) in entrys" :key="entry.id" @click="onRowClick(eid)"
@@ -218,6 +218,7 @@ $align: align-size(normal);
    flex-area {
       display: block;
       width: 100%;
+      padding: 0 align-size(small);
    }
 
    ul {

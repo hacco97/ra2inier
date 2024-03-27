@@ -4,6 +4,9 @@ import LeftTabLayout from '../Layout.vue';
 import { usePanelHeight } from './panelHeight';
 import PkgView from './PkgView.vue';
 import { isEmptyObject } from '@ra2inier/core';
+import Search from '@/pages/leftTab/tabs/Search.vue';
+import { ref } from 'vue';
+
 
 const {
    onReferClick,
@@ -24,15 +27,18 @@ const {
       </template>
       <template #panel :key="loadingVersion">
          <div :class="$style.panel">
-
             <ul>
+               <!-- 上半 -->
                <p class="scroll">
+                  <Search placeholder="搜索对象"></Search>
                   <PkgView :pkg="mainPackage" :isMain="true"></PkgView>
                </p>
+               <!-- 拖动框 -->
                <legend>
                   <b @mousedown="isDragerPanelShowed = true" :class="$theme['projres-drager']"
                      :dragging="isDragerPanelShowed"></b>
                </legend>
+               <!-- 下半 -->
                <p>
                <h2 @click="onReferClick" :class="$theme['projres-referbar']">
                   <em><span class="folder" :folded="isReferFolded">&gt;</span><span>引用</span></em>
@@ -43,8 +49,8 @@ const {
                </section>
                </p>
             </ul>
-            <i @mouseup="isDragerPanelShowed = false" @mouseout="isDragerPanelShowed = false" v-show="isDragerPanelShowed"
-               @mousemove="onDragerMousemove"></i>
+            <i @mouseup="isDragerPanelShowed = false" @mouseout="isDragerPanelShowed = false"
+               v-show="isDragerPanelShowed" @mousemove="onDragerMousemove"></i>
          </div>
       </template>
    </LeftTabLayout>
@@ -61,44 +67,19 @@ const {
    height: 100%;
    position: relative;
 
-   i {
-      position: absolute;
-      z-index: 10;
-      display: block;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      cursor: ns-resize;
-   }
-
    ul {
       display: flex;
       flex-direction: column;
       height: 100%;
    }
 
+   h3 {
+      padding-left: align-size(normal);
+   }
+
    p {
       position: relative;
       z-index: 0;
-   }
-
-   legend {
-      width: 100%;
-      height: 0;
-      overflow: visible;
-      position: relative;
-
-      b {
-         display: block;
-         position: absolute;
-         z-index: 9;
-         top: -3px;
-         left: 0;
-         width: 100%;
-         height: 8px;
-         cursor: ns-resize;
-      }
    }
 
    p:nth-child(1) {
@@ -123,8 +104,34 @@ const {
       }
    }
 
-   h3 {
-      padding-left: align-size(normal);
+   // 拖动框
+   legend {
+      width: 100%;
+      height: 0;
+      overflow: visible;
+      position: relative;
+
+      b {
+         display: block;
+         position: absolute;
+         z-index: 9;
+         top: -3px;
+         left: 0;
+         width: 100%;
+         height: 8px;
+         cursor: ns-resize;
+      }
+   }
+
+   i {
+      position: absolute;
+      z-index: 10;
+      display: block;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      cursor: ns-resize;
    }
 }
 </style>

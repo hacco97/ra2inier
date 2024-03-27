@@ -3,7 +3,7 @@ import { reactive } from 'vue';
 import bellSvg from '@/asset/icons/bell.svg?raw';
 import compileSvg from '@/asset/icons/compile.svg?raw';
 import consoleSvg from '@/asset/icons/console.svg?raw';
-import taskSvg from '@/asset/icons/task.svg?raw';
+import recycleSvg from '@/asset/icons/recycle.svg?raw';
 import { messageList, onMessage } from '@/stores/messageStore';
 
 export interface FootTab {
@@ -18,7 +18,7 @@ export interface FootTab {
 
 export enum FootTabType {
    Dialog = 'Dialog',
-   TaskQueue = 'TaskQueue',
+   Recycle = 'Recycle',
    Output = 'Output',
    Message = 'Message'
 }
@@ -37,9 +37,9 @@ export const footTabList = reactive<FootTab[]>([
    {
       id: 1,
       order: 1,
-      label: taskSvg,
-      type: FootTabType.TaskQueue,
-      name: '历史记录',
+      label: recycleSvg,
+      type: FootTabType.Recycle,
+      name: '回收站',
       badge: '',
       toolButtons: []
    },

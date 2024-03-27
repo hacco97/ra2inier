@@ -1,54 +1,58 @@
 <script lang='ts' setup>
 import { ref } from 'vue';
-import { downloadRemotePackage, flushReference, projectInfo as info, loadLocalPackage } from '@/stores/projectStore';
+import { projectInfo as info, loadLocalPackage, loadPackage } from '@/stores/projectStore';
 import openSvg from '@/asset/icons/openDir.svg?raw';
 import reloadSvg from '@/asset/icons/reload.svg?raw';
 import githubSvg from '@/asset/icons/github.svg?raw';
 import copySvg from '@/asset/icons/copy.svg?raw';
 import rightSvg from '@/asset/icons/right.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
+import submitSvg from '@/asset/icons/submit.svg?raw';
 import MapBox from '@/components/dirty/MapBox.vue';
 import ListView from '@/components/ListView.vue';
 import { LazyButton, PopupBox, FlexInput } from '@ra2inier/wc';
 import HeaderLayout from '../HeaderLayout.vue'
-import { useReferList } from './state';
+import { ReferItem, createReferList } from './state';
 import { Reference } from '@ra2inier/core';
 import { openDirectory } from '@/boot/apis';
-import { DialogType, ask } from '@/states/dialog';
+import { useDisabled } from '@/hooks/disabledFn'
+import { IItem } from '@/components/ListViewState';
 
 defineOptions({ name: 'ProjectInfo' })
 
-const { referList, localList, onReferDelete, onLocalSelect, globalPackages } = useReferList()
+const { referList, localList, addRefer, getReferMap, deleteRefer } = createReferList()
 const isLocalShowed = ref(false)
 const newPath = ref('')
 const newUrl = ref('')
-const listView = ref<InstanceType<typeof ListView>>()
-const localView = ref<InstanceType<typeof ListView>>()
+// const listView = ref<InstanceType<typeof ListView>>()
+// const localView = ref<InstanceType<typeof ListView>>()
 
-async function onFlushClick() {
-   const tmp: Record<string, Reference> = {}
-   referList.value.forEach((x) => {
-      if (x.key) tmp[x.key] = <Reference>({
-         name: x.value,
-         path: x.path,
-         key: x.key,
-         url: x.url
-      })
-   })
-   const toAdd = flushReference(tmp)
-   console.log(toAdd)
-   if (!toAdd.length) return
-   const msg = toAdd.map(x => x.name).join('\n')
-   const res = await ask('即将下载远程包：' + msg, DialogType.askIf, true)
-   if (!res) return
-   await downloadRemotePackage(toAdd)
-   loadLocalPackage(toAdd)
+function onReferDelete(item: IItem, order: number) {
+   const i = <ReferItem>item
+   deleteRefer(i)
 }
+
+function onLocalSelect(item: IItem, order: number) {
+   const target = localList.value.find(x => x.key === item.key)!
+   if (item.selected) {
+      addRefer(target)
+   } else {
+      referList.value = referList.value.filter(x => x.key !== item.key)
+   }
+   target.selected = item.selected
+}
+
+const [onFlushClick] = useDisabled(async () => {
+   // 获取需要添加的包
+   const map = getReferMap()
+   await loadPackage(map)
+})
 
 async function onOpenClick() {
    const dirs = <string[]>await openDirectory()
    console.log(dirs)
-
+   const loaded = await loadLocalPackage(dirs)
+   console.log(loaded)
 }
 
 async function onCopyClick() {
@@ -56,10 +60,14 @@ async function onCopyClick() {
    newUrl.value = text.replaceAll('\n', '')
 }
 
-async function onTClick() {
-   const site = <Reference>referList.value[0]
-   console.log(site)
-   loadLocalPackage([site])
+
+async function onLocalSubmitClick() {
+   const loaded = await loadLocalPackage([newPath.value])
+   console.log(loaded)
+
+}
+
+function onRemoteSubmitClick() {
 
 }
 
@@ -81,7 +89,7 @@ async function onTClick() {
          <li class="line"><span>项目作者：</span><span>{{ info.author }}</span></li>
          <li class="line"><span>目标环境：</span><span>{{ info.target }}</span></li>
          <ul>
-            <ListView ref="listView" :list="referList" :check-box="false" @delete="onReferDelete">
+            <ListView :list="referList" :check-box="false" @delete="onReferDelete">
                <h2>
                   <span>引用：</span>
                   <s class="normal-button" @click="isLocalShowed = !isLocalShowed">
@@ -97,25 +105,25 @@ async function onTClick() {
                         <span slot="pop" class="popup">刷新引用</span>
                      </popup-box>
                   </lazy-button>
-                  <s @click="onTClick">添加</s>
                </h2>
             </ListView>
             <main class="normal-rpanel" v-show="isLocalShowed">
-               <ListView v-if="localList.length" ref="localView" :list="localList" :delete-button="false"
-                  @select="onLocalSelect">
+               <ListView v-if="localList.length" :list="localList" :delete-button="false" @select="onLocalSelect">
                   <h3><span>从内置导入：</span></h3>
                </ListView>
                <div v-else>没有找到内置包</div>
                <h3>
                   <span>从本地导入：</span>
                   <flex-input v-model="newPath" class="fore-input"></flex-input>
+                  <s class="normal-button" v-svgicon="submitSvg" padding="15%" @click="onLocalSubmitClick"></s>
                   <s class="normal-button" v-svgicon="openSvg" padding="15%" @click="onOpenClick"></s>
                </h3>
                <h3>
                   <span>从远程导入：</span>
                   <flex-input v-model="newUrl" class="fore-input"></flex-input>
-                  <a href="https://github.com/" class="normal-button"><span v-svgicon="githubSvg"></span></a>
+                  <s class="normal-button" v-svgicon="submitSvg" padding="15%" @click="onRemoteSubmitClick"></s>
                   <s v-svgicon="copySvg" class="normal-button" padding="15%" @click="onCopyClick"></s>
+                  <a href="https://github.com/" class="normal-button"><span v-svgicon="githubSvg"></span></a>
                </h3>
             </main>
          </ul>

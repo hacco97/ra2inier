@@ -1,14 +1,8 @@
 import { computed, ComputedGetter } from 'vue';
-
-import {
-   diffArray, forIn, IniObjectRo, MapperRo, PackageRo,
-   ProjectInfo, Reference, ScopeRo, WordRo,
-} from '@ra2inier/core';
-
-import { mainKey, project, setPackage, ValueSetKey, ValueSetType } from './boot';
-import { loadingVersion, loadLocalPackage, openProject } from './actions'
+import { forIn, PackageRo, ProjectInfo, Reference, } from '@ra2inier/core';
+import { mainKey, project, setPackage, setReference, ValueSetKey, ValueSetType } from './boot';
+import { downloadRemotePackage, loadingVersion, loadLocalPackage, openProject } from './actions'
 import { work } from '@/boot/apis';
-import { ask, DialogType } from '@/states/dialog';
 
 /**
  * 自定义computed，让computed的值依赖于loadingVersion
@@ -16,7 +10,8 @@ import { ask, DialogType } from '@/states/dialog';
 export function loaderComputed<T>(f: ComputedGetter<T>) {
    return computed((o?: T) => {
       if (project.loadable) openProject()
-      loadingVersion.value
+      const tmp = loadingVersion.value
+      void tmp
       return f(o)
    })
 }
@@ -39,7 +34,7 @@ export const referPackages = loaderComputed(() => {
 })
 
 export const packages = loaderComputed(() => {
-   return project.packages
+   return { ...project.packages }
 })
 
 export const projectInfo = loaderComputed(() => {
@@ -60,22 +55,22 @@ export const packageNames = loaderComputed(() => {
 /**
  * 返回全部项目资源的可读集合
  */
-export const all = loaderComputed(() => {
+export const allOfPackages = loaderComputed(() => {
    return {
-      objects: mergeKey<IniObjectRo>(project.packages, 'objects'),
-      scopes: mergeKey<ScopeRo>(project.packages, 'scopes'),
-      mappers: mergeKey<MapperRo>(project.packages, 'mappers'),
-      dictionary: mergeKey<WordRo>(project.packages, 'dictionary')
+      objects: mergeKey(project.packages, 'objects'),
+      scopes: mergeKey(project.packages, 'scopes'),
+      mappers: mergeKey(project.packages, 'mappers'),
+      dictionary: mergeKey(project.packages, 'dictionary')
    }
 })
-function mergeKey<T>(packages: Record<string, PackageRo>, readKey: string) {
+function mergeKey<T extends ValueSetKey>(packages: Record<string, PackageRo>, readKey: T) {
    const tmp: Record<string, any> = {}
    forIn(packages, (key, pkg) => {
-      forIn(pkg[readKey], (key, obj) => {
+      forIn(pkg[<keyof PackageRo>readKey], (key, obj) => {
          tmp[key] = obj
       })
    })
-   return <Readonly<Record<string, T>>>tmp
+   return <Readonly<Record<string, ValueSetType[T]>>>tmp
 }
 
 
@@ -84,7 +79,7 @@ function mergeKey<T>(packages: Record<string, PackageRo>, readKey: string) {
  */
 export function queryObject<T extends ValueSetKey>(type: T,
    filter: (v: ValueSetType[T]) => number, limit = 20) {
-   const targetSet = all.value[type]
+   const targetSet = allOfPackages.value[type]
    const ret: [number, any][] = []
    forIn(<Record<string, any>>targetSet, (key, val) => {
       const priority = filter(val)
@@ -96,23 +91,3 @@ export function queryObject<T extends ValueSetKey>(type: T,
    return <ValueSetType[T][]>(temp.reverse())
 }
 
-/**
- * 刷新当前项目的依赖项，不涉及包的下载逻辑
- */
-export function flushReference(references: Record<string, Reference>) {
-   // 删去多余的包
-   const toDel = []
-   for (const key in referPackages.value) {
-      if (key in references) continue
-      setPackage(key)
-      toDel.push(key)
-   }
-   work('package/remove', toDel)
-   // 确定未加载的包
-   const toAdd: Reference[] = []
-   for (const key in references) {
-      if (key in project.packages) continue
-      toAdd.push(references[key])
-   }
-   return toAdd
-}

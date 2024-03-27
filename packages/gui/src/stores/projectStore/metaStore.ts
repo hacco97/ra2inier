@@ -1,10 +1,8 @@
 import { exec, work } from '@/boot/apis';
-import {
-  MapperRo, MarkdownRo, ScopeRo, WordRo, WordValidity,
-} from '@ra2inier/core';
+import { MapperRo, MarkdownRo, ScopeRo, WordRo, WordValidity } from '@ra2inier/core';
 
 import useLog from '../messageStore';
-import { all, mainKey, setValue } from './boot';
+import { allOfMain, mainKey, setValue } from './boot';
 
 const log = useLog('meta-store')
 
@@ -73,7 +71,7 @@ export function saveWord(word: WordRo) {
 }
 
 export async function queryWordByName(name: string): Promise<WordRo> {
-   const dictionary = all.dictionary
+   const dictionary = allOfMain.dictionary
    return new Promise((solve, reject) => {
       for (const key in dictionary) {
          if (dictionary[key].name === name)
@@ -85,7 +83,7 @@ export async function queryWordByName(name: string): Promise<WordRo> {
 
 export function queryWordByNameSync(name: string) {
    if (!name) return undefined
-   const dictionary = all.dictionary
+   const dictionary = allOfMain.dictionary
    for (const key in dictionary) {
       if (dictionary[key].name === name)
          return dictionary[key]
@@ -97,7 +95,7 @@ export function queryWordByNameSync(name: string) {
  * 从整个项目中获得word，根据key值
  */
 export function queryWordByKey(key: string) {
-   return all.dictionary[key]
+   return allOfMain.dictionary[key]
 }
 
 /**
@@ -106,7 +104,7 @@ export function queryWordByKey(key: string) {
 const wordValidateCache: Record<string, WordValidity> = {}
 export async function validateWord(wordKey: string, values: string[]) {
    if (wordValidateCache[wordKey]) return wordValidateCache[wordKey]
-   const word = all.dictionary[wordKey]
+   const word = allOfMain.dictionary[wordKey]
    if (!word) return _setCache(wordKey, new WordValidity)
    const res = await work('word/validate', { wordKey: wordKey, values })
    if (res.status) {

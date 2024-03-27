@@ -1,21 +1,19 @@
 <script lang='ts' setup>
-import { shallowReactive } from 'vue';
-
+import dictSvg from '@/asset/icons/dict.svg?raw'
 import { useCtxMenu } from '@/states/ctxMenu';
 import { addPanel, PanelParam, PanelType } from '@/states/panelList';
 import { addWord, packageNames, saveWord } from '@/stores/projectStore';
-import { cloneTyped, copy, WordRo } from '@ra2inier/core';
+import { cloneTyped, WordRo } from '@ra2inier/core';
 
 import { isReadonly } from './metaState';
+import { reactiveComputed } from '@vueuse/core';
 
 defineOptions({ name: 'DictView' })
 
 const props = defineProps<{ dictionary: Record<string, WordRo> }>()
-const dictView: Record<string, WordRo> = shallowReactive(props.dictionary)
+const dictView: Record<string, WordRo> = reactiveComputed(() => props.dictionary)
 
 function onSave(word: WordRo) {
-   console.log(123)
-
    const newOne = cloneTyped(word, WordRo)
    saveWord(newOne)
    dictView[newOne.key] = newOne
@@ -47,7 +45,10 @@ const vCtxmenu = useCtxMenu({
 
 <template>
    <div :class="$style.dict" v-ctxmenu>
-      <h2>Word::词条类型</h2>
+      <h2 class="list-item">
+         <p v-svgicon="dictSvg" padding="0"></p>
+         <span>字典</span>
+      </h2>
       <ul>
          <li v-for="(word, key) in dictView" :key="key" @dblclick="onOpenClick(word)" class="list-item">
             <span>{{ packageNames[word.package] }}</span><span>/</span>

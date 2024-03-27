@@ -23,7 +23,3 @@ export function useGlobalPackages() {
       })
    return <Readonly<Record<string, Package>>>globalPackages
 }
-
-export function openD() {
-
-}

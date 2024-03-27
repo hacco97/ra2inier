@@ -1,17 +1,18 @@
 <script lang='ts' setup>
 import { shallowReactive } from 'vue';
-
+import mapperSvg from '@/asset/icons/mapper.svg?raw'
 import { useCtxMenu } from '@/states/ctxMenu';
 import { addPanel, PanelParam, PanelType } from '@/states/panelList';
 import { addMapper, packageNames, saveMapper } from '@/stores/projectStore';
 import { cloneTyped, MapperRo } from '@ra2inier/core';
 
 import { isReadonly } from './metaState';
+import { reactiveComputed } from '@vueuse/core';
 
 defineOptions({ name: 'MapperView' })
 
 const props = defineProps<{ mappers: Record<string, MapperRo> }>()
-const mapperView: Record<string, MapperRo> = shallowReactive(props.mappers)
+const mapperView: Record<string, MapperRo> = reactiveComputed(() => props.mappers)
 
 function onSave(data: MapperRo) {
    const newOne = cloneTyped(data, MapperRo)
@@ -47,7 +48,10 @@ const vCtxmenu = useCtxMenu({
 
 <template>
    <div :class="$style.mapper" v-ctxmenu>
-      <h2>Mapper::文件类型</h2>
+      <h2 class="list-item">
+         <p v-svgicon="mapperSvg" padding="15%"></p>
+         <span>输出器</span>
+      </h2>
       <ul>
          <li class="list-item" v-for="(mapper, key) in mapperView" @dblclick="onOpenMapper(mapper)" :key="key">
             <span>{{ packageNames[mapper.package] }}</span><span>/</span><span>{{ mapper.name }}</span>

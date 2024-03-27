@@ -1,7 +1,7 @@
 import {
-  createAll, forIn, fromRaw, IniObjectRo, IniObjectVo,
-  MapperRo, MapperVo, PackageRo, ProjectRo, ProjectVo,
-  ScopeRo, ScopeVo, WordRo, WordVo,
+   createAll, forIn, fromRaw, IniObjectRo, IniObjectVo,
+   MapperRo, MapperVo, PackageRo, PackageVo, ProjectRo, ProjectVo,
+   ScopeRo, ScopeVo, WordRo, WordVo,
 } from './boot';
 
 export * from './boot'
@@ -69,10 +69,11 @@ export function mergeWords(words: Record<string, WordVo>, pkgKey: string, dictio
 /**
  * 打开项目的核心逻辑
  */
-export function parseProjectVo(data: ProjectVo, project: ProjectRo) {
+export function parsePackages(pkgsVo: Record<string, PackageVo>) {
+   const pkgs: Record<string, PackageRo> = {}
    // 处理后端的数据，将iniObejct Vo转化为Ro对象，
-   for (const key in data.packages) {
-      const vo = data.packages[key]
+   for (const key in pkgsVo) {
+      const vo = pkgsVo[key]
       const tmp = fromRaw(vo, PackageRo)
       const pkgKey = tmp.key
       // 处理objects的内容
@@ -83,7 +84,7 @@ export function parseProjectVo(data: ProjectVo, project: ProjectRo) {
       tmp.scopes = mergeScopes(vo.scopes, pkgKey)
       //处理mappers
       tmp.mappers = mergeMappers(vo.mappers, pkgKey)
-      project.packages[key] = tmp
+      pkgs[key] = tmp
    }
-   project.main = project.packages[data.main]
+   return pkgs
 }

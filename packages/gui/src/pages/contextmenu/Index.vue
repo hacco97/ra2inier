@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import { reactive, ref } from 'vue';
+import { reactive } from 'vue';
 
 import closeSvg from '@/asset/icons/close.svg?raw';
 import { useCtxMenuInfo } from '@/states/ctxMenu';

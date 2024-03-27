@@ -82,7 +82,6 @@ function createAPI() {
       execQueue.splice(0)
    }
 
-
    return {
       exec,
       registerLog

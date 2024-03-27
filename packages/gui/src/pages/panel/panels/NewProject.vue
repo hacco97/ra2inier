@@ -3,20 +3,23 @@ import { ref } from 'vue';
 
 import newSvg from '@/asset/icons/new.svg?raw';
 import openDirSvg from '@/asset/icons/openDir.svg?raw';
-import { openDir, useConfig } from '@/stores/config';
+import { useConfigStore } from '@/stores/config';
 import { createNewProject } from '@/stores/projectStore';
 import { FlexInput, LazyButton } from '@ra2inier/wc';
 
 import HeaderLayout from './HeaderLayout.vue';
 import ReferView from './ReferView.vue';
+import { openDirectory } from '@/boot/file';
 
-const defaultPath = useConfig().DEFAULT_PROJECT_DIR + '/new_project'
+const { config } = useConfigStore()
+
+const defaultPath = config.DEFAULT_PROJECT_DIR + '/new_project'
 const name = ref('new_project')
 const targetPath = ref(defaultPath)
 
 async function onOpenClick() {
-   const path = await openDir()
-   path && (targetPath.value = path)
+   const path = await openDirectory()
+   path && (targetPath.value = path[0])
 }
 
 

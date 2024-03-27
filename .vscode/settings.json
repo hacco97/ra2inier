@@ -12,6 +12,7 @@
    "typescript.tsdk": "node_modules\\typescript\\lib",
    "svg.preview.background": "transparent",
    "files.exclude": {
+      "**/.git": true,
       "**/.svn": true,
       "**/.hg": true,
       "**/CVS": true,

@@ -1,42 +1,37 @@
-import { reactive } from 'vue';
+import { reactive, readonly } from 'vue';
 
 import { exec } from '@/boot/apis';
-import { Config, copy } from '@ra2inier/core';
+import { Config } from '@ra2inier/core';
 
 import useLog from './messageStore';
+import { defineStore } from 'pinia';
 
 // 全局配置信息的仓库
-const log = useLog('config-store')
 
-const config = reactive(new Config)
+const log = useLog('config-store')
 let loaded = false
-function loadConfig() {
-   exec<Config>('config/client').then((res) => {
-      if (res.status) {
-         copy(res.data, config)
-      }
+const config = reactive(new Config)
+const IS_DEV = import.meta.env.DEV;
+
+async function loadConfig() {
+   return exec<Config>('config/client').then((res) => {
+      if (res.status) Object.assign(config, res.data)
    })
 }
 
-setTimeout(loadConfig, 200)
 
-export function useConfig() {
-   if (!config.value && !loaded) loadConfig()
-   return <Readonly<Config>>config
-}
-
-export function setConfig(key: string, value: string) {
+function setConfig(key: string, value: string) {
    exec('config/set', { key, value }).then((res) => {
       if (res.status) { config[key] = value }
    })
 }
 
-export const IS_DEV = import.meta.env.DEV
-
-export async function openDir() {
-   return exec<string>('dialog/open/dir').then((res) => {
-      if (res.status) {
-         return res.data
-      } else return
-   })
+export function useConfigStore() {
+   if (!loaded) loadConfig()
+   return {
+      IS_DEV,
+      config: readonly(config),
+      set: setConfig
+   }
 }
+

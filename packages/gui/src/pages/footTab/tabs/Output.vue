@@ -4,12 +4,13 @@ import { computed, inject, ref, Ref } from 'vue';
 import playSvg from '@/asset/icons/compile.svg?raw';
 import openDirSvg from '@/asset/icons/openDir.svg?raw';
 import { FootTabType, useFootSelect } from '@/states/footTabList';
-import { openDir, setConfig, useConfig } from '@/stores/config';
+import { useConfigStore } from '@/stores/config';
 import { build } from '@/stores/projectStore';
 import { FlexInput, LazyButton } from '@ra2inier/wc';
+import { openDirectory } from '@/boot/file';
 
 defineOptions({ name: 'Output' })
-const config = useConfig()
+const { config, set } = useConfigStore()
 
 function onOutputClick() {
    build()
@@ -17,12 +18,12 @@ function onOutputClick() {
 
 const outDir = computed({
    get() { return config.OUTPUT_DIR ?? "" },
-   set(val: string) { setConfig('OUTPUT_DIR', val) }
+   set(val: string) { set('OUTPUT_DIR', val) }
 })
 
 async function onOpenPathClick() {
-   const path = await openDir()
-   path && (outDir.value = path)
+   const path = await openDirectory()
+   path && (outDir.value = path[0])
 }
 
 // foottab的自定义按钮逻辑

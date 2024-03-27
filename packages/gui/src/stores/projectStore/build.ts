@@ -3,7 +3,7 @@ import { work } from '@/boot/apis';
 import { forIn } from '@ra2inier/core';
 
 import useLog from '../messageStore';
-import { all } from './computed'
+import { allOfPackages } from './computed'
 
 const logger = useLog('project-store')
 
@@ -19,7 +19,7 @@ export function build() {
    if (building) return
    const buildList: string[] = []
    // TODO: 从UI读取BuildList，此处暂时为全部构建
-   forIn(all.value.objects, (key, val) => { buildList.push(key) })
+   forIn(allOfPackages.value.objects, (key, val) => { buildList.push(key) })
    work<boolean>('project/build', buildList).then(({ status, data }) => {
       if (status) {
          logger.info('构建成功')

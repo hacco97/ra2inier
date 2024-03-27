@@ -148,6 +148,11 @@
    @include center();
 }
 
+.vertical-center>* {
+   display: inline-block;
+   vertical-align: top;
+}
+
 .text-center {
    text-align: center;
 }

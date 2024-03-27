@@ -1,15 +1,15 @@
 <script lang='ts' setup>
-import { shallowReactive } from 'vue';
-
+import typeSvg from '@/asset/icons/type.svg?raw'
 import { useCtxMenu } from '@/states/ctxMenu';
 import { addPanel, PanelParam, PanelType } from '@/states/panelList';
 import { addScope, packageNames, saveScope } from '@/stores/projectStore';
 import { cloneTyped, ScopeRo } from '@ra2inier/core';
-
 import { isReadonly } from './metaState';
+import { reactiveComputed } from '@vueuse/core';
 
 const props = defineProps<{ scopes: Record<string, ScopeRo> }>()
-const scopeView: Record<string, ScopeRo> = shallowReactive(props.scopes)
+const scopeView: Record<string, ScopeRo> = reactiveComputed(() => props.scopes)
+
 
 function onSave(scope: ScopeRo) {
    const newOne = cloneTyped(scope, ScopeRo)
@@ -44,7 +44,10 @@ const vCtxmenu = useCtxMenu({
 
 <template>
    <div :class="$style.scope" v-ctxmenu>
-      <h2>Scope::对象类型</h2>
+      <h2 class="list-item">
+         <p v-svgicon="typeSvg" padding="15%"></p>
+         <span>类型</span>
+      </h2>
       <ul>
          <li class="list-item" v-for="(scope, key) of scopeView" :key="key" @dblclick="onOpenClick(scope)">
             <span>{{ packageNames[scope.package] }}</span><span>/</span><span>{{ scope.name }}</span>

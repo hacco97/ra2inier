@@ -1,7 +1,7 @@
 import { shallowReactive } from 'vue';
 
 import { globalEvent } from '@/boot/apis';
-import { IS_DEV, useConfig } from '@/stores/config';
+import { useConfigStore } from '@/stores/config';
 import { EventEmitter, useMemo } from '@ra2inier/core';
 
 import { logger } from './log';
@@ -100,13 +100,17 @@ export interface PanelTab {
    param: PanelParam
 }
 
+const { config, IS_DEV } = useConfigStore()
+
 const initLeftPanel: PanelTab = {
    id: 1,
    order: 0,
    position: true,
-   param: new PanelParam({ label: PanelType.Welcome })
+   param: new PanelParam({
+      label: PanelType.Welcome,
+      type: IS_DEV ? PanelType.API : PanelType.Welcome
+   })
 }
-initLeftPanel.param.type = IS_DEV ? PanelType.API : PanelType.Welcome
 
 const NONE: PanelTab[] = [
    {
@@ -143,6 +147,7 @@ export function selectTabByID(id: number) {
    let tab = panelList.find(tab => tab.id === id)
    if (tab) selectTab(tab)
 }
+
 
 /**
  * 关闭所给定id值的panel，并且触发param的回调函数
@@ -189,6 +194,10 @@ export function colseAllTabs(pos: 'left' | 'right') {
 }
 
 
+
+/**
+ * 添加页面逻辑
+ */
 const { get: getRandom } =
    useMemo((a) => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER), undefined, 999_999_999)
 function createId(param: PanelParam) {
@@ -218,7 +227,7 @@ export function addPanel(param: PanelParam) {
       selectTab(target)
       return false
    }
-   if (panelList.length > (useConfig().MAX_TAB_AMOUNT || 30)) {
+   if (panelList.length > (config.MAX_TAB_AMOUNT || 30)) {
       logger.warn('打开的页面太多')
       return false
    }

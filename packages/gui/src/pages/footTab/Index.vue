@@ -11,11 +11,11 @@ import { footTabSize, tryUnFocusFoottab } from '@/states/layout';
 import Dialog from './tabs/Dialog.vue';
 import Message from './tabs/Message.vue';
 import Output from './tabs/Output.vue';
-import TaskQueue from './tabs/TaskQueue.vue';
+import Recycle from './tabs/Recycle.vue';
 
 defineOptions({
    name: 'FootTab',
-   components: { Dialog, Output, Message, TaskQueue }
+   components: { Dialog, Output, Message, Recycle }
 })
 
 defineEmits(['toggleTab'])
@@ -102,8 +102,8 @@ onMounted(() => { mounted.value = true })
 </script>
 
 <template>
-   <div id="foottab" ref="focusHandle" :class="$style.foottab" @focusout="onFocusout" @focusin="footTabSize.active = true"
-      tabindex="-1">
+   <div id="foottab" ref="focusHandle" :class="$style.foottab" @focusout="onFocusout"
+      @focusin="footTabSize.active = true" tabindex="-1">
       <nav class="scrollx" :class="$theme['foottab-nav']" v-scrollx>
          <ul :class="$theme['foottab-nav-label']">
             <b></b>
@@ -111,7 +111,7 @@ onMounted(() => { mounted.value = true })
                @drop="onTabDrop($event, tab)" @dragstart="onTabDragStart($event, tab)" @dragover.prevent
                :style="{ order: tab.order }">
                <li :selected="selected.id === tab.id">
-                  <span v-svgicon="tab.label"></span>
+                  <span v-svgicon="tab.label" padding="13%"></span>
                   <b>{{ tab.name }}</b>
                   <em style="visibility: hidden;">{{ tab.badge }}</em>
                </li>
@@ -121,9 +121,9 @@ onMounted(() => { mounted.value = true })
             <!-- 脚部tab工具按钮 -->
             <p v-svgicon="arrowUp" @click="onUpClick"></p>
             <p v-svgicon="arrowDown" @click="onDownClick"></p>
-            <q v-svgicon="fix" :selected="isFixSelected" @click="isFixSelected = !isFixSelected"></q>
             <q v-svgicon="minSvg" padding="15%" :selected="footTabSize.canHidden"
                @click="footTabSize.canHidden = !footTabSize.canHidden"></q>
+            <q v-svgicon="fix" :selected="isFixSelected" @click="isFixSelected = !isFixSelected"></q>
             <span id="foottab-tools" :class="$style['foottab-tools']"></span>
          </ul>
       </nav>

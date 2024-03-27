@@ -2,12 +2,12 @@
 import { ref } from 'vue';
 
 import { useCtxMenuInfo, } from '@/states/ctxMenu';
-import { footTabSize, leftTabSize, tryUnFocusFoottab, useMask } from '@/states/layout';
-import { useConfig } from '@/stores/config';
+import { footTabSize, leftTabSize, useMask } from '@/states/layout';
+import { useConfigStore } from '@/stores/config';
 
 //左侧拖拽逻辑
 const display = ref(false)
-const config = useConfig()
+const { config } = useConfigStore()
 
 function onSideDrag(e: MouseEvent) {
    if (e.clientX < 140) {
@@ -33,7 +33,7 @@ function onFootDrag(e: MouseEvent) {
 
 function onFootDargEnd() {
    display2.value = false
-   footTabSize.emit('resized')
+   if (footTabSize.height > 20) footTabSize.emit('resized')
 }
 
 

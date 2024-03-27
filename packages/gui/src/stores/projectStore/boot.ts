@@ -1,15 +1,22 @@
 import {
-   copy, createProject, IniObjectRo, MapperRo, PackageRo, ScopeRo,
+   copy, createProject, IniObjectRo, MapperRo, PackageRo, Reference, ScopeRo,
    WordRo,
 } from '@ra2inier/core';
+import { ref, shallowReadonly } from 'vue';
 
 export const project = createProject()
 
-export const all = {
-   get objects() { return project.main!.objects },
-   get dictionary() { return project.main!.dictionary },
-   get mappers() { return project.main!.mappers },
-   get scopes() { return project.main!.scopes },
+
+let tmp: Record<string, any> = {}
+function getReadonlyTmp<T extends ValueSetKey>(type: T) {
+   if (!tmp[type]) tmp[type] = shallowReadonly(project.main![type])
+   return <Readonly<Record<string, ValueSetType[T]>>>tmp[type]
+}
+export const allOfMain = {
+   get objects() { return getReadonlyTmp('objects') },
+   get dictionary() { return getReadonlyTmp('dictionary') },
+   get mappers() { return getReadonlyTmp('mappers') },
+   get scopes() { return getReadonlyTmp('scopes') },
 }
 
 export type ValueSetType = {
@@ -34,6 +41,7 @@ export function setValue<V extends ValueSetKey, T extends ValueSetType[V]>(type:
 }
 
 export function setPackage(key: string, pkg?: PackageRo) {
+   if(key===mainKey()) return
    if (pkg) { project.packages[key] = pkg }
    else delete project.packages[key]
 }
@@ -44,4 +52,10 @@ export function clearAll() {
 
 export function mainKey() {
    return project.main ? project.main.key : ''
+}
+
+export function setReference(key: string, refer?: Reference) {
+   if (!project.main) return
+   if (refer) project.main.references[key] = refer
+   else delete project.main.references[key]
 }

@@ -1,18 +1,11 @@
 import fs from 'node:fs';
 
 import { component, inject } from '~/mainWindow/ioc.config';
-
 import {
-   Config,
-   EMPTY_PACKAGEVO,
-   EMPTY_PROJECTVO,
-   enhance, fromRaw, isUniqueObject, Package,
-   PackageVo,
-   Project, ProjectVo, Reference, UniqueObject,
+   Config, EMPTY_PACKAGEVO, EMPTY_PROJECTVO, enhance, fromRaw, isUniqueObject, Package,
+   PackageVo, Project, ProjectVo, UniqueObject,
 } from '@ra2inier/core';
-import {
-   escapePath, readJson, writeFile, writeJson,
-} from '@ra2inier/core/node';
+import { escapePath, readJson, writeFile, writeJson, } from '@ra2inier/core/node';
 
 import { DaoConfig } from './DaoConfig';
 import { PackageDao } from './PackageDao';

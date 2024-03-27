@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-defineOptions({ name: 'TaskQueue' })
+defineOptions({ name: 'Recycle' })
 </script>
 
 

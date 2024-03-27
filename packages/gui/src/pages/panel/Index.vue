@@ -2,9 +2,9 @@
 import closeSvg from '@/asset/icons/close.svg?raw';
 import { drager, dragStart, DragType } from '@/states/drager';
 import {
-  closeTab, curPanel, panelList, PanelTab, selectTab,
+   closeTab, curPanel, panelList, PanelTab, selectTab,
 } from '@/states/panelList';
-import { useConfig } from '@/stores/config';
+import { useConfigStore } from '@/stores/config';
 
 import PanelLayout from './Layout.vue';
 import API from './panels/API.vue';
@@ -78,7 +78,7 @@ function getMainSlotName(tab: PanelTab) {
    return 'main-' + id
 }
 
-const config = useConfig()
+const { config } = useConfigStore()
 
 </script>
 

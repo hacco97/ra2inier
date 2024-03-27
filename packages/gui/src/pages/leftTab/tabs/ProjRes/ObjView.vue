@@ -1,6 +1,7 @@
 <script lang='ts' setup>
 import { computed, ref, StyleValue, watchEffect } from 'vue';
-
+import iniSvg from '@/asset/icons/ini.svg?raw'
+import addonSvg from '@/asset/icons/addon.svg?raw'
 import { setStatus } from '@/pages/footer/state';
 import { IniObjectRo } from '@ra2inier/core';
 import { useObjectCtxmenu, CtxItem } from './objectCtxmenu'
@@ -29,13 +30,17 @@ const rotateStyle = computed<StyleValue>(() => ({
    <div :class="$style.objview" v-ctxmenu="ctxItem">
       <h2 @click="isSubitemShowed = !isSubitemShowed" @mouseenter="onMouseEnter(object.fullname)" class="list-item">
          <q :style="rotateStyle" class="folder" :folded="!isSubitemShowed">&gt;</q>
+         <p v-svgicon="iniSvg" padding="15%"></p>
          <span :title="object.fullname" class="vertical-center">
             <i>{{ object.name }}</i><i>.</i>
             <i>{{ object.scope }}</i>
          </span>
       </h2>
       <ul v-show="isSubitemShowed">
-         <li v-for="sub in object.inline" class="list-item">{{ sub }}</li>
+         <li v-for="sub in object.inline" class="list-item">
+            <p v-svgicon="addonSvg" padding="0"></p>
+            <span>{{ sub }}</span>
+         </li>
       </ul>
    </div>
 </template>
@@ -61,6 +66,12 @@ $padding: align-size(large);
          text-align: center;
          transition: rotate 0.5s ease;
       }
+   }
+
+   p {
+      display: inline-block;
+      height: 1lh;
+      aspect-ratio: 1;
    }
 
    li {

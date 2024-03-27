@@ -1,25 +1,45 @@
 import { ref } from 'vue';
-import { Package, parseProjectVo, ProjectVo, Reference, } from '@ra2inier/core';
+import { forIn, Package, PackageVo, parsePackages, ProjectVo, Reference, } from '@ra2inier/core';
 import { exec, globalEvent, work } from '@/boot/apis';
-import { useConfig } from '../config';
+import { useConfigStore } from '../config';
 import useLog from '../messageStore';
-import { saveObject } from './';
-import { clearAll, project, ValueSetKey, ValueSetType } from './boot';
+import { saveObject } from './iniObjectStore';
+import { clearAll, project, setPackage, setReference, ValueSetKey, ValueSetType } from './boot';
 import { saveMapper, saveScope, saveWord } from './metaStore';
 
 const logger = useLog('project-store')
+const { config } = useConfigStore()
 export const loadingVersion = ref(0)
 
 function updateProject(ipkg: ProjectVo) {
    // 打开项目核心逻辑
    clearAll()
-   parseProjectVo(ipkg, project)
+   const pkgs = parsePackages(ipkg.packages)
+   forIn(pkgs, (key, pkg) => { setPackage(key, pkg) })
+   project.main = pkgs[ipkg.main]
 
    // 将初始数据传递给worker
    work('project/init', ipkg)
    globalEvent.emit('project-loaded')
+   globalEvent.emit('package-loaded')
 
    // 结束
+   loadingVersion.value++
+}
+
+/**
+ * 向当前项目资源结合中添加新的资源集合
+ */
+function mergePackages(pkgs: Record<string, PackageVo>) {
+   const parsed = parsePackages(pkgs)
+   forIn(parsed, (key, pkg) => {
+      setPackage(key, pkg)
+      setReference(key, new Reference(pkg))
+   })
+
+   globalEvent.emit('package-loaded')
+   console.log('merged')
+
    loadingVersion.value++
 }
 
@@ -29,7 +49,7 @@ function updateProject(ipkg: ProjectVo) {
 export function openProject(path?: string) {
    if (project.loaded) return logger.info('项目已经加载')
    project.loading = true
-   path = path || useConfig().PROJECT_PATH
+   path = path || config.PROJECT_PATH
    exec<ProjectVo>('project/open', { path }).then((res) => {
       const ipkg = res.data
       if (!res.status || !ipkg) {
@@ -59,7 +79,7 @@ export function reloadProject(path: string) {
 /**
  * 通过文件资源管理器，打开项目
  */
-export function openNewProject() {
+export function openProjectFromBrowser() {
    exec<string[]>('dialog/open/dir').then((res) => {
       if (res.status) {
          reloadProject(res.data[0])
@@ -104,6 +124,12 @@ const SAVE_MAP: Record<ValueSetKey, Function> = {
    scopes: saveScope
 }
 
+/**
+ * 修改当前主包的引用
+ */
+export function saveReference(references: Record<string, Reference>) {
+
+}
 
 /**
  * 保存项目的info文件
@@ -119,13 +145,18 @@ export function savePackageInfo(pkg: Package) {
 /**
  * 从磁盘加载包
  */
-export function loadLocalPackage(references: Reference[]) {
-   exec('project/load-package', { references }).then(({ status, data }) => {
-      if (!status) return logger.warn('加载包出错', data)
-      console.log(data)
-
+export async function loadLocalPackage(references: Reference[] | string[]) {
+   if (!references.length) return {}
+   let option: any = {}
+   if (typeof references[0] === 'string') option.paths = references
+   else option.references = references
+   return exec<Record<string, PackageVo>>('project/load-package', option).then(({ status, data }) => {
+      if (!status) return void logger.warn('加载包出错', data) || {}
+      mergePackages(data)
+      return data
    })
 }
+
 
 /**
  * 下载远程包，下载的时候会检查是否存在url属性如果不存在
@@ -133,7 +164,52 @@ export function loadLocalPackage(references: Reference[]) {
 export async function downloadRemotePackage(refers: Reference[]) {
    const tmp = refers.filter(x => !!x.url)
    if (!tmp.length) return []
-   const { status, data } = await exec('download/remote-package', { data: tmp })
+   const { status, data } = await exec('download/remote-package', { data: tmp, timeout: 999_999_999_999 })
    if (!status) return void logger.warn('下载包失败') || []
    return <Reference[]>data
+}
+
+/**
+ * 在已经加载的包中，将不再需要的包移除，找出还没有加载的包
+ * @returns [toAdd, toDel] - packages to add and removed packages' keys
+ */
+export function diffReference(references: Record<string, Reference>) {
+   // 删去多余的包
+   const toDel = []
+   for (const key in project.packages) {
+      if (key in references) continue
+      setPackage(key, undefined)
+      setReference(key, undefined)
+      toDel.push(key)
+   }
+   work('package/remove', toDel)
+   // 确定未加载的包
+   const toAdd: Reference[] = []
+   for (const key in references) {
+      setReference(key, references[key])
+      if (key in project.packages) continue
+      toAdd.push(references[key])
+   }
+   return [toAdd, toDel] as const
+}
+
+/**
+ * 给定一个引用的集合，对该集合中的包进行加载，
+ */
+export async function loadPackage(addMap: Record<string, Reference>) {
+   const [toAdd] = diffReference(addMap)
+   console.log(toAdd)
+   if (!toAdd.length) return
+   // 检查哪些包需要下载
+   const loaded = await loadLocalPackage(toAdd)
+   const toDownload: Reference[] = []
+   for (const r of toAdd) {
+      if (r.key in loaded) continue
+      if (r.url) toDownload.push(r)
+   }
+   if (toDownload.length <= 0) return
+   const downloaded = await downloadRemotePackage(toDownload)
+   const newLoaded = await loadLocalPackage(downloaded)
+   console.log(newLoaded)
+
 }

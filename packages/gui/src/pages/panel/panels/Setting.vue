@@ -1,9 +1,9 @@
 <script lang='ts' setup>
 import Options from '@/components/Options.vue';
-import { useConfig } from '@/stores/config';
+import { useConfigStore } from '@/stores/config';
 
 defineOptions({ name: 'Setting' })
-const config = useConfig()
+const { config } = useConfigStore()
 
 // GPU逻辑
 

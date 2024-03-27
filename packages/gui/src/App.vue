@@ -5,11 +5,11 @@ import '@/components/FileLink'
 
 import.meta.glob('@/css/global/**/*', { eager: true })
 import.meta.glob('@/css/classes/**/*', { eager: true })
-import { projectInfo, packages, all, loadingVersion } from '@/stores/projectStore'
+import { projectInfo, packages, allOfPackages } from '@/stores/projectStore'
 
 const projectInfo_ = projectInfo
 const packages_ = packages
-const all_ = all
+const all_ = allOfPackages
 
 document.body.addEventListener('contextmenu', (ev) => {
    ev.stopPropagation()

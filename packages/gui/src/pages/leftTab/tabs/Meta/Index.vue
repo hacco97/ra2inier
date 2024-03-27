@@ -1,15 +1,17 @@
 <script lang='ts' setup>
-import { all, projectName } from '@/stores/projectStore';
-
+import { allOfPackages, projectName } from '@/stores/projectStore';
 import Layout from '../Layout.vue';
 import DictView from './DictView.vue';
 import MapperView from './MapperView.vue';
 import ScopeView from './ScopeView.vue';
+import SnippetView from './SnippetView.vue';
+import Search from '../Search.vue';
+
 
 defineOptions({ name: "Meta" })
 
 const pName = projectName
-
+const all = allOfPackages
 
 </script>
 
@@ -21,13 +23,11 @@ const pName = projectName
       </template>
       <template #panel>
          <div :class="$style.metaview">
-            <li v-if="pName">当前项目::{{ pName }}</li>
-            <i></i>
-            <MapperView :mappers="all.mappers" />
-            <i></i>
+            <Search placeholder="搜索对象"></Search>
             <ScopeView :scopes="all.scopes" />
-            <i></i>
+            <MapperView :mappers="all.mappers" />
             <DictView :dictionary="all.dictionary" />
+            <SnippetView :dictionary="all.dictionary" />
          </div>
       </template>
    </Layout>

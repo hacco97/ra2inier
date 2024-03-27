@@ -161,8 +161,6 @@ globalEvent.on('project-loaded', () => groupCtx = undefined)
 export function useGroupCtxmenu(state: PkgViewState) {
    const cursor = ref('')
 
-
-
    if (!groupCtx) groupCtx = useCtxMenu({
       '新建对象'(groupKey: string) {
          state.onAddClick(groupKey)

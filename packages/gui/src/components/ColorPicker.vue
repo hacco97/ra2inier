@@ -344,11 +344,11 @@ const selected = ref(false)
 
       >number-input,
       >p {
-         margin: 5px;
+         margin: align-size(small);
          display: block;
          flex: 1;
          min-width: 0;
-         max-width: 60px;
+         max-width: 50px;
          height: 100%;
       }
    }

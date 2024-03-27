@@ -83,6 +83,7 @@ export function expire(target?: string | RegExp | Function) {
 
 /**
  * 使用一个函数作为数据源，返回一对取值函数，get时将会调用数据源函数，如果计算过该值则返回缓存
+ * 为了防止不可预估的行为，该函数应当尽量选择为纯函数，或者是只读脏函数
  */
 export function useMemo<T, A extends any[]>(
    sourceFunction: (...args: A) => T,

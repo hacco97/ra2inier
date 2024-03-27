@@ -116,16 +116,25 @@ export class ProjServ {
    }
 
    @mapping('load-package')
-   loadPackages(@param('references') refers: Reference[]) {
+   loadPackages(@param('references') refers: Reference[], @param('paths') paths: string[]) {
       const packages: Record<string, PackageVo> = {}
-      for (const refer of refers) {
-         const path = escapePath(refer.path)
-         const locals = this.staticDao.readGlobalPackages()
-         if (!(refer.key in locals)) continue
+      const locals = this.staticDao.readGlobalPackages()
+      for (const refer of refers || []) {
+         let path = ''
+         if (refer.key in locals) {
+            path = locals[refer.key].path
+         } else if (refer.path) {
+            path = escapePath(refer.path)
+         }
          const pkg = this.packageDao.readPackageByPath(path)
-         if (!pkg) continue
-         packages[UniqueObject.getKey(pkg)] = pkg
+         if (pkg) packages[UniqueObject.getKey(pkg)] = pkg
       }
+
+      for (const path of paths || []) {
+         const pkg = this.packageDao.readPackageByPath(path)
+         if (pkg) packages[UniqueObject.getKey(pkg)] = pkg
+      }
+
       return packages
    }
 

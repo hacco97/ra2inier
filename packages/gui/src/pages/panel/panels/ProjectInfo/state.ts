@@ -1,44 +1,72 @@
 import { IItem } from '@/components/ListViewState';
-import { projectInfo as info } from '@/stores/projectStore';
+import { projectInfo, packages } from '@/stores/projectStore';
 import { useGlobalPackages } from '@/stores/staticStore';
-import { forIn, Package, Reference } from '@ra2inier/core';
+import { Reference, forIn, toRaw } from '@ra2inier/core';
 import { ref, watch } from 'vue';
+import { ReferItem, pkg2ReferItem, refer2ReferItem } from './utils';
 
-export interface ReferItem extends IItem, Reference {
-   path: string,
-   key: string,
-   missing: boolean
-   unknown: boolean
+export * from './utils'
+
+function getDetail(r: Partial<ReferItem>) {
+   const loaded = packages.value
+   return (r.key! in loaded) ? '已加载' : '未加载'
 }
 
-export function useReferList() {
+export function createReferList() {
    /**
-    * 当前依赖项
+    * 显示当前项目的依赖项
+    * 依赖项可以分为两种形态，已经加载的和未加载的
+    * 未加载的包为虚悬依赖，实际上当前内存中没有该包的数据，不能够参与当前项目的构建
     */
    const referList = ref<Partial<ReferItem>[]>([])
+   watch(() => projectInfo.value, () => {
+      console.log(projectInfo.value)
 
-   watch(info, () => {
-      referList.value = Object.values(info.value.references).map(refer2ReferItem)
+      referList.value = Object.values(projectInfo.value.references).map(refer2ReferItem)
+      for (const r of referList.value) {
+         r.detail = getDetail(r)
+      }
    }, { immediate: true })
-
 
    function addRefer(newOne: Partial<ReferItem>) {
       for (const r of referList.value) {
          if (r.key === newOne.key) return r
       }
-      referList.value.push(newOne)
+      const tmp = toRaw(newOne)
+      tmp.detail = getDetail(tmp)
+      referList.value.push(tmp)
       return newOne
    }
 
+   function deleteRefer(item: ReferItem) {
+      const target = localList.value.find(x => x.key === item.key)
+      if (target) target.selected = true
+      referList.value = referList.value.filter(x => x.key !== item.key)
+   }
+
+   function getReferMap() {
+      const tmp: Record<string, Reference> = {}
+      referList.value.forEach((x) => {
+         if (x.key) tmp[x.key] = <Reference>({
+            name: x.value,
+            path: x.path,
+            key: x.key,
+            url: x.url
+         })
+      })
+      return tmp
+   }
+
+
    /**
-    * 全局包
+    * 加载全局包，用于显示当前的机器上，在两处位置处的包，可以快速地进行选择依赖
     */
    const globalPackages = useGlobalPackages()
    const localList = ref<Partial<ReferItem>[]>([])
    watch(globalPackages, () => {
       const tmp: Partial<ReferItem>[] = []
       forIn(globalPackages, (key, pkg) => {
-         const newOne = pkg2Item(pkg)
+         const newOne = pkg2ReferItem(pkg)
          const target = referList.value.find(x => newOne.key === x.key)
          newOne.selected = !!target
          tmp.push(newOne)
@@ -47,59 +75,15 @@ export function useReferList() {
    }, { immediate: true })
 
 
-   function onReferDelete(item: IItem, order: number) {
-      const i = <ReferItem>item
-      const target = localList.value.find(x => x.key === i.key)
-      if (target) target.selected = true
-      referList.value = referList.value.filter(x => x.key !== item.key)
-   }
-
-   function onLocalSelect(item: IItem, order: number) {
-      const target = localList.value.find(x => x.key === item.key)!
-      if (item.selected) {
-         addRefer(target)
-      } else {
-         referList.value = referList.value.filter(x => x.key !== item.key)
-      }
-      target.selected = item.selected
-   }
-
    return {
       referList,
       localList,
-      onLocalSelect,
-      onReferDelete,
-      globalPackages
+      addRefer,
+      deleteRefer,
+      globalPackages,
+      getReferMap
    }
 }
 
-function createPopup(x: any) {
-   const path = `本地路径：<file-link style="height: fit-content;" path="${x.path}" class="link">${x.path || '?'}</file-link>`
-   const url = `仓库链接：<a href="${x.url}" class="link">\
-${(x.url && x.url.startsWith('https://github.com')) ? x.url : '?'}</a>`
-   return `${path}\n${url}`
-}
 
-function refer2ReferItem(x: Reference) {
-   let popup = createPopup(x)
-   return <ReferItem>{
-      value: x.name || '匿名',
-      popup,
-      path: x.path,
-      key: x.key,
-      url: x.url,
-      get unknown() { return !this.url && !this.path }
-   }
-}
-
-function pkg2Item(pkg: Package) {
-   return {
-      value: pkg.name,
-      popup: createPopup({ path: pkg.path }),
-      selected: false,
-      path: pkg.path,
-      key: pkg.key,
-      url: pkg.link
-   }
-}
 

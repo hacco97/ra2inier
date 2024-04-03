@@ -29,11 +29,10 @@ export function createProjectAction(boot: ProjectBoot) {
       let option: any = {}
       if (typeof references[0] === 'string') option.paths = references
       else option.references = references
-      return exec<Record<string, PackageVo>>('project/load-package', option).then(({ status, data }) => {
-         if (!status) return void logger.warn('加载包出错', data) || {}
-         mergePackages(data)
-         return data
-      })
+      const { status, data } = await exec<Record<string, PackageVo>>('project/load-package', option)
+      if (!status) return void logger.warn('加载包出错', data) || {}
+      mergePackages(data)
+      return data
    }
 
 
@@ -64,6 +63,7 @@ export function createProjectAction(boot: ProjectBoot) {
       if (toDownload.length <= 0) return
       const downloaded = await downloadPackage(toDownload)
       const newLoaded = await loadLocalPackage(downloaded)
+      console.log('正在下载')
       // TODO:
    }
 

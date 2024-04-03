@@ -5,7 +5,6 @@ const styleSheet = css`
    :host {
       display: inline-flex;
    }
-
 `
 
 export class FileLink extends HTMLElement implements WebComponent {
@@ -13,9 +12,7 @@ export class FileLink extends HTMLElement implements WebComponent {
 
    static observedAttributes = ['path']
    attributeChangedCallback(name: string, oldValue: string, newValue: string): void {
-      if (name === 'path') {
-         this.path = newValue + ''
-      }
+      if (name === 'path') { this.path = newValue + '' }
    }
 
    constructor() {
@@ -26,8 +23,6 @@ export class FileLink extends HTMLElement implements WebComponent {
       `
       const a = shadow.querySelector('a')
       a?.addEventListener('click', () => {
-         console.log(this.path)
-
          if (this.path) showInFileFloder(this.path)
       })
       shadow.adoptedStyleSheets.push(styleSheet)

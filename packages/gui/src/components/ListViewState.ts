@@ -1,28 +1,27 @@
 
 
 export interface IItem {
+   [s: string]: any
    value: string
    selected: boolean
-   popup: string
    key: string
    detail: string
 }
 
 export class Item implements IItem {
+   [s: string]: any
    id = ''
+   src: Partial<IItem> = {}
    key = ''
    value = ''
    selected = false
-   popup = ''
    detail = ''
-   src: Partial<IItem> = {}
 
    constructor(x: Partial<IItem>) {
       if (typeof x === 'string') {
          this.value = x
       } else {
          this.value = x.value || ''
-         this.popup = x.popup || ''
          this.detail = x.detail || ''
          this.selected = !!x.selected
          this.key = x.key || Math.random() + ''

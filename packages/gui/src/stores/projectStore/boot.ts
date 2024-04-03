@@ -1,9 +1,9 @@
 import { useLogger } from '@/boot/logger';
 import {
    createProjectRo, EMPTY_PROJECTVO, forIn, IniObjectRo, MapperRo, PackageRo,
-   PackageVo, parsePackages, ProjectInfo, ProjectVo, Reference, ScopeRo, WordRo,
+   PackageVo, parsePackages, ProjectVo, Reference, ScopeRo, WordRo,
 } from '@ra2inier/core';
-import { computed, reactive, readonly, shallowReactive } from 'vue';
+import { computed, reactive, shallowReactive } from 'vue';
 
 /**
  * 创建一个项目初始化值
@@ -13,10 +13,6 @@ export function createProject(projectVo: ProjectVo) {
     * 核心project对象
     */
    const project = reactive(createProjectRo(projectVo))
-   /**
-    * 抽象main package对象的信息
-    */
-   const projectInfo = computed(() => readonly(new ProjectInfo(project)))
    /**
     * 主包对象
     */
@@ -86,7 +82,6 @@ export function createProject(projectVo: ProjectVo) {
 
    return {
       project,
-      projectInfo,
       main,
       mainKey,
       setValue,

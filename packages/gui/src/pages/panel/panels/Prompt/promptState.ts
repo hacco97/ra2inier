@@ -135,8 +135,9 @@ export function usePromptHelper(store: ProjectStore, promptState: PromptState) {
    }
 
    function updateEntry(entry: EntryRo) {
+      if (!entry) return
       promptState[ENTRY] = entry
-      promptState[TYPE] = getPromptType(getParam(entry).type)
+      promptState[TYPE] = getPromptType(getParam(entry)?.type)
       promptState.emit('entry-change', entry)
    }
 

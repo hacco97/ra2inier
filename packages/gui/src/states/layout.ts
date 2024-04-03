@@ -1,4 +1,4 @@
-import { EventEmitter } from '@ra2inier/core';
+import { EventEmitter, useSingleton } from '@ra2inier/core';
 import { defineStore } from 'pinia';
 import { computed, reactive, ref } from 'vue';
 
@@ -95,5 +95,5 @@ const createLayoutState = () => {
    }
 }
 
-export const useLayoutState = defineStore('layout-state', { state: createLayoutState })
+export const useLayoutState = defineStore('layout-state', { state: useSingleton(createLayoutState) })
 export type LayoutState = ReturnType<typeof useLayoutState>

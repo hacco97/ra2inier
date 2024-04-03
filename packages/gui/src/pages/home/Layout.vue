@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { ref, inject } from 'vue';
+import { ref } from 'vue';
 import { useConfigStore } from '@/stores/config';
 import { useLayoutState } from '@/states/layout';
-import { CtxmenuState, useCtxMenuState } from '@/states/ctxMenu';
+import { useCtxMenuState } from '@/states/ctxMenu';
 
 
 const layout = useLayoutState()
+const { leftTabSize, footTabSize } = layout
 
 //左侧拖拽逻辑
 const display = ref(false)
@@ -13,31 +14,30 @@ const { config } = useConfigStore()
 
 function onSideDrag(e: MouseEvent) {
    if (e.clientX < 140) {
-      return layout.leftTabSize.close()
+      return leftTabSize.close()
    }
-   layout.leftTabSize.width = e.clientX
+   leftTabSize.width = e.clientX
 }
 
 //右侧下边栏逻辑
 const display2 = ref(false)
 function onFootDragStart() {
    display2.value = true
-   setTimeout(() => layout.footTabSize.active = true)
+   setTimeout(() => footTabSize.active = true)
 }
 
 function onFootDrag(e: MouseEvent) {
    // @ts-ignore
    const tmp = e.target.offsetParent, x = tmp.clientHeight - e.layerY
    if (isNaN(x)) return
-   if (x < 100) layout.footTabSize.min()
-   else layout.footTabSize.height = x
+   if (x < 100) footTabSize.min()
+   else footTabSize.height = x
 }
 
 function onFootDargEnd() {
    display2.value = false
-   if (layout.footTabSize.height > 20) layout.footTabSize.emit('resized')
+   if (footTabSize.height > 20) footTabSize.emit('resized')
 }
-
 
 // 右键菜单逻辑
 // 等待修改
@@ -58,7 +58,7 @@ const { vCtxRoot } = ctxmenu
       <!-- 中间内容 -->
       <section>
          <!-- 左侧边 -->
-         <aside :style="layout.leftTabSize.widthS">
+         <aside :style="leftTabSize.widthS">
             <slot name="leftSide"></slot>
             <div :class="[$style.drager1, $theme['drager-hover']]">
                <p @mousedown="display = true"></p>
@@ -68,8 +68,7 @@ const { vCtxRoot } = ctxmenu
          <!-- 右侧主要内容区域 -->
          <main :class="$theme.panel">
             <!-- 右下边栏 -->
-            <aside :style="layout.footTabSize.heightS"
-               :class="[layout.footTabSize.canHidden || $style['foottab-size']]">
+            <aside :style="footTabSize.heightS" :class="[footTabSize.canHidden || $style['foottab-size']]">
                <slot name="footSide"></slot>
                <div :class="[$style.drager2, $theme['drager-hover']]" :dragging="display2">
                   <p @mousedown="onFootDragStart"></p>

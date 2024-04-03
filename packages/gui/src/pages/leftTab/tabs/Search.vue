@@ -12,7 +12,7 @@ const { folded, vFolder } = useFolder()
 
 
 <template>
-   <aside :class="$style.search" class="normal-rpanel">
+   <aside :class="$style.search" class="normal-panel">
       <header>
          <span v-folder>&gt;</span>
          <s v-svgicon="searchSvg" padding="20%" @click="folded = !folded"></s>
@@ -29,6 +29,8 @@ const { folded, vFolder } = useFolder()
 
 <style module scoped lang='scss'>
 .search {
+   padding: 0 align-size(normal);
+
    input {
       flex: 1;
       padding: 0 align-size(normal);
@@ -41,8 +43,6 @@ const { folded, vFolder } = useFolder()
       overflow: hidden;
       flex-wrap: nowrap;
 
-
-
       span {
          flex: 0 0 auto;
          min-width: fit-content;
@@ -50,7 +50,14 @@ const { folded, vFolder } = useFolder()
    }
 
    nav {
-      padding: 0 align-size(normal);
+      li {
+         display: flex;
+         flex-wrap: nowrap;
+      }
+
+      input {
+         flex: 1;
+      }
    }
 }
 </style>

@@ -97,7 +97,7 @@ export function useEffect<A extends any[], R>(effect: ((...args: A) => [R, () =>
 }
 
 /**
- * 将一个函数声明为单例函数，一个函数只能有一个返回值实例
+ * 将一个工厂函数包装为一个单例对象工厂函数
  * @returns [factoryFn: typeof factory, expire: ()=>void]
  */
 export function useSingleton<A extends any[], R, L extends (...args: A) => R>(factory: L): L

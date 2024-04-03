@@ -48,7 +48,9 @@ function onDeleteClick(item: Item, order: number) {
                   <span>{{ item.value }}</span>
                   <u v-if="item.detail">({{ item.detail }})</u>
                </label>
-               <pre slot="pop" class="popup" v-if="item.popup" v-html="item.popup"></pre>
+               <pre slot="pop" class="popup">
+                  <slot name="popup" v-bind="item.src"></slot>
+               </pre>
             </popup-box>
             <i></i>
             <s v-if="deleteButton" @click="onDeleteClick(item, order)" v-svgicon="closeSvg" class="normal-button"></s>
@@ -147,6 +149,11 @@ function onDeleteClick(item: Item, order: number) {
    pre {
       position: relative;
       z-index: 100;
+      display: flex;
+      min-height: 0;
+      min-width: 0;
+      padding: 0 align-size(normal);
+      margin: 0;
    }
 
    i {

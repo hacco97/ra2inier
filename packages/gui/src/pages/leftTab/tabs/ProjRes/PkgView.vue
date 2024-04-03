@@ -7,6 +7,7 @@ import { PkgViewProp, createPkgViewState, useVFlod } from './pkgViewState';
 import { useGroupCtxmenu, usePkgviewCtxmenu } from './pkgViewState'
 import { FlexInput } from '@ra2inier/wc';
 import rightSvg from '@/asset/icons/right.svg?raw';
+import { useFolder } from '@/hooks/folder';
 
 
 const props = defineProps<PkgViewProp>()
@@ -25,36 +26,40 @@ function onGroupNameBlur(input: FlexInput) {
    input.setAttribute('disabled', 'true')
    getSelection()?.removeAllRanges()
 }
+
+const { folded, vFolder } = useFolder()
 </script>
 
 
 <template>
    <div :class="$style.pkgview">
-      <h1 class="list-item normal-panel" v-pkgview-menu>
+      <h1 class="list-item normal-panel" v-pkgview-menu @click="folded = !folded">
          <q class="vertical-center">
+            <b v-folder @click.stop>&gt;</b>
             <p v-svgicon="pkgSvg" style="height: 1lh;" padding="0%"></p>
             <span>{{ pkg.name }}</span>
          </q>
-         <aside>
-            <s v-svgicon="rightSvg" class="fore-button"></s>
-            <s v-svgicon="addSvg" class="fore-button" v-if="isMain" @click="onAddClick()"></s>
-         </aside>
+         <!-- <aside>
+            <s v-svgicon="addSvg" class="fore-button" v-if="isMain" @click.stop="onAddClick()"></s>
+         </aside> -->
       </h1>
-      <ul v-for="(group, gkey) of view" :key="gkey" :style="getFoldedStyle(gkey)" v-group-menu="gkey">
-         <!-- 组的标题 -->
-         <h2 class="list-item" @click="flip(gkey)">
-            <b class="folder" :style="getFolderStyle(gkey)" :folded="isGroupFoldedMap[gkey]">&gt;</b>
-            <p v-svgicon="groupSvg" padding="0"></p>
-            <flex-input class="group-name" :value="gkey" @change="onGroupNameChange($event.target, gkey)" disabled="true"
-               :placeholder="gkey" @blur="onGroupNameBlur($event.target)"></flex-input>
-         </h2>
-         <ol v-for="(object, key) of group" :key="key">
-            <!-- 对象 -->
-            <div v-if="!object.parent">
-               <ObjView :object="object" :key="key" @open="onObjectOpen"></ObjView>
-            </div>
-         </ol>
-      </ul>
+      <section v-show="!folded">
+         <ul v-for="(group, gkey) of view" :key="gkey" :style="getFoldedStyle(gkey)" v-group-menu="gkey">
+            <!-- 组的标题 -->
+            <h2 class="list-item" @click="flip(gkey)">
+               <b class="folder" :style="getFolderStyle(gkey)" :folded="isGroupFoldedMap[gkey]">&gt;</b>
+               <p v-svgicon="groupSvg" padding="0"></p>
+               <flex-input class="group-name" :value="gkey" @change="onGroupNameChange($event.target, gkey)"
+                  disabled="true" :placeholder="gkey" @blur="onGroupNameBlur($event.target)"></flex-input>
+            </h2>
+            <ol v-for="(object, key) of group" :key="key">
+               <!-- 对象 -->
+               <div v-if="!object.parent">
+                  <ObjView :object="object" :key="key" @open="onObjectOpen"></ObjView>
+               </div>
+            </ol>
+         </ul>
+      </section>
    </div>
 </template>
 

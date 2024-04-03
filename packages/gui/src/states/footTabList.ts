@@ -26,7 +26,6 @@ export enum FootTabType {
 
 
 const createFoottabState = () => {
-
    const footTabList = reactive<FootTab[]>([
       {
          id: 0,

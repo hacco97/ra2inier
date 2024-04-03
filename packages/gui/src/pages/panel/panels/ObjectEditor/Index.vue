@@ -1,19 +1,21 @@
 <script lang='ts' setup>
 import { ref, shallowReactive, watch } from 'vue';
-
 import checkSvg from '@/asset/icons/check.svg?raw';
 import columnSvg from '@/asset/icons/column.svg?raw';
 import delSvg from '@/asset/icons/delete.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
 import { PanelParam } from '@/states/panelList';
-import { projectName } from '@/stores/projectStore';
 import { FlexInput, LazyButton } from '@ra2inier/wc';
-
 import HeaderLayout from '../HeaderLayout.vue';
 import EditorView from './EditorView.vue';
-import { EditorState } from './eidtorState';
+import { EditorState } from './EditorState';
+import { useProjectStore } from '@/stores/projectStore';
+import { useQueryWord } from './hooks'
 
 defineOptions({ name: 'ObjectEditor' })
+const store = useProjectStore()
+
+
 const props = defineProps<{ param: PanelParam }>()
 let param: PanelParam = props.param
 const state = shallowReactive(new EditorState(param.data))
@@ -40,7 +42,11 @@ function ondeleteClick() {
    state.removeSelected()
 }
 function onColumnClick() { state.columnCount = (state.columnCount + 1) % 5 }
-function onCheckClick() { state.validateWordById(0) }
+
+const { } = useQueryWord()
+function onCheckClick() {
+
+}
 const labelHelper = ref<HTMLElement>()
 </script>
 
@@ -53,7 +59,7 @@ const labelHelper = ref<HTMLElement>()
             <h1 class="scrollx" v-scrollx>
                <ul>
                   <h2>
-                     <em>./</em><span>{{ projectName }}</span><em>/</em>
+                     <em>./</em><span>{{ store.projectName }}</span><em>/</em>
                      <i></i><flex-input v-model.lazy.trim="state.data.group" placeholder="GROUP_NAME" /><i></i>
                      <em>/</em>
                      <i></i>

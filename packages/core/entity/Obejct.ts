@@ -83,7 +83,7 @@ export interface Entry {
    /**
     * 对应word的名字
     */
-   key: string,
+   wordName: string,
    /**
     * word对应的值，可以有多个值，中间用逗号分开
     */
@@ -91,11 +91,7 @@ export interface Entry {
    /**
     * 给该词条可选的评论
     */
-   comment?: string,
-   /**
-    * 该单词的key值
-    */
-   wordKey?: string
+   comment?: string
 }
 
 export class IniObject extends UniqueObject {

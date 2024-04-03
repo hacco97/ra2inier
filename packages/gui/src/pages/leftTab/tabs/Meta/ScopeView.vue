@@ -1,19 +1,21 @@
 <script lang='ts' setup>
 import typeSvg from '@/asset/icons/type.svg?raw'
-import { useCtxMenu } from '@/states/ctxMenu';
-import { addPanel, PanelParam, PanelType } from '@/states/panelList';
-import { addScope, packageNames, saveScope } from '@/stores/projectStore';
+import { PanelParam, PanelType, usePanelState } from '@/states/panelList';
 import { cloneTyped, ScopeRo } from '@ra2inier/core';
-import { isReadonly } from './metaState';
+import { getPackageName, isReadonly } from './metaState';
 import { reactiveComputed } from '@vueuse/core';
+import { useCtxMenuState } from '@/states/ctxMenu';
+import { useProjectStore } from '@/stores/projectStore';
 
+
+const store = useProjectStore()
+const ctxmenu = useCtxMenuState()
+const panel = usePanelState()
 const props = defineProps<{ scopes: Record<string, ScopeRo> }>()
 const scopeView: Record<string, ScopeRo> = reactiveComputed(() => props.scopes)
-
-
 function onSave(scope: ScopeRo) {
    const newOne = cloneTyped(scope, ScopeRo)
-   saveScope(newOne)
+   store.saveScope(newOne)
    scopeView[newOne.key] = newOne
 }
 
@@ -26,16 +28,16 @@ function openScopePanel(scope: ScopeRo) {
       readonly: isReadonly(scope)
    })
    if (!isReadonly(scope)) p.on('save', onSave)
-   addPanel(p)
+   panel.addPanel(p)
 }
 
 function onOpenClick(scope: ScopeRo) {
    openScopePanel(scope)
 }
 
-const vCtxmenu = useCtxMenu({
+const vCtxmenu = ctxmenu.useCtxMenu({
    '新建类型'() {
-      openScopePanel(addScope('NEW_SCOPE'))
+      openScopePanel(store.addScope('NEW_SCOPE'))
    }
 })
 
@@ -50,7 +52,7 @@ const vCtxmenu = useCtxMenu({
       </h2>
       <ul>
          <li class="list-item" v-for="(scope, key) of scopeView" :key="key" @dblclick="onOpenClick(scope)">
-            <span>{{ packageNames[scope.package] }}</span><span>/</span><span>{{ scope.name }}</span>
+            <span>{{ getPackageName(scope) }}</span><span>/</span><span>{{ scope.name }}</span>
          </li>
       </ul>
    </div>

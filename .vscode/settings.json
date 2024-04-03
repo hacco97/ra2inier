@@ -1,14 +1,4 @@
 {
-   "hide-files.files": [
-      "node_modules",
-      "packages/core/node_modules",
-      "packages/core/package-lock.json",
-      "packages/doc/node_modules",
-      "packages/gui/node_modules",
-      "packages/test/node_modules",
-      "packages/wc/node_modules",
-      "packages/dev/node_modules"
-   ],
    "typescript.tsdk": "node_modules\\typescript\\lib",
    "svg.preview.background": "transparent",
    "files.exclude": {
@@ -18,13 +8,10 @@
       "**/CVS": true,
       "**/.DS_Store": true,
       "**/Thumbs.db": true,
-      "node_modules": true,
-      "packages/core/node_modules": true,
-      "packages/core/package-lock.json": true,
-      "packages/doc/node_modules": true,
-      "packages/gui/node_modules": true,
-      "packages/test/node_modules": true,
-      "packages/wc/node_modules": true,
-      "packages/dev/node_modules": true
-   }
+      "**/node_modules": true,
+      "**/package-lock.json": true,
+      "**/pnpm-lock.yaml": true,
+      "packages/gui/dist": true
+   },
+   "files.autoSave": "onWindowChange",
 }

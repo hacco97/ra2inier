@@ -1,22 +1,23 @@
 
-import { Logger } from '@ra2inier/core';
-
+import { Logger, Pipe } from '@ra2inier/core';
 export { openDirectory } from './file'
-export { work, listen } from './worker'
+export { work, listenWorker } from './worker'
 export const on = window.eApi.on
 export const send = window.eApi.send
+export const off = window.eApi.off
 export { globalEvent } from './event'
+export { useLogger } from './logger'
 
 /**
- * 建立
+ * 建立与后端和worker交互的API接口
  */
 function createAPI() {
    // 初始化日志和端口
-   let log: Logger
+   let logger: Logger
    let port: MessagePort
 
    function registerLog(logObject: Logger) {
-      log = logObject
+      logger = logObject
    }
 
    // 使用send和on模拟的异步请求api
@@ -36,7 +37,7 @@ function createAPI() {
                port.postMessage({ id, command, options })
             }
             catch (error) {
-               log.error('命令发送失败', {
+               logger.error('命令发送失败', {
                   command,
                   error,
                   options
@@ -54,6 +55,24 @@ function createAPI() {
                solve({ status: false, data: 'timeout' })
             }
          }, options.timeout ?? 60_000)
+      })
+   }
+
+   function makeExecMethod<T>(command: string, errerHeader?: string, successHeader?: string) {
+      return new Pipe(async (option: RequestOptions = {}) => {
+         const { status, data } = await exec<T>(command, option)
+         if (!status) throw Error(void logger.warn(`${errerHeader || ''}${data}`))
+         logger.info(`${successHeader || ''}${option.msg || ''}`)
+         return data
+      })
+   }
+
+   function makeExecCtx<T>(command: string, errerHeader?: string, successHeader?: string) {
+      return new Pipe(async (option: RequestOptions) => {
+         const { status, data } = await exec<T>(command, option)
+         if (!status) throw Error(void logger.warn(`${errerHeader || ''}${data}`))
+         logger.info(`${successHeader || ''}${option.msg || ''}`)
+         return [data, option] as const
       })
    }
 
@@ -84,8 +103,11 @@ function createAPI() {
 
    return {
       exec,
-      registerLog
+      registerLog,
+      makeExecMethod,
+      makeExecCtx
    }
 }
 
-export const { exec, registerLog } = createAPI()
+export const { exec, registerLog, makeExecMethod, makeExecCtx } = createAPI()
+

@@ -1,11 +1,8 @@
 <script lang='ts' setup>
 import closeSvg from '@/asset/icons/close.svg?raw';
 import { drager, dragStart, DragType } from '@/states/drager';
-import {
-   closeTab, curPanel, panelList, PanelTab, selectTab,
-} from '@/states/panelList';
+import { PanelTab, usePanelState } from '@/states/panelList';
 import { useConfigStore } from '@/stores/config';
-
 import PanelLayout from './Layout.vue';
 import API from './panels/API.vue';
 import Debug from './panels/Debug.vue';
@@ -29,11 +26,13 @@ defineOptions({
    },
 })
 
+const panel = usePanelState()
+
 // 选项卡逻辑
 function tabClose(e: MouseEvent, id: number) {
    e.stopPropagation()
    e.preventDefault()
-   closeTab(id)
+   panel.closeTab(id)
 }
 
 // 选项卡拖动逻辑
@@ -51,14 +50,14 @@ function handleDragPanelTab(tab: PanelTab) {
    const tmp = tab.order;
    let dragingTab: PanelTab = drager.data
    if (dragingTab.order > tab.order) {
-      for (let t of panelList) {
+      for (let t of panel.panelList) {
          if (t.position === dragingTab.position
             && t.order >= tab.order
             && t.order < dragingTab.order)
             t.order += 1;
       }
    } else if (dragingTab.order < tab.order) {
-      for (let t of panelList) {
+      for (let t of panel.panelList) {
          if (t.position === dragingTab.position
             && t.order > dragingTab.order
             && t.order <= tab.order)
@@ -84,12 +83,12 @@ const { config } = useConfigStore()
 
 <template>
    <PanelLayout>
-      <template v-for="panel in curPanel" v-slot:[getNavSlotName(panel)]="slotProps" :key="panel.id">
+      <template v-for="p in panel.curPanel" v-slot:[getNavSlotName(p)]="slotProps" :key="p.id">
          <ul class="panel-nav" :class="[$style.navbox]">
-            <li v-for="item in panelList" :key="item.id" :style="{ order: item.order }" draggable="true"
+            <li v-for="item in panel.panelList" :key="item.id" :style="{ order: item.order }" draggable="true"
                @dragstart="tabDragStart($event, item)" @dragover.prevent @drop.stop="tabDragDrop($event, item)">
                <div v-if="item.position == slotProps.position && item.id > 0" :class="$theme['nav-label']"
-                  :selected="panel.id === item.id" @click="selectTab(item)">
+                  :selected="p.id === item.id" @click="panel.selectTab(item)">
                   <b>{{ item.param.label }}</b>
                   <s @click="tabClose($event, item.id)" v-svgicon="closeSvg" :class="$theme['nav-close']"></s>
                </div>
@@ -97,9 +96,9 @@ const { config } = useConfigStore()
          </ul>
       </template>
 
-      <template v-for="panel in curPanel" v-slot:[getMainSlotName(panel)] :key="panel.id">
+      <template v-for="p in panel.curPanel" v-slot:[getMainSlotName(p)] :key="p.id">
          <KeepAlive :max="config.MAX_TAB_AMOUNT">
-            <component :is="panel.param.type" :param="panel.param" :key="panel.id" />
+            <component :is="p.param.type" :param="p.param" :key="p.id" />
          </KeepAlive>
       </template>
    </PanelLayout>

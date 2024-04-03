@@ -1,13 +1,10 @@
 import { reactive } from 'vue';
-
-import { exec } from '@/boot/apis';
-
-import useLog from './messageStore';
-import { Package, cloneTyped, forIn, fromRaw } from '@ra2inier/core';
+import { exec, useLogger } from '@/boot/apis';
+import { Package, cloneTyped, forIn } from '@ra2inier/core';
 
 const globalPackages: Record<string, Package> = reactive({})
 
-const logger = useLog('static-store')
+const logger = useLogger('static-store')
 
 /**
  * 获得全局的library中的本地包

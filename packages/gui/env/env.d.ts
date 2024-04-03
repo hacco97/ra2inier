@@ -1,6 +1,7 @@
 
 /// <reference types="vite/client" />
 
+import { ProjectRo, ProjectVo } from "@ra2inier/core"
 import { BrowserWindow } from "electron"
 
 interface ImportMetaEnv {
@@ -35,5 +36,8 @@ declare global {
    }
 
    type RejectHandle = (reason: any) => ServResponse<any>
+
+
+   var projectVo: ProjectVo
 }
 

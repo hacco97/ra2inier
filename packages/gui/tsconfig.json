@@ -28,7 +28,7 @@
    "include": [
       "src",
       "electron/preload/renderer.d.ts",
-      "env/env.d.ts",
+      "env/env.d.ts", "../core/utils/Pipe.ts",
    ],
    "exclude": [
       "src/worker",

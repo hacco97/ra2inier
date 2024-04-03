@@ -1,19 +1,19 @@
 <script lang='ts' setup>
 import { ref } from 'vue';
-
+import HeaderLayout from '../HeaderLayout.vue';
 import columnSvg from '@/asset/icons/column.svg?raw';
 import { PanelParam } from '@/states/panelList';
-import { projectName } from '@/stores/projectStore';
 import { IniObjectRo } from '@ra2inier/core';
+import { useProjectStore } from '@/stores/projectStore';
 
-import HeaderLayout from '../HeaderLayout.vue';
+const store = useProjectStore()
+
 
 interface Prop {
    param: PanelParam
 }
 const props = defineProps<Prop>()
 const object: IniObjectRo = props.param.data
-const pName = projectName
 const currentChild = ref('')
 const columnCount = ref(0)
 
@@ -32,8 +32,8 @@ function onColumnClick() {
             <h1 class="scrollx" v-scrollx>
                <ul>
                   <h2>
-                     <em>./</em><span>{{ pName }}</span><em>/</em>
-                     <i></i><q>{{ pName }}</q>
+                     <em>./</em><span>{{ store.projectName }}</span><em>/</em>
+                     <i></i><q>{{ store.projectName }}</q>
                      <em>.</em>
                      <em>{{ object.scope }}</em><i></i>
                      <em>/</em><i></i>
@@ -54,7 +54,7 @@ function onColumnClick() {
          <!-- 编辑视图 -->
          <ul :class="$layout.list" id="object-editor">
             <li v-for="entry in object.entry">
-               <span>{{ entry.key }}</span>
+               <span>{{ entry.wordName }}</span>
                <em>=</em>
                <i>{{ entry.values.join(',') }}</i>
                <p>{{ entry.comment }}</p>

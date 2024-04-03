@@ -2,8 +2,9 @@ import { Focus } from '@/hooks/focus';
 import { useKeyMap } from '@/hooks/keymap';
 
 import { PromptState } from '../Prompt/promptState';
-import { EditorState } from './eidtorState';
+import { EditorState } from './EditorState';
 import { EntryRo } from './Entry';
+import { useProjectStore } from '@/stores/projectStore';
 
 // const dict = useDict()
 const VALIDATE_NEW = /^[a-zA-Z\$#@][a-zA-Z\d]*$/
@@ -47,6 +48,7 @@ interface Ctx {
 
 export function useEditorKeymap(ctx: Ctx) {
    const { state, focus, promptState } = ctx
+   const store = useProjectStore()
 
    function closeNav() {
       promptState.unactive()
@@ -114,11 +116,11 @@ export function useEditorKeymap(ctx: Ctx) {
    const theNewKeymap = useKeyMap({
       enter(this, e) {
          const newOne = defaultValidator((<HTMLInputElement>this).value)
-         if (newOne) {
-            const target = state.insert(newOne, '')
-            focus.focusAt(target);
-            (<HTMLInputElement>this).value = ''
-         }
+         if (!newOne) return
+         const target = state.insert(newOne)
+         if (target < 0) return
+         focus.focusAt(target);
+         (<HTMLInputElement>this).value = ''
       },
       arrowup(e) { focus.focusPrev() },
       arrowdown(e) { focus.focusAt(0) },

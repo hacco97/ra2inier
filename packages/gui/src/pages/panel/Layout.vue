@@ -1,12 +1,11 @@
 <script lang='ts' setup>
 import { ref } from 'vue';
-
 import closeAllSvg from '@/asset/icons/closeAll.svg?raw';
 import fullSvg from '@/asset/icons/full.svg?raw';
 import leftArrowSvg from '@/asset/icons/leftArrows.svg?raw';
 import rightArrowSvg from '@/asset/icons/rightArrows.svg?raw';
-import { useMask } from '@/states/layout';
-import { colseAllTabs } from '@/states/panelList';
+import { useLayoutState } from '@/states/layout';
+import { usePanelState } from '@/states/panelList';
 
 defineOptions({ name: 'PanelLayout' })
 
@@ -14,18 +13,18 @@ defineOptions({ name: 'PanelLayout' })
 const dragerIsShowed = ref(false)
 const dragWidth = ref('100%')
 const rightIsShowed = ref(false)
-
+const layout = useLayoutState()
+const panel = usePanelState()
 
 // 全屏化逻辑
 const isFullScreen = ref(true)
-const { show } = useMask(() => { isFullScreen.value = true })
 function onFullScreenClick() {
    isFullScreen.value = false
-   show()
+   layout.showMask()
 }
 
 function onCloseAll(pos: 'left' | 'right') {
-   colseAllTabs(pos)
+   panel.colseAllTabs(pos)
 }
 
 </script>
@@ -87,8 +86,8 @@ function onCloseAll(pos: 'left' | 'right') {
 <style scoped lang='scss' module>
 $height: layout-size(panelnav);
 
-$z-index-nav:2;
-$z-index-panel:1;
+$z-index-nav: 2;
+$z-index-panel: 1;
 
 
 .left {

@@ -1,13 +1,13 @@
 
 
 import { Directive, StyleValue, reactive, ref, watch } from 'vue';
-import { addPanel, PanelParam, PanelType } from '@/states/panelList';
-import { cloneIniObject, createIniObject, saveObject, } from '@/stores/projectStore';
-import { EventEmitter, forIn, IniObjectRo, isEmptyObject, isUniqueObject, PackageRo } from '@ra2inier/core';
+import { PanelParam, PanelType, usePanelState } from '@/states/panelList';
+import { cloneTyped, EventEmitter, forIn, IniObjectRo, isEmptyObject, isUniqueObject, PackageRo } from '@ra2inier/core';
 import { globalEvent } from '@/boot/apis';
-import { useCtxMenu } from '@/states/ctxMenu';
+import { useCtxMenuState } from '@/states/ctxMenu';
 import { FlexInput } from '@ra2inier/wc';
 import { showInFileFloder } from '@/boot/file';
+import { useProjectStore } from '@/stores/projectStore';
 
 
 export const DEFAULT_GROUP_NAME = 'G0'
@@ -30,7 +30,8 @@ export type PkgViewState = ReturnType<typeof createPkgViewState>
 export function createPkgViewState(props: PkgViewProp) {
    const view: Record<string, Record<string, IniObjectRo>> = reactive({})
    const viewInfo: Record<string, GroupViewInfo> = reactive({})
-
+   const store = useProjectStore()
+   const panel = usePanelState()
    function initView() {
       const objects = props.pkg.objects
       for (const key in view) { delete view[key], delete viewInfo[key] }
@@ -56,7 +57,7 @@ export function createPkgViewState(props: PkgViewProp) {
    watch(() => props.pkg, initView, { immediate: true })
 
    function openObjectPanel(object: IniObjectRo) {
-      const opened = cloneIniObject(object)
+      const opened = cloneTyped(object, IniObjectRo)
       const p: PanelParam = new PanelParam({
          label: opened.name,
          type: props.isMain ? PanelType.ObjectEditor : PanelType.ObjectViewer,
@@ -64,19 +65,19 @@ export function createPkgViewState(props: PkgViewProp) {
          readonly: !props.isMain
       })
       const onSave = (o: IniObjectRo) => {
-         const tmp = cloneIniObject(o)
-         saveObject(tmp)
+         const tmp = cloneTyped(o, IniObjectRo)
+         store.saveObject(tmp)
          view[object.group] && (delete view[object.group][object.key])
          addNewObjectToView(tmp)
          reOrder()
       }
       if (props.isMain) { p.on('save', onSave) }
-      addPanel(p)
+      panel.addPanel(p)
    }
 
    function onAddClick(gKey?: string) {
       gKey || (gKey = DEFAULT_GROUP_NAME)
-      const newOne = createIniObject()
+      const newOne = store.addObject()
       newOne.group = gKey
       openObjectPanel(newOne)
    }
@@ -157,11 +158,12 @@ export function useVFlod(state: PkgViewState) {
  * 分组的右键菜单逻辑
  */
 let groupCtx: Directive<HTMLElement, any> | undefined
-globalEvent.on('project-loaded', () => groupCtx = undefined)
+// globalEvent.on('project-loaded', () => groupCtx = undefined)
 export function useGroupCtxmenu(state: PkgViewState) {
    const cursor = ref('')
+   const ctxmenu = useCtxMenuState()
 
-   if (!groupCtx) groupCtx = useCtxMenu({
+   if (!groupCtx) groupCtx = ctxmenu.useCtxMenu({
       '新建对象'(groupKey: string) {
          state.onAddClick(groupKey)
       },
@@ -184,9 +186,10 @@ export function useGroupCtxmenu(state: PkgViewState) {
  * 包整体的右键菜单逻辑
  */
 let pkgviewCtx: Directive<HTMLElement, any> | undefined
-globalEvent.on('project-loaded', () => groupCtx = undefined)
+// globalEvent.on('project-loaded', () => groupCtx = undefined)
 export function usePkgviewCtxmenu(state: PkgViewState) {
-   if (!pkgviewCtx) pkgviewCtx = useCtxMenu({
+   const ctxmenu = useCtxMenuState()
+   if (!pkgviewCtx) pkgviewCtx = ctxmenu.useCtxMenu({
       '新建分组'() {
          state.createGroup()
       },

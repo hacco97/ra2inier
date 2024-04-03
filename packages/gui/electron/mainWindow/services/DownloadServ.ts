@@ -1,4 +1,4 @@
-import { controller, inject, mapping, param, test } from "../ioc.config";
+import { controller, inject, mapping, param } from "../ioc.config";
 import { GithubApi } from "../components/GithubApi";
 import { escapePath } from "@ra2inier/core/node";
 import { Config, Reference } from "@ra2inier/core";

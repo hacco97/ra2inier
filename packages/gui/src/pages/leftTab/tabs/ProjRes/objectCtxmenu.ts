@@ -1,6 +1,6 @@
 import { globalEvent } from "@/boot/event"
 import { work } from "@/boot/worker"
-import { useCtxMenu } from "@/states/ctxMenu"
+import { useCtxMenuState } from "@/states/ctxMenu"
 import { IniObjectRo } from "@ra2inier/core"
 import { Directive } from "vue"
 
@@ -11,9 +11,10 @@ export type CtxItem = {
 }
 
 let objectCtx: Directive<HTMLElement, any> | undefined
-globalEvent.on('project-loaded', () => objectCtx = undefined)
+// globalEvent.on('project-loaded', () => objectCtx = undefined)
 export function useObjectCtxmenu() {
-   if (!objectCtx) objectCtx = useCtxMenu<CtxItem>({
+   const ctxmenu = useCtxMenuState()
+   if (!objectCtx) objectCtx = ctxmenu.useCtxMenu<CtxItem>({
       '编辑对象'(item) {
          item.openHandle()
       },

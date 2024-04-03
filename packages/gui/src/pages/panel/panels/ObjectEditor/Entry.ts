@@ -1,23 +1,19 @@
 import { shallowReactive } from 'vue';
-
-import { queryWordByKey, queryWordByNameSync } from '@/stores/projectStore';
 import { createParam, Entry, WordRo, WordValidity } from '@ra2inier/core';
 
 // 常量定义
 const NULL_WORD = new WordRo('未知词条')
 NULL_WORD.valueParam = [createParam()]
-const NOT_FOUND = 'not-found'
-const WORD_KEY = Symbol()
 const ENTRY_VID = Symbol()
 
 // 字段对象，代表一个字段的所需信息
-export class EntryRo {
+export class EntryRo implements Entry {
    static nextID = 0
    readonly id: number = 0
    // 顺序，用于焦点逻辑和排序逻辑
    order: number = 0
    // 字段的word名字
-   key: string = ''
+   wordName: string = ''
 
    // 字段的word具体值，列表，中间用“,”分割
    values: string[] = [];
@@ -39,38 +35,11 @@ export class EntryRo {
    validitys: WordValidity[] = shallowReactive([])
    // 该字段的合法性，提示
    prediction: string = '';
-   // 字段word的key值
-   [WORD_KEY] = ''
-   get wordKey() { return this.word.key }
-   // 该字段的UI校验参数
-   get word() {
-      let tmp
-      if (!!this[WORD_KEY]) {
-         if (this[WORD_KEY] === NOT_FOUND) return NULL_WORD
-         tmp = queryWordByKey(this[WORD_KEY]) ?? NULL_WORD
-      } else {
-         // TODO: 待升级为沿项目依赖进行查找
-         tmp = queryWordByNameSync(this.key)
-         this[WORD_KEY] = NOT_FOUND
-         if (tmp) this[WORD_KEY] = tmp.key
-         else tmp = NULL_WORD
-      }
-      return <WordRo>tmp
-   }
-   get isNullWord() { return this.word === NULL_WORD }
-
-   get typeParams() {
-      return this.word.valueParam
-   }
-
-   get typeParam() {
-      return this.word.valueParam[this.vid] ?? NULL_WORD.valueParam[0]
-   }
 
    constructor(entry: Entry) {
       this.id = EntryRo.nextID++
-      this.key = entry.key
-      this.values = entry.values
+      this.wordName = entry.wordName
+      this.values = entry.values || []
    }
 
    set value(value: string) {

@@ -1,11 +1,13 @@
 <script lang='ts' setup>
 import sharpSvg from '@/asset/icons/sharp.svg?raw'
-import { useCtxMenu } from '@/states/ctxMenu';
+import { useCtxMenuState } from '@/states/ctxMenu';
+
+const ctxmenu = useCtxMenuState()
 
 
-const vCtxmenu = useCtxMenu({
+const vCtxmenu = ctxmenu.useCtxMenu({
    '新建缩写'() {
-      
+
    }
 })
 

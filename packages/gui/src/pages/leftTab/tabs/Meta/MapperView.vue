@@ -1,22 +1,22 @@
 <script lang='ts' setup>
-import { shallowReactive } from 'vue';
 import mapperSvg from '@/asset/icons/mapper.svg?raw'
-import { useCtxMenu } from '@/states/ctxMenu';
-import { addPanel, PanelParam, PanelType } from '@/states/panelList';
-import { addMapper, packageNames, saveMapper } from '@/stores/projectStore';
 import { cloneTyped, MapperRo } from '@ra2inier/core';
-
-import { isReadonly } from './metaState';
+import { isReadonly, getPackageName } from './metaState';
 import { reactiveComputed } from '@vueuse/core';
+import { useProjectStore } from '@/stores/projectStore';
+import { useCtxMenuState } from '@/states/ctxMenu';
+import { PanelParam, PanelType, usePanelState } from '@/states/panelList';
 
-defineOptions({ name: 'MapperView' })
+const store = useProjectStore()
+const ctxmenu = useCtxMenuState()
+const panel = usePanelState()
 
 const props = defineProps<{ mappers: Record<string, MapperRo> }>()
 const mapperView: Record<string, MapperRo> = reactiveComputed(() => props.mappers)
 
 function onSave(data: MapperRo) {
    const newOne = cloneTyped(data, MapperRo)
-   saveMapper(newOne)
+   store.saveMapper(newOne)
    mapperView[newOne.key] = newOne
 }
 
@@ -30,16 +30,17 @@ function openMapperPanel(mapper: MapperRo) {
       readonly
    })
    if (!readonly) p.on('save', onSave)
-   addPanel(p)
+   panel.addPanel(p)
 }
 
 function onOpenMapper(mapper: MapperRo) {
    openMapperPanel(mapper)
 }
 
-const vCtxmenu = useCtxMenu({
+
+const vCtxmenu = ctxmenu.useCtxMenu({
    '新建输出器'() {
-      openMapperPanel(addMapper('NEW_MAPPER'))
+      openMapperPanel(store.addMapper('NEW_MAPPER'))
    }
 })
 
@@ -54,7 +55,7 @@ const vCtxmenu = useCtxMenu({
       </h2>
       <ul>
          <li class="list-item" v-for="(mapper, key) in mapperView" @dblclick="onOpenMapper(mapper)" :key="key">
-            <span>{{ packageNames[mapper.package] }}</span><span>/</span><span>{{ mapper.name }}</span>
+            <span>{{ getPackageName(mapper) }}</span><span>/</span><span>{{ mapper.name }}</span>
          </li>
       </ul>
    </div>

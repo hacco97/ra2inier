@@ -1,17 +1,15 @@
 <script lang='ts' setup>
-import { computed, Directive, ref } from 'vue';
-
+import { computed, ref } from 'vue';
 import closeSvg from '@/asset/icons/close.svg?raw';
 import minSvg from '@/asset/icons/min.svg?raw';
 import toggleSvg from '@/asset/icons/toggle.svg?raw';
 import toggle2Svg from '@/asset/icons/toggle2.svg?raw';
 import { on, send } from '@/boot/apis';
-import { invokeMenuOption, menuList as list } from '@/states/menu';
-import { projectName } from '@/stores/projectStore';
-
 import CheckBox from './menuItem/CheckBox.vue';
 import FileBox from './menuItem/FileBox.vue';
 import { useScroller } from './scroll';
+import { useProjectStore } from '@/stores/projectStore';
+import { useMenuState } from '@/states/menu';
 
 defineOptions({
    name: 'Menu',
@@ -27,13 +25,13 @@ const vScrollx = {
 // 菜单逻辑
 const show = ref(0)
 const focused = ref(false)
+const menu = useMenuState()
 
-const pName = computed(() => {
-   return projectName.value || 'ra2 inier'
-})
+const store = useProjectStore()
+const pName = computed(() => store.projectName || 'ra2 inier')
 
 const onMenuClick = (i: number, j: number) => {
-   invokeMenuOption(i, j)
+   menu.invokeMenuOption(i, j)
 }
 
 // 窗口开闭逻辑
@@ -77,7 +75,7 @@ on('unmaximize', () => {
          <!-- 菜单按钮 -->
          <ul class="scrollx" v-scrollx @scroll="scrolled">
             <h2>
-               <div v-for="i in list" :key="i.id" :class="[$layout['no-drag'], $theme['menubar-item']]">
+               <div v-for="i in menu.menuList" :key="i.id" :class="[$layout['no-drag'], $theme['menubar-item']]">
                   <li @mouseover=" show = i.id" @click.stop>
                      <h3 class="vertical-center">{{ i.label }}</h3>
                   </li>
@@ -87,7 +85,7 @@ on('unmaximize', () => {
          <!-- 下拉菜单选项 -->
          <ol :class="$layout['no-drag']">
             <div :style="{ left: subLeft }">
-               <p v-for="item in list">
+               <p v-for="item in menu.menuList">
                   <li v-show="focused && show === item.id" :class="$theme['menubar-sublist']">
                      <em :class="$theme['menubar-subitem']" v-for="subItem in item.sub" :key="subItem.id"
                         @click="onMenuClick(item.id, subItem.id)">

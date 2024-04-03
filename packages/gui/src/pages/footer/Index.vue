@@ -1,8 +1,6 @@
 <script lang='ts' setup>
-import { ref } from 'vue'
 import { statusText } from './state'
 defineOptions({ name: 'Footer' })
-
 
 
 </script>

@@ -1,20 +1,18 @@
 <script lang="ts" setup>
 import ContextMenu from '@/pages/contextmenu/Index.vue';
 import Home from '@/pages/home/Index.vue';
-import '@/components/FileLink'
-
 import.meta.glob('@/css/global/**/*', { eager: true })
 import.meta.glob('@/css/classes/**/*', { eager: true })
-import { projectInfo, packages, allOfPackages } from '@/stores/projectStore'
+import '@/components/FileLink'
+import { onMounted } from 'vue';
 
-const projectInfo_ = projectInfo
-const packages_ = packages
-const all_ = allOfPackages
-
-document.body.addEventListener('contextmenu', (ev) => {
-   ev.stopPropagation()
-   ev.preventDefault()
+onMounted(() => {
+   document.body.addEventListener('contextmenu', (ev) => {
+      ev.stopPropagation()
+      ev.preventDefault()
+   })
 })
+
 </script>
 
 <template>

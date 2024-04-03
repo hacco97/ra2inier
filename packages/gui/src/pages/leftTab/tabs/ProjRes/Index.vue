@@ -1,12 +1,12 @@
 <script lang='ts' setup>
-import { loadingVersion, mainPackage, referPackages } from '@/stores/projectStore';
 import LeftTabLayout from '../Layout.vue';
 import { usePanelHeight } from './panelHeight';
 import PkgView from './PkgView.vue';
 import { isEmptyObject } from '@ra2inier/core';
 import Search from '@/pages/leftTab/tabs/Search.vue';
-import { ref } from 'vue';
+import { useProjectStore } from '@/stores/projectStore';
 
+const store = useProjectStore()
 
 const {
    onReferClick,
@@ -25,13 +25,13 @@ const {
             <span>实体类管理</span>
          </div>
       </template>
-      <template #panel :key="loadingVersion">
+      <template #panel>
          <div :class="$style.panel">
             <ul>
                <!-- 上半 -->
                <p class="scroll">
                   <Search placeholder="搜索对象"></Search>
-                  <PkgView :pkg="mainPackage" :isMain="true"></PkgView>
+                  <PkgView :pkg="store.main" :isMain="true"></PkgView>
                </p>
                <!-- 拖动框 -->
                <legend>
@@ -44,8 +44,8 @@ const {
                   <em><span class="folder" :folded="isReferFolded">&gt;</span><span>引用</span></em>
                </h2>
                <section class="scroll">
-                  <PkgView v-for="pkg in referPackages" :pkg="pkg"></PkgView>
-                  <h3 v-if="isEmptyObject(referPackages)"><span>暂无引用</span></h3>
+                  <PkgView v-for="pkg in store.referPackages" :pkg="pkg"></PkgView>
+                  <h3 v-if="isEmptyObject(store.referPackages)"><span>暂无引用</span></h3>
                </section>
                </p>
             </ul>

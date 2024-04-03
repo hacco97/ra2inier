@@ -11,7 +11,9 @@ export default defineConfig(({ mode }) => {
    env.MODE = mode
    return {
       envDir: 'env',
-      server: {},
+      server: {
+         port: 34242
+      },
       resolve: {
          alias: {
             '@': resolve(__dirname, './src'),

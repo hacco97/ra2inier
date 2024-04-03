@@ -31,11 +31,15 @@ export class EventEmitter {
    }
 
    /**
-    * 取消订阅一个频道
+    * 取消订阅一个频道，需要给定需要删除的callback，如果不指定callback，则所有该channel的callback都会被删除
     */
-   off(event: string, callback: Callback) {
+   off(event: string, callback?: Callback) {
       if (event in this[BUS_MAP]) {
          let arr = this[BUS_MAP][event]
+         if (callback === undefined) {
+            arr.splice(0)
+            return
+         }
          for (let i = 0; i < arr.length; ++i) {
             if (arr[i] === callback)
                arr.splice(i, 1)

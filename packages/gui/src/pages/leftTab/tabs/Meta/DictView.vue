@@ -1,21 +1,22 @@
 <script lang='ts' setup>
 import dictSvg from '@/asset/icons/dict.svg?raw'
-import { useCtxMenu } from '@/states/ctxMenu';
-import { addPanel, PanelParam, PanelType } from '@/states/panelList';
-import { addWord, packageNames, saveWord } from '@/stores/projectStore';
+import { useCtxMenuState } from '@/states/ctxMenu';
+import { PanelParam, PanelType, usePanelState } from '@/states/panelList';
 import { cloneTyped, WordRo } from '@ra2inier/core';
-
-import { isReadonly } from './metaState';
+import { isReadonly, getPackageName } from './metaState';
 import { reactiveComputed } from '@vueuse/core';
-
-defineOptions({ name: 'DictView' })
+import { useProjectStore } from '@/stores/projectStore';
 
 const props = defineProps<{ dictionary: Record<string, WordRo> }>()
 const dictView: Record<string, WordRo> = reactiveComputed(() => props.dictionary)
 
+const store = useProjectStore()
+const panel = usePanelState()
+const ctxmenu = useCtxMenuState()
+
 function onSave(word: WordRo) {
    const newOne = cloneTyped(word, WordRo)
-   saveWord(newOne)
+   store.saveWord(newOne)
    dictView[newOne.key] = newOne
 }
 
@@ -28,16 +29,16 @@ function openWordPanel(word: WordRo) {
       readonly: isReadonly(word)
    })
    if (!isReadonly(word)) p.on('save', onSave)
-   addPanel(p)
+   panel.addPanel(p)
 }
 
 function onOpenClick(word: WordRo) {
    openWordPanel(word)
 }
 
-const vCtxmenu = useCtxMenu({
+const vCtxmenu = ctxmenu.useCtxMenu({
    '新建词条'() {
-      openWordPanel(addWord())
+      openWordPanel(store.addWord())
    },
 })
 </script>
@@ -51,7 +52,7 @@ const vCtxmenu = useCtxMenu({
       </h2>
       <ul>
          <li v-for="(word, key) in dictView" :key="key" @dblclick="onOpenClick(word)" class="list-item">
-            <span>{{ packageNames[word.package] }}</span><span>/</span>
+            <span>{{ getPackageName(word) }}</span><span>/</span>
             <span>{{ word.dictionary }}</span><span>/</span>
             <span>{{ word.name }}</span>
          </li>

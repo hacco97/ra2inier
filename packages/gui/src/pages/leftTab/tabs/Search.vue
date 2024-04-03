@@ -51,8 +51,6 @@ const { folded, vFolder } = useFolder()
 
    nav {
       padding: 0 align-size(normal);
-
-      main {}
    }
 }
 </style>

@@ -44,6 +44,9 @@ function toRawArray(arr: any[]) {
    else return arr.slice()
 }
 
+/**
+ * 使用固定的模板的toRaw
+ */
 export function useToRaw(template: Record<string, any>, deep: boolean) {
    return <T extends Record<string, any>>(object: T) => toRaw(object, template, deep)
 }
@@ -83,6 +86,13 @@ export function enhance<T extends Record<string, any>>(object: Record<string, an
 }
 
 /**
+ * 从一个对象删除一个key值
+ */
+export function delKey(object: Record<string, any>, key: string) {
+   delete object[key]
+}
+
+/**
  * 从一个对象排除某些键值并且进行TS层面的类型转换
  */
 export function exclude<T extends Record<string, any>>(object: Record<string, any>, keys: string[]) {
@@ -110,9 +120,14 @@ export function MapIn<K extends string | number | symbol, V, T>(object: Record<K
    return <Record<K, T>>tmp
 }
 
-/**
- * 从一个删除一个key值
- */
-export function delKey(object: Record<string, any>, key: string) {
-   delete object[key]
+export function destruct<T, K extends keyof T>(obj: T, keys: K[]) {
+   const _obj = <Record<string, any>>obj
+   const newOne: Record<string, any> = {}
+   for (const key in keys) {
+      const tmp = _obj[key]
+      if (tmp === undefined) continue
+      if (typeof tmp === 'function') newOne[key] = () => _obj[key]()
+      else tmp[key] = _obj[key]
+   }
+   return <Pick<T, K>>newOne
 }

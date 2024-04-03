@@ -41,7 +41,7 @@ export class PackageDao {
          pkg.references[key] = Reference.parser(<any>pkg.references[key])
       }
       return <PackageVo>pkg
-   }).get
+   })[0]
 
    /**
     * 直接读取一个包文件夹，将其变为PackageVo对象，不涉及引用的读取

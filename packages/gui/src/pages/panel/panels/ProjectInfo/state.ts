@@ -1,32 +1,33 @@
-import { IItem } from '@/components/ListViewState';
-import { projectInfo, packages } from '@/stores/projectStore';
 import { useGlobalPackages } from '@/stores/staticStore';
-import { Reference, forIn, toRaw } from '@ra2inier/core';
-import { ref, watch } from 'vue';
+import { ProjectInfo, Reference, forIn, toRaw } from '@ra2inier/core';
+import { ComputedRef, ref, watch } from 'vue';
 import { ReferItem, pkg2ReferItem, refer2ReferItem } from './utils';
+import { useProjectStore } from '@/stores/projectStore';
 
 export * from './utils'
 
-function getDetail(r: Partial<ReferItem>) {
-   const loaded = packages.value
-   return (r.key! in loaded) ? '已加载' : '未加载'
-}
-
-export function createReferList() {
+export function createReferList(info: ComputedRef<ProjectInfo>) {
    /**
     * 显示当前项目的依赖项
     * 依赖项可以分为两种形态，已经加载的和未加载的
     * 未加载的包为虚悬依赖，实际上当前内存中没有该包的数据，不能够参与当前项目的构建
     */
    const referList = ref<Partial<ReferItem>[]>([])
-   watch(() => projectInfo.value, () => {
-      console.log(projectInfo.value)
+   watch(() => info.value, () => {
+      console.log(info.value)
 
-      referList.value = Object.values(projectInfo.value.references).map(refer2ReferItem)
+      referList.value = Object.values(info.value.references).map(refer2ReferItem)
       for (const r of referList.value) {
          r.detail = getDetail(r)
       }
    }, { immediate: true })
+
+   const store = useProjectStore()
+
+   function getDetail(r: Partial<ReferItem>) {
+      const loaded = store.packages
+      return (r.key! in loaded) ? '已加载' : '未加载'
+   }
 
    function addRefer(newOne: Partial<ReferItem>) {
       for (const r of referList.value) {

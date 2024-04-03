@@ -29,18 +29,23 @@
          "skipFiles": [
             "<node_internals>/**"
          ],
+         "cascadeTerminateToConfigurations": [
+            "Renderer"
+         ]
       },
       {
          "name": "Renderer",
          "port": 19222,
          "request": "attach",
          "type": "chrome",
-         "webRoot": "${workspaceFolder}/packages/gui"
+         "webRoot": "${workspaceFolder}/packages/gui",
+         "restart": true
       },
       {
          "name": "调试test用例",
          "request": "launch",
          "runtimeArgs": [
+            "run",
             "test"
          ],
          "runtimeExecutable": "pnpm",

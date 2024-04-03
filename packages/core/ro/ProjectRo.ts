@@ -1,28 +1,16 @@
-import { fromRaw, PackageDto, ProjectDto, Reference, ToDto, toRaw } from '../';
+import { PackageDto, ProjectDto, ToDto } from '../dto';
+import { Reference } from '../entity/Package';
 import { Project } from '../entity/Project';
+import { fromRaw, toRaw } from '../utils/object';
 import { PackageRo } from './PackageRo';
-
-export type { ProjectVo } from '../vo/ProjectVo';
 
 export class ProjectRo extends Project implements ToDto {
    [key: string]: any
 
    /**
-    * 项目已经加载
-    */
-   loaded: boolean = false
-   /**
-    * 项目正在加载
-    */
-   loading: boolean = false
-   /**
-    * 项目当前可以被加载
-    */
-   get loadable() { return !this.loaded && !this.loading }
-   /**
     * 项目的主包
     */
-   main?: PackageRo
+   main: PackageRo = new PackageRo
    /**
     * 项目的所有包，包括主包
     */
@@ -47,7 +35,7 @@ export class ProjectInfo {
 
    constructor(project?: ProjectRo) {
       if (!project) return
-      const main = project.main!
+      const main = project.main || new PackageRo
       this.name = project.name || '(unknown name)'
       this.author = main.author || '(unknown author)'
       this.target = main.target

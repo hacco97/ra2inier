@@ -1,8 +1,5 @@
 
 import { IItem } from '@/components/ListViewState';
-import { DialogType, ask } from '@/states/dialog';
-import useLog from '@/stores/messageStore';
-import { downloadRemotePackage, diffReference, loadLocalPackage } from '@/stores/projectStore';
 import { Package, Reference } from '@ra2inier/core';
 
 
@@ -44,6 +41,3 @@ export function pkg2ReferItem(pkg: Package) {
       url: pkg.link
    }
 }
-
-export const logger = useLog('project-info')
-

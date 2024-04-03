@@ -1,11 +1,100 @@
-import { reactive, shallowReactive } from 'vue';
-
+import { reactive, readonly } from 'vue';
 import { IpcRendererEvent } from 'electron/renderer';
+import { globalEvent, listenWorker, on, registerLog, useLogger, off } from '@/boot/apis';
+import { LogLevel, Message, useEffect } from '@ra2inier/core';
+import { defineStore } from 'pinia';
 
-import { listen, on, registerLog } from '@/boot/apis';
-import { LogLevel, Message } from '@ra2inier/core';
+
+const establishListener = useEffect((pushMsg: any) => {
+   /**
+    * 注册一个消息的消费者
+    * 本模块负责将后端、worker和页面中的其他组件中产生的消息添加到统一的集合当中
+    * 这个消息集合将会由Message组件进行展示
+    */
+   registerLog(useLogger('api-center'))
+
+   /**
+    * 监听后端的消息
+    */
+   const listenerForBack = (event: IpcRendererEvent, l: LogLevel, msg: string, remark?: any) => {
+      (l in LogLevel) || (l = LogLevel.info)
+      pushMsg('backend', l, msg, remark)
+   }
+   on('log-from-backend', listenerForBack)
+
+   /**
+    * 监听前端的消息
+    */
+   globalEvent.on('renderer-message', pushMsg)
+
+   /**
+    * 监听worker的消息
+    */
+   listenWorker('send-log', ({ msg, level, remark }) => {
+      pushMsg('worker', level, msg, remark)
+   })
+
+   return [undefined, () => {
+      off('log-from-backend', listenerForBack)
+      globalEvent.off('renderer-message')
+   }]
+})
 
 // 消息通知模块的仓库
+export const createMessageStore = () => {
+   const messageList = reactive<Message[]>([])
+   let nextID = messageList.length
+
+   const hooks: Record<string, Set<Function>> = {
+      onMessage: new Set,
+   }
+
+   function onMessage(cb: () => void) {
+      hooks.onMessage.add(cb)
+   }
+
+   function pushMsg(sender: string, level: LogLevel, msg: string, remark?: any) {
+      messageList.push({
+         id: nextID++,
+         content: msg,
+         remark: remark ?? '',
+         time: new Date().toLocaleString(),
+         read: false,
+         sender,
+         level
+      })
+      hooks.onMessage.forEach(cb => cb())
+   }
+
+   function readAll() {
+      for (let msg of messageList) { msg.read = true }
+   }
+
+   function clearAll() {
+      messageList.splice(0)
+   }
+
+   establishListener(pushMsg)
+
+   return {
+      messageList: readonly(messageList),
+      /**
+       * 添加一条消息
+       */
+      pushMsg,
+      readAll,
+      clearAll,
+      /**
+       * 当新增消息时，可以被触发的回调函数
+       */
+      onMessage
+   }
+}
+
+
+export const useMessageStore = defineStore('message-store', { state: createMessageStore })
+export type MessageStore = ReturnType<typeof useMessageStore>
+
 
 const EXAMPLE = [
    {
@@ -41,65 +130,3 @@ const EXAMPLE = [
       level: LogLevel.error
    },
 ]
-
-export const messageList = reactive<Message[]>(EXAMPLE)
-let nextID = messageList.length
-const hooks: Record<string, Set<Function>> = {
-   onMessage: new Set,
-}
-
-/**
- * 当新增消息时，可以被触发的回调函数
- */
-export function onMessage(cb: () => void) {
-   hooks.onMessage.add(cb)
-}
-
-export function pushMsg(sender: string, level: LogLevel, msg: string, remark?: any) {
-   messageList.push({
-      id: nextID++,
-      content: msg,
-      remark: remark ?? '',
-      time: new Date().toLocaleString(),
-      read: false,
-      sender,
-      level
-   })
-   hooks.onMessage.forEach(cb => cb())
-}
-
-export default function useLog(sender: string) {
-   return {
-      debug(msg: string, remark?: any) {
-         pushMsg(sender, LogLevel.debug, msg, remark)
-      },
-      info(msg: string, remark?: any) {
-         pushMsg(sender, LogLevel.info, msg, remark)
-      },
-      warn(msg: string, remark?: any) {
-         pushMsg(sender, LogLevel.warn, msg, remark)
-      },
-      error(msg: string, remark?: any) {
-         pushMsg(sender, LogLevel.error, msg, remark)
-      }
-   }
-}
-
-registerLog(useLog('api-center'))
-
-on('log-from-backend', (event: IpcRendererEvent, l: LogLevel, msg: string, remark?: any) => {
-   (l in LogLevel) || (l = LogLevel.info)
-   pushMsg('backend', l, msg, remark)
-})
-
-listen('send-log', ({ msg, level, remark }) => {
-   pushMsg('worker', level, msg, remark)
-})
-
-export function readAll() {
-   for (let msg of messageList) { msg.read = true }
-}
-
-export function clearAll() {
-   messageList.splice(0)
-}

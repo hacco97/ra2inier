@@ -1,4 +1,4 @@
-import { openDirectory, showInFileFloder } from "@/boot/file"
+import { showInFileFloder } from "@/boot/file"
 import { WebComponent, css, html } from "@ra2inier/wc"
 
 const styleSheet = css`

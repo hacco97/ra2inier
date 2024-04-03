@@ -1,32 +1,34 @@
 <script lang='ts' setup>
-import { reactive } from 'vue';
-
+import { onMounted, reactive } from 'vue';
 import closeSvg from '@/asset/icons/close.svg?raw';
-import { useCtxMenuInfo } from '@/states/ctxMenu';
-import { closeMask, useMask } from '@/states/layout';
+import { useCtxMenuState } from '@/states/ctxMenu';
+import { useLayoutState } from '@/states/layout';
+
 
 defineOptions({ name: 'ContextMenu' })
-
-const { isCtxMenuShowed, ctxMenuPostion, ctxMemuItems, vCtxmenu } = useCtxMenuInfo()
-
-const { isMasked } = useMask()
+const ctxmenu = useCtxMenuState()
+const layout = useLayoutState()
+const vCtxmenu = ctxmenu.vCtxmenu
 
 const wavePosition = reactive({ translate: '100px 100px' })
-document.body.addEventListener('click', (e: MouseEvent) => {
-   wavePosition.translate = `${e.clientX}px ${e.clientY}px`
+onMounted(() => {
+   document.body.addEventListener('click', (e: MouseEvent) => {
+      wavePosition.translate = `${e.clientX}px ${e.clientY}px`
+   })
 })
 
 </script>
 
 
 <template>
-   <div id="mask" :class="[$style.mask, $theme.mask]" v-show="isMasked">
-      <s v-svgicon="closeSvg" class="fore-button" @click="closeMask"></s>
+   <div id="mask" :class="[$style.mask, $theme.mask]" v-show="layout.isMasked">
+      <s v-svgicon="closeSvg" class="fore-button" @click="layout.closeMask"></s>
    </div>
    <!-- <li :class="$style.radius" :style="wavePosition"><span></span></li> -->
    <ul id="contextMenu" v-ctxmenu :class="[$style['context-menu'], $theme['context-menu']]" class="scrollx normal-panel"
-      v-show="isCtxMenuShowed" :style="ctxMenuPostion">
-      <li v-for="item in ctxMemuItems" @click="item.callback" v-show="item.enabled" class="fore-panel reactive-hc">
+      v-show="ctxmenu.isCtxMenuShowed" :style="ctxmenu.ctxMenuPostion">
+      <li v-for="item in ctxmenu.ctxMemuItems" @click="item.callback" v-show="item.enabled"
+         class="fore-panel reactive-hc">
          {{ item.label }}
       </li>
    </ul>

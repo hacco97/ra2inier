@@ -1,16 +1,18 @@
 <script lang='ts' setup>
-import { computed, reactive, shallowRef, watch } from 'vue';
+import { computed, reactive, ref, shallowRef } from 'vue';
 
 import submitSvg from '@/asset/icons/submit.svg?raw';
 import ColorPicker from '@/components/ColorPicker.vue';
-import { packageNames } from '@/stores/projectStore';
-import { IniObjectRo, WordRo } from '@ra2inier/core';
+import { IniObjectRo, WordRo, WordValueType } from '@ra2inier/core';
 import { NumberInput, TouchButton } from '@ra2inier/wc';
 
 import { useFloat, useInt } from './number';
 import { Option, useObjects, useOption } from './option';
 import { usePromptKeymap } from './promptKeymap';
 import { PromptState, PromptType, useChildFocus } from './promptState';
+import { useProjectStore } from '@/stores/projectStore';
+import { EntryRo } from '../ObjectEditor/Entry';
+
 
 const props = defineProps({
    disabled: { type: Boolean, default: false },
@@ -21,16 +23,11 @@ const emit = defineEmits(['submit', 'blur'])
 // 初始化组件参数
 const state = props.state
 const word = shallowRef(new WordRo)
+const store = useProjectStore()
 function getWordPath(word: WordRo) {
-   return `${packageNames.value[word.package]}/${word.dictionary}/${word.fullname}`
+   return `${store.packageNames[word.package]}/${word.dictionary}/${word.fullname}`
 }
 const author = computed(() => word.value.author ? '作者：' + word.value.author : '')
-const isKnownWord = computed(() => state.entry && !state.entry.isNullWord)
-watch(() => props.state.entry, init, { immediate: true })
-function init() {
-   if (!state.entry) return
-   word.value = state.entry.word
-}
 
 // 提示框焦点控制逻辑
 function onPromptFocus() {
@@ -48,9 +45,7 @@ function onPromptBlur() {
 
 // 子元素焦点focus逻辑，该逻辑用于通过使用emit触发，使得Prompt内部子元素的主动focus
 const { vChildFocus, focusChild } = useChildFocus()
-state.on('focus-child', () => {
-   focusChild(state.type)
-})
+state.on('focus-child', () => { focusChild(state.type) })
 
 
 // 键盘处理逻辑
@@ -82,6 +77,15 @@ const { intInput, changeInt, getInt, isValid: intValid } = useInt(state)
 function onIntSubmit(e: Event) {
    intValid() && submit(getInt())
 }
+const min = ref(Number.MIN_SAFE_INTEGER), max = ref(Number.MAX_SAFE_INTEGER)
+state.on('entry-change', (e: EntryRo) => {
+   word.value = store.queryWord(e.wordName)
+   const param = word.value.valueParam[e.vid]
+   if (param?.type === WordValueType.int) {
+      min.value = param.min ?? Number.MIN_SAFE_INTEGER
+      max.value = param.max ?? Number.MAX_SAFE_INTEGER
+   }
+})
 
 // 浮点类型的处理逻辑
 const { floatInput, changeFloat, getFloat, isValid: floatValid } = useFloat(state)
@@ -90,9 +94,7 @@ function onFloatSubmit(e: Event) {
 }
 
 // 颜色类型
-const color = reactive({
-   red: 0, green: 70, blue: 50
-})
+const color = reactive({ red: 0, green: 70, blue: 50 })
 function getColor() {
    return `${Math.round(color.red)},${Math.round(color.green)},${Math.round(color.blue)}`
 }
@@ -102,7 +104,10 @@ function onColorSubmit() {
 }
 
 // 对象类型
-const { objects, getObjectPath, cursor: objectCursor } = useObjects(state)
+const { objects, cursor: objectCursor } = useObjects(state)
+function getObjectPath(o: IniObjectRo) {
+   return `${store.packageNames[o.package]}/${o.group}/${o.name}.${o.scope}`
+}
 function onObjectClick(id: number) {
    state.active()
    objectCursor.value = id
@@ -140,7 +145,7 @@ state.on('submit-request', () => submit(getValue()))
 
 <template>
    <div v-if="!disabled" :class="[$style.prompt, $theme.prompt]" v-keymap @keydown="onPromptSubmit"
-      @focusin.stop="onPromptFocus" @focusout.stop="onPromptBlur" v-show="isKnownWord">
+      @focusin.stop="onPromptFocus" @focusout.stop="onPromptBlur" v-show="state.entry">
       <h2>
          <h3 :title="author">{{ word.name }}</h3>
          <h4>{{ getWordPath(word) }}</h4>
@@ -164,8 +169,8 @@ state.on('submit-request', () => submit(getValue()))
       <ul :class="$style.number" v-show="state.type === PromptType.int">
          <touch-button @touch="changeInt(-10)">--</touch-button>
          <touch-button @touch="changeInt(-1)">-</touch-button>
-         <number-input ref="intInput" @keydown.enter.stop="onIntSubmit" :min="state.entry?.typeParam.min"
-            :max="state.entry?.typeParam.max" v-child-focus="PromptType.int" />
+         <number-input ref="intInput" @keydown.enter.stop="onIntSubmit" :min="min" :max="max"
+            v-child-focus="PromptType.int" />
          <touch-button @touch="changeInt(1)">+</touch-button>
          <touch-button @touch="changeInt(10)">++</touch-button>
          <p class="normal-label" v-svgicon="submitSvg" padding="18%" @click="onIntSubmit"></p>

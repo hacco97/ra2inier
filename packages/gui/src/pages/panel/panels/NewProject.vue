@@ -4,12 +4,12 @@ import { ref } from 'vue';
 import newSvg from '@/asset/icons/new.svg?raw';
 import openDirSvg from '@/asset/icons/openDir.svg?raw';
 import { useConfigStore } from '@/stores/config';
-import { createNewProject } from '@/stores/projectStore';
 import { FlexInput, LazyButton } from '@ra2inier/wc';
-
 import HeaderLayout from './HeaderLayout.vue';
 import ReferView from './ReferView.vue';
 import { openDirectory } from '@/boot/file';
+import { useProjectStore } from '@/stores/projectStore';
+const store = useProjectStore()
 
 const { config } = useConfigStore()
 
@@ -24,7 +24,7 @@ async function onOpenClick() {
 
 
 function onAddClick() {
-   createNewProject(targetPath.value, name.value)
+   // createNewProject(targetPath.value, name.value)
 }
 </script>
 

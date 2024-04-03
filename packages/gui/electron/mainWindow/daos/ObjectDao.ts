@@ -43,7 +43,7 @@ export class ObjectDao {
       for (const item of val) {
          const [ekey, valueStr, comment] = item.split('\n\n')
          ret.push({
-            key: ekey,
+            wordName: ekey,
             values: valueStr.split('\n'),
             comment
          })
@@ -55,7 +55,7 @@ export class ObjectDao {
       if (key !== 'entry') return val
       const entrys: string[] = []
       for (const item of <Entry[]>val) {
-         entrys.push(`${item.key}\n\n${item.values.join('\n')}${item.comment ? '\n\n' + item.comment : ''}`)
+         entrys.push(`${item.wordName}\n\n${item.values.join('\n')}${item.comment ? '\n\n' + item.comment : ''}`)
       }
       return entrys
    }

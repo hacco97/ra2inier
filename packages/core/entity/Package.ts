@@ -1,4 +1,4 @@
-import { IUniqueObject, UniqueObject } from './Obejct';
+import { UniqueObject } from './Obejct';
 
 export class Package extends UniqueObject {
    /**

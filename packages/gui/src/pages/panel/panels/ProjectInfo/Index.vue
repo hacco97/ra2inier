@@ -1,6 +1,5 @@
 <script lang='ts' setup>
-import { ref } from 'vue';
-import { projectInfo as info, loadLocalPackage, loadPackage } from '@/stores/projectStore';
+import { computed, ref } from 'vue';
 import openSvg from '@/asset/icons/openDir.svg?raw';
 import reloadSvg from '@/asset/icons/reload.svg?raw';
 import githubSvg from '@/asset/icons/github.svg?raw';
@@ -13,14 +12,17 @@ import ListView from '@/components/ListView.vue';
 import { LazyButton, PopupBox, FlexInput } from '@ra2inier/wc';
 import HeaderLayout from '../HeaderLayout.vue'
 import { ReferItem, createReferList } from './state';
-import { Reference } from '@ra2inier/core';
 import { openDirectory } from '@/boot/apis';
 import { useDisabled } from '@/hooks/disabledFn'
 import { IItem } from '@/components/ListViewState';
+import { useProjectStore } from '@/stores/projectStore';
 
 defineOptions({ name: 'ProjectInfo' })
+const store = useProjectStore()
+const info = computed(() => store.projectInfo)
 
-const { referList, localList, addRefer, getReferMap, deleteRefer } = createReferList()
+
+const { referList, localList, addRefer, getReferMap, deleteRefer } = createReferList(info)
 const isLocalShowed = ref(false)
 const newPath = ref('')
 const newUrl = ref('')
@@ -45,13 +47,13 @@ function onLocalSelect(item: IItem, order: number) {
 const [onFlushClick] = useDisabled(async () => {
    // 获取需要添加的包
    const map = getReferMap()
-   await loadPackage(map)
+   await store.loadPackage(map)
 })
 
 async function onOpenClick() {
    const dirs = <string[]>await openDirectory()
    console.log(dirs)
-   const loaded = await loadLocalPackage(dirs)
+   const loaded = await store.loadLocalPackage(dirs)
    console.log(loaded)
 }
 
@@ -62,7 +64,7 @@ async function onCopyClick() {
 
 
 async function onLocalSubmitClick() {
-   const loaded = await loadLocalPackage([newPath.value])
+   const loaded = await store.loadLocalPackage([newPath.value])
    console.log(loaded)
 
 }

@@ -1,13 +1,9 @@
 import { shallowReactive } from 'vue';
+import { exec, useLogger } from '@/boot/apis';
+import { fromRaw, MarkdownDto, MarkdownRo, MarkdownVo, useToRaw } from '@ra2inier/core';
 
-import { exec } from '@/boot/apis';
-import {
-  fromRaw, MarkdownDto, MarkdownRo, MarkdownVo, useToRaw,
-} from '@ra2inier/core';
 
-import useLog from './messageStore';
-
-const log = useLog('markdown-store')
+const log = useLogger('markdown-store')
 const markdowns: Record<string, MarkdownRo> = shallowReactive({})
 
 

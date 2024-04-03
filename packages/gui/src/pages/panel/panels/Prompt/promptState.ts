@@ -3,6 +3,7 @@ import { Directive } from 'vue';
 import { EventEmitter, IniObjectRo, WordValueType } from '@ra2inier/core';
 
 import { EntryRo } from '../ObjectEditor/Entry';
+import { ProjectStore, useProjectStore } from '@/stores/projectStore';
 
 /**
  * 常量定义
@@ -34,6 +35,7 @@ export function getPromptType(t: WordValueType) {
 }
 
 const ENTRY = Symbol('entry')
+const TYPE = Symbol('type')
 const FOCUS_CHANGE_WHEN_ACTIVE = Symbol()
 
 /**
@@ -46,18 +48,13 @@ export class PromptState extends EventEmitter {
     */
    declare [ENTRY]: EntryRo;
    get entry() { return this[ENTRY] }
-   set entry(entry: EntryRo) {
-      this[ENTRY] = entry
-      this.type = PromptType.str
-      if (!entry) return
-      this.type = getPromptType(entry.typeParam?.type)
-   }
 
    //提示框的类型
-   type: PromptType = PromptType.str
+   [TYPE]: PromptType = PromptType.str
+   get type() { return this[TYPE] }
 
    /**
-    * 提示框在展示逻辑
+    * 提示框展示逻辑
     */
    isShowed = false
    show() {
@@ -70,7 +67,7 @@ export class PromptState extends EventEmitter {
     */
    isActive = false
    active() {
-      if (!this.entry || this.entry.isNullWord) return false
+      if (!this.entry) return false
       this.isActive = true
       this.show()
       if (this[FOCUS_CHANGE_WHEN_ACTIVE].has(this.type))
@@ -127,6 +124,26 @@ export class PromptState extends EventEmitter {
    }
 }
 
+/**
+ * 对于PromptState的数据管理，需要借助PromptHelper对象实现
+ */
+export function usePromptHelper(store: ProjectStore, promptState: PromptState) {
+
+   function getParam(entry: EntryRo) {
+      const word = store.queryWord(entry.wordName)
+      return word.valueParam[entry.vid]
+   }
+
+   function updateEntry(entry: EntryRo) {
+      promptState[ENTRY] = entry
+      promptState[TYPE] = getPromptType(getParam(entry).type)
+      promptState.emit('entry-change', entry)
+   }
+
+   return {
+      updateEntry
+   }
+}
 
 /**
  * 提示框的主动focus逻辑，由其他组件调用的Prompt组件逻辑
@@ -149,5 +166,3 @@ export function useChildFocus() {
       focusChild
    }
 }
-
-

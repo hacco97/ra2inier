@@ -1,18 +1,18 @@
 <script lang='ts' setup>
-import { inject, onMounted, provide, ref, Ref } from 'vue';
+import { inject, Ref } from 'vue';
+import { Dialog, DialogType, useDialogState } from '@/states/dialog';
+import { FootTabType, useFoottabState } from '@/states/footTabList';
 
-import { Dialog, dialogs, DialogType } from '@/states/dialog';
-import { FootTabType, useFootSelect } from '@/states/footTabList';
+const foottab = useFoottabState()
+const dialogs = useDialogState()
+// foottab的自定义按钮逻辑
+const mounted = <Ref<boolean>>inject('foottab-mounted')
 
 function onFileChange(e: Event, dialog: Dialog) {
    const input = e.target as HTMLInputElement
    dialog.res = input.files ? input.files[0].path : ''
-
 }
 
-// foottab的自定义按钮逻辑
-const { selected } = useFootSelect()
-const mounted = <Ref<boolean>>inject('foottab-mounted')
 </script>
 
 
@@ -20,7 +20,7 @@ const mounted = <Ref<boolean>>inject('foottab-mounted')
    <div>
       这里是对话框
       <ul>
-         <li v-for="dialog in dialogs">
+         <li v-for="dialog in dialogs.list">
             <p><span> {{ dialog.question }}</span></p>
             <template v-if="dialog.type === DialogType.askStr">
                <p>
@@ -40,7 +40,7 @@ const mounted = <Ref<boolean>>inject('foottab-mounted')
          </li>
       </ul>
    </div>
-   <Teleport v-if="mounted" to="#foottab-tools" :disabled="selected.type !== FootTabType.Dialog">
+   <Teleport v-if="mounted" to="#foottab-tools" :disabled="foottab.selected.type !== FootTabType.Dialog">
       <p>1</p>
       <p>2</p>
       <p>3</p>

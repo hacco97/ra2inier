@@ -69,9 +69,10 @@ export class ProjServ {
     */
    @mapping('open')
    openProject(@param('path') projectPath: string) {
-      const path = this.#path = escapePath(projectPath || this.appConfig.PROJECT_PATH)
-      if (path in this.#projectCacheMap) return this.#projectCacheMap[path]
+      const path = escapePath(projectPath || this.appConfig.PROJECT_PATH)
       if (!this.projectDao.checkPath(path)) throw Error('该项目路径可能是错误的：' + path)
+      this.#path = path
+      if (path in this.#projectCacheMap) return this.#projectCacheMap[path]
       this.appConfig.setByKey('PROJECT_PATH', path)
       const project = this.projectDao.readProjectInfo(path)
       this.appConfig.addProjectHistory(projectPath)
@@ -80,7 +81,6 @@ export class ProjServ {
 
    @mapping('new')
    newProject(@param('path') newProjectPath: string, @param('name') name: string) {
-      console.log(newProjectPath)
       const isExist = existsSync(newProjectPath)
       if (isExist) {
          const dirent = readdirSync(newProjectPath)

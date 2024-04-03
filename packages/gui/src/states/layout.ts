@@ -1,12 +1,12 @@
 import { EventEmitter } from '@ra2inier/core';
-import { reactive, ref } from 'vue';
+import { defineStore } from 'pinia';
+import { computed, reactive, ref } from 'vue';
 
 // 记录视图布局相关的数据，这些数据需要全局共享
 const LEFTWIDTH = Symbol()
 const FOOTHEGHT = Symbol()
 const MEMO = Symbol()
 const CLOSED = Symbol()
-
 
 // 左边栏的宽度
 export class LeftTabSize {
@@ -33,7 +33,6 @@ export class LeftTabSize {
       this[LEFTWIDTH] = val
    }
 }
-export const leftTabSize = reactive(new LeftTabSize)
 
 // 下边栏的高度
 export class FootTabSize extends EventEmitter {
@@ -67,27 +66,34 @@ export class FootTabSize extends EventEmitter {
       this[FOOTHEGHT] = val
    }
 }
-export const footTabSize = reactive(new FootTabSize)
 
-export const tryUnFocusFoottab = () => {
-   if (footTabSize.active) return
-   footTabSize.min()
-   footTabSize.active = false
-}
+const createLayoutState = () => {
+   const leftTabSize = reactive(new LeftTabSize)
 
-// 全局遮罩
-const isMasked = ref(false)
-const callbacks: Function[] = []
+   const footTabSize = reactive(new FootTabSize)
 
-export function closeMask() {
-   callbacks.forEach(cb => cb())
-   isMasked.value = false
-}
+   const tryUnFocusFoottab = () => {
+      if (footTabSize.active) return
+      footTabSize.min()
+      footTabSize.active = false
+   }
 
-export function useMask(cb?: Function) {
-   cb && callbacks.push(cb)
+   // 全局遮罩
+   const isMasked = ref(false)
+   function closeMask(cb?: Function) {
+      cb?.()
+      isMasked.value = false
+   }
+
    return {
-      isMasked,
-      show() { isMasked.value = true }
+      leftTabSize,
+      footTabSize,
+      tryUnFocusFoottab,
+      isMasked: computed(() => isMasked.value),
+      closeMask,
+      showMask() { isMasked.value = true },
    }
 }
+
+export const useLayoutState = defineStore('layout-state', { state: createLayoutState })
+export type LayoutState = ReturnType<typeof useLayoutState>

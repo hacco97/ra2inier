@@ -1,8 +1,6 @@
 <script lang='ts' setup>
 import { onBeforeUnmount, ref, shallowReactive, watch } from 'vue';
-
-import markDownIt from 'markdown-it';
-
+import { Marked } from 'marked'
 import addImgSvg from '@/asset/icons/addImage.svg?raw';
 import closeSvg from '@/asset/icons/close.svg?raw';
 import { copy, forIn, MarkdownRo } from '@ra2inier/core';
@@ -14,32 +12,27 @@ interface Prop {
 }
 const props = defineProps<Prop>()
 
-const maskdownit = new markDownIt({
+const marked = new Marked({
    breaks: true,
-   linkify: true
+   gfm: true,
+   renderer: {
+      image(href, title, text) {
+         return `<img src="${props.markdown?.urls?.[href] || href}" alt="${text || '#'}" title="${text}(${href})" />`
+      },
+   }
 })
 
-// 渲染逻辑
-const imgLinkLike = /(?<=!\[.*\]\()((?!http).+)(?=\))/g
-const substr = (sub: string) => {
-   for (const name in data.urls) {
-      if (sub.trim() === name)
-         return data.urls[name]
-   }
-   return sub
+function parseMd(markdown: MarkdownRo) {
+   return marked.parse(markdown.raw)
 }
 
-function parseMd(markdoen: MarkdownRo) {
-   const hot = markdoen.raw.replaceAll(imgLinkLike, substr)
-   return maskdownit.render(hot)
-}
 const data = shallowReactive(props.markdown)
-watch(() => props.markdown, () => {
+watch(() => props.markdown, async () => {
    copy(props.markdown, data)
-   forIn(data.images, (key, buf) => {
-      data.urls[key] = URL.createObjectURL(new Blob([buf], { type: 'image' }))
+   forIn(data.images, (name, buf) => {
+      data.urls[name] = URL.createObjectURL(new Blob([buf], { type: 'image' }))
    })
-   data.md = parseMd(data)
+   data.md = await parseMd(data)
 }, { immediate: true })
 
 
@@ -86,10 +79,10 @@ function onImageClick(name: string) {
 
 // 渲染的缓存机制
 let prev: string
-watch(() => props.disabled, () => {
+watch(() => props.disabled, async () => {
    if (props.disabled && !(prev == data.raw)) {
       prev = data.raw
-      data.md = parseMd(data)
+      data.md = await parseMd(data)
    }
 })
 

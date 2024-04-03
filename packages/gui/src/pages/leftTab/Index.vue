@@ -1,26 +1,27 @@
 <script lang='ts' setup>
 import { reactive } from 'vue';
-
 import cllected from '@/asset/icons/cllected.svg?raw';
-import { leftTabSize } from '@/states/layout';
-import { LeftTab, starList, tabList } from '@/states/leftTabList';
-
+import { LeftTab, useLefttabState } from '@/states/leftTabList';
 import Addons from '../panel/panels/Addons.vue';
 import Launcher from './tabs/Launcher.vue';
 import Meta from './tabs/Meta/Index.vue';
 import ProjRes from './tabs/ProjRes/Index.vue';
 import Resource from './tabs/Resource.vue';
 import Tutorial from './tabs/Tutorial.vue';
+import { useLayoutState } from '@/states/layout';
 
 defineOptions({
    name: "LeftTab",
    components: { Resource, ProjRes, Addons, Tutorial, Launcher, Meta },
 })
 
+const layout = useLayoutState()
+const lefttab = useLefttabState()
+
 // 选择逻辑
 const selected = reactive({
-   id: tabList[0].id,
-   type: tabList[0].type
+   id: lefttab.tabList[0].id,
+   type: lefttab.tabList[0].type
 })
 
 function select(tab: LeftTab) {
@@ -29,8 +30,9 @@ function select(tab: LeftTab) {
 }
 
 function onTabClick(tab: LeftTab) {
+   const { leftTabSize } = layout
    if (selected.id === tab.id) {
-      if (leftTabSize.width === 0) {
+      if (layout.leftTabSize.width === 0) {
          leftTabSize.open()
       } else {
          leftTabSize.close()
@@ -46,17 +48,18 @@ function onTabDragStart(e: DragEvent, tab: LeftTab) {
    e.dataTransfer?.setData('area', 'tab')
 }
 
+// TODO: 非纯函数
 function onTabDragDrop(e: DragEvent, tab: LeftTab) {
    if (e.dataTransfer?.getData('area') !== 'tab') return
    const tmp = tab.order;
    if (dragingTab.order > tmp) {
-      for (let t of tabList) {
+      for (let t of lefttab.tabList) {
          if (t.order >= tmp && t.order < dragingTab.order)
             t.order += 1;
       }
    }
    else if (dragingTab.order < tmp) {
-      for (let t of tabList) {
+      for (let t of lefttab.tabList) {
          if (t.order > dragingTab.order && t.order <= tmp)
             t.order -= 1;
       }
@@ -71,15 +74,17 @@ function onTabDragDrop(e: DragEvent, tab: LeftTab) {
       <ul class="scrollx normal-panel">
          <section></section>
          <ol>
-            <li v-for="i in tabList" :key="i.id" :style="{ order: i.order }" @click="onTabClick(i)"
-               :selected="selected.id === i.id" draggable="true" @dragstart="onTabDragStart($event, i)" @dragover.prevent
-               @drop.stop="onTabDragDrop($event, i)" :class="$theme['lefttab-label']" class="lefttab-button">
+            <li v-for="i in lefttab.tabList" :key="i.id" :style="{ order: i.order }" @click="onTabClick(i)"
+               :selected="selected.id === i.id" draggable="true" @dragstart="onTabDragStart($event, i)"
+               @dragover.prevent @drop.stop="onTabDragDrop($event, i)" :class="$theme['lefttab-label']"
+               class="lefttab-button">
                <div v-svgicon="i.label" padding="15%"></div>
             </li>
          </ol>
          <section></section>
          <ol>
-            <li v-for="star in starList" :key="star.id" :class="$theme['lefttab-label']" class="lefttab-button">
+            <li v-for=" star in lefttab.starList " :key="star.id" :class="$theme['lefttab-label']"
+               class="lefttab-button">
                <a :href="star.url" :title="star.name" tabindex="-1">
                   <div v-svgicon="cllected" padding="15%"></div>
                </a>

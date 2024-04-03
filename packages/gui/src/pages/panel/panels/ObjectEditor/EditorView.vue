@@ -1,25 +1,23 @@
 <script setup lang="ts">
 import { computed, ref, shallowReactive } from 'vue';
-
 import ListBox from '@/components/dirty/ListBox.vue';
 import MapBox from '@/components/dirty/MapBox.vue';
 import { useFocus } from '@/hooks/focus';
 import { FlexArea, FlexInput } from '@ra2inier/wc';
-
 import Prompt from '../Prompt/Prompt.vue';
-import { PromptState } from '../Prompt/promptState';
+import { PromptState, usePromptHelper } from '../Prompt/promptState';
 import { useEditorKeymap } from './editorKeymap';
-import {
-   EditorState, useCursorCoord, usePromptCoord, useQueryObject,
-} from './eidtorState';
+import { EditorState, usePromptCoord, } from './EditorState';
 import { EntryRo } from './Entry';
+import { useCursorCoord, useQueryObject } from './hooks';
+import { useProjectStore } from '@/stores/projectStore';
 
 // 初始化数据
 const props = defineProps<{ state: EditorState }>()
 const state = props.state
 const { entrys, data: object } = state
 const promptState = shallowReactive(new PromptState)
-
+const store = useProjectStore()
 
 // 焦点逻辑
 const focus = useFocus()
@@ -28,12 +26,13 @@ const vAutoFocus = { mounted(el: HTMLElement) { el.focus() } }
 
 // 提示框定位逻辑
 const { onColFocus, onRowFocus, translate: promptPosition } = usePromptCoord()
+const promptHelper = usePromptHelper(store, promptState)
 function onInputFocused(e: Event, order: number, vid: number, entry: EntryRo) {
    // 切换焦点
    focus.setCurrent(order + vid)
    // 切换被选择的词条
    entry.vid = vid
-   promptState.entry = entry
+   promptHelper.updateEntry(entry)
    // 隐藏提示框防止闪烁，重定位提示框位置
    promptState.hide()
    onColFocus(e)
@@ -47,7 +46,7 @@ function onNewInputFocused(e: KeyboardEvent) {
    e.currentTarget!.dispatchEvent(new CustomEvent('flex-focus', { bubbles: true }))
 }
 
-// 提示框交互逻辑
+// 提示框显示逻辑
 function onPromptSubmit(value: string) {
    focus.focusCurrent()
 }
@@ -116,7 +115,7 @@ function onSubFoldClick(entry: EntryRo) {
    entry.isSubFolded = !entry.isSubFolded
 }
 
-//
+// 分栏
 const columCount = computed(() => ({ columns: state.columnCount }))
 </script>
 
@@ -152,7 +151,7 @@ const columCount = computed(() => ({ columns: state.columnCount }))
                      <i @click="onSubFoldClick(entry)" class="folder" :folded="entry.isSubFolded">&gt;</i>
                      <span :selected="entry.selected" @auxclick="onLabelAuxClick" @click="onLabelClick($event, entry)"
                         :cursor="current === eid">
-                        {{ entry.key }}
+                        {{ entry.wordName }}
                      </span>
                      <em>=</em>
                      <flex-input v-for="(value, vid) in entry.values" :key="vid" :value="value"

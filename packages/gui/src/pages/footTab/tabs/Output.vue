@@ -1,19 +1,20 @@
 <script lang='ts' setup>
-import { computed, inject, ref, Ref } from 'vue';
+import { computed, inject, Ref } from 'vue';
 
 import playSvg from '@/asset/icons/compile.svg?raw';
 import openDirSvg from '@/asset/icons/openDir.svg?raw';
-import { FootTabType, useFootSelect } from '@/states/footTabList';
+import { FoottabState, FootTabType, useFoottabState } from '@/states/footTabList';
 import { useConfigStore } from '@/stores/config';
-import { build } from '@/stores/projectStore';
 import { FlexInput, LazyButton } from '@ra2inier/wc';
 import { openDirectory } from '@/boot/file';
 
 defineOptions({ name: 'Output' })
 const { config, set } = useConfigStore()
 
+const foottab = useFoottabState()
+
 function onOutputClick() {
-   build()
+   // build()
 }
 
 const outDir = computed({
@@ -27,7 +28,6 @@ async function onOpenPathClick() {
 }
 
 // foottab的自定义按钮逻辑
-const { selected } = useFootSelect()
 const mounted = <Ref<boolean>>inject('foottab-mounted')
 </script>
 
@@ -48,7 +48,7 @@ const mounted = <Ref<boolean>>inject('foottab-mounted')
          </lazy-button>
       </li>
    </div>
-   <Teleport v-if="mounted" to="#foottab-tools" :disabled="selected.type !== FootTabType.Output">
+   <Teleport v-if="mounted" to="#foottab-tools" :disabled="foottab.selected.type !== FootTabType.Output">
       <lazy-button class="fore-button" :class="$style['icon-margin']" @click="onOutputClick">
          <s v-svgicon="playSvg"></s>
       </lazy-button>

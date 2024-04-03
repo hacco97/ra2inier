@@ -22,7 +22,10 @@ contextBridge.exposeInMainWorld('eApi', {
    },
    on(channel: string, listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void) {
       ipcRenderer.on(channel, listener)
-   }
+   },
+   off(channel: string, listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void) {
+      ipcRenderer.off(channel, listener)
+   },
 })
 
 

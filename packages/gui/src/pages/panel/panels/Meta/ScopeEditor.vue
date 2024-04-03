@@ -1,6 +1,5 @@
 <script lang='ts' setup>
-import { provide, ref, shallowReactive } from 'vue';
-
+import { shallowReactive } from 'vue';
 import editSvg from '@/asset/icons/edit.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
 import ListBox from '@/components/dirty/ListBox.vue';
@@ -8,7 +7,6 @@ import MapBox from '@/components/dirty/MapBox.vue';
 import { PanelParam } from '@/states/panelList';
 import { ScopeRo } from '@ra2inier/core';
 import { FlexArea, FlexInput, LazyButton } from '@ra2inier/wc';
-
 import HeaderLayout from '../HeaderLayout.vue';
 import { useFilp } from './flip';
 

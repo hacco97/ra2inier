@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-
-import { useCtxMenuInfo, } from '@/states/ctxMenu';
-import { footTabSize, leftTabSize, useMask } from '@/states/layout';
+import { ref, inject } from 'vue';
 import { useConfigStore } from '@/stores/config';
+import { useLayoutState } from '@/states/layout';
+import { CtxmenuState, useCtxMenuState } from '@/states/ctxMenu';
+
+
+const layout = useLayoutState()
 
 //左侧拖拽逻辑
 const display = ref(false)
@@ -11,43 +13,44 @@ const { config } = useConfigStore()
 
 function onSideDrag(e: MouseEvent) {
    if (e.clientX < 140) {
-      return leftTabSize.close()
+      return layout.leftTabSize.close()
    }
-   leftTabSize.width = e.clientX
+   layout.leftTabSize.width = e.clientX
 }
 
 //右侧下边栏逻辑
 const display2 = ref(false)
 function onFootDragStart() {
    display2.value = true
-   setTimeout(() => footTabSize.active = true)
+   setTimeout(() => layout.footTabSize.active = true)
 }
 
 function onFootDrag(e: MouseEvent) {
    // @ts-ignore
    const tmp = e.target.offsetParent, x = tmp.clientHeight - e.layerY
    if (isNaN(x)) return
-   if (x < 100) footTabSize.min()
-   else footTabSize.height = x
+   if (x < 100) layout.footTabSize.min()
+   else layout.footTabSize.height = x
 }
 
 function onFootDargEnd() {
    display2.value = false
-   if (footTabSize.height > 20) footTabSize.emit('resized')
+   if (layout.footTabSize.height > 20) layout.footTabSize.emit('resized')
 }
 
 
 // 右键菜单逻辑
-const { vCtxRoot } = useCtxMenuInfo()
+// 等待修改
+const ctxmenu = useCtxMenuState()
+const { vCtxRoot } = ctxmenu
 
-const { isMasked } = useMask()
 </script>
 
 <template>
    <div id="home" :class="[$style.home]" :GPU="config.GPU" v-ctx-root>
       <!-- 顶部内容 -->
       <header>
-         <div v-show="!isMasked">
+         <div v-show="!layout.isMasked">
             <slot name="header"></slot>
          </div>
       </header>
@@ -55,7 +58,7 @@ const { isMasked } = useMask()
       <!-- 中间内容 -->
       <section>
          <!-- 左侧边 -->
-         <aside :style="leftTabSize.widthS">
+         <aside :style="layout.leftTabSize.widthS">
             <slot name="leftSide"></slot>
             <div :class="[$style.drager1, $theme['drager-hover']]">
                <p @mousedown="display = true"></p>
@@ -65,7 +68,8 @@ const { isMasked } = useMask()
          <!-- 右侧主要内容区域 -->
          <main :class="$theme.panel">
             <!-- 右下边栏 -->
-            <aside :style="footTabSize.heightS" :class="[footTabSize.canHidden || $style['foottab-size']]">
+            <aside :style="layout.footTabSize.heightS"
+               :class="[layout.footTabSize.canHidden || $style['foottab-size']]">
                <slot name="footSide"></slot>
                <div :class="[$style.drager2, $theme['drager-hover']]" :dragging="display2">
                   <p @mousedown="onFootDragStart"></p>

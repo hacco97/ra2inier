@@ -1,17 +1,15 @@
 <script lang="ts" setup>
 import { KeepAlive, onMounted, provide, ref } from 'vue';
-
 import arrowDown from '@/asset/icons/arrowDown.svg?raw';
 import arrowUp from '@/asset/icons/arrowUp.svg?raw';
 import minSvg from '@/asset/icons/min.svg?raw';
 import fix from '@/asset/icons/fix.svg?raw';
-import { FootTab, footTabList, useFootSelect } from '@/states/footTabList';
-import { footTabSize, tryUnFocusFoottab } from '@/states/layout';
-
 import Dialog from './tabs/Dialog.vue';
 import Message from './tabs/Message.vue';
 import Output from './tabs/Output.vue';
 import Recycle from './tabs/Recycle.vue';
+import { useLayoutState } from '@/states/layout';
+import { FootTab, useFoottabState } from '@/states/footTabList';
 
 defineOptions({
    name: 'FootTab',
@@ -20,22 +18,22 @@ defineOptions({
 
 defineEmits(['toggleTab'])
 
+const layout = useLayoutState()
+const foottab = useFoottabState()
 
-// useMsg(selected)
-
-const draging = ref<FootTab>(footTabList[0])
-const { select, selected } = useFootSelect()
+const draging = ref(<Readonly<FootTab>>foottab.footTabList[0])
 
 //选项卡开启与关闭
 function onTabClick(tab: FootTab) {
-   if (selected.id === tab.id) {
+   const { footTabSize } = layout
+   if (foottab.selected.id === tab.id) {
       if (footTabSize.height <= 25) {
          footTabSize.height = 300
       } else {
          footTabSize.min()
       }
    }
-   select(tab)
+   foottab.selectFootTab(tab)
 }
 
 //选项卡可拖动的逻辑
@@ -47,6 +45,7 @@ const onTabDragStart = function (e: DragEvent, tab: FootTab) {
 }
 
 const onTabDrop = function (e: DragEvent, tab: FootTab) {
+   const { footTabList } = foottab
 
    // TODO: 有副作用，等待更改
    if (!e.dataTransfer?.getData('foot_tab')) return
@@ -57,18 +56,18 @@ const onTabDrop = function (e: DragEvent, tab: FootTab) {
    else if (d > order) {
       for (let i of footTabList) {
          if (i.order < d && i.order >= order) {
-            i.order++
+            // i.order++
          } else if (i.order === d) {
-            i.order = order
+            // i.order = order
          }
       }
    }
    else {
       for (let i of footTabList) {
          if (i.order > d && i.order <= order) {
-            i.order--
+            // i.order--
          } else if (i.order === d) {
-            i.order = order
+            // i.order = order
          }
       }
    }
@@ -76,24 +75,26 @@ const onTabDrop = function (e: DragEvent, tab: FootTab) {
 
 
 function onUpClick() {
-   footTabSize.max()
+   layout.footTabSize.max()
 }
 
 function onDownClick() {
-   footTabSize.min()
+   layout.footTabSize.min()
 }
 
 const isFixSelected = ref(false)
 
 function onFocusout() {
-   footTabSize.active = false
+   layout.footTabSize.active = false
    if (isFixSelected.value) return
-   setTimeout(tryUnFocusFoottab, 20)
+   setTimeout(layout.tryUnFocusFoottab, 20)
 }
-const focusHandle = ref<HTMLElement>()
-footTabSize.on('resized', () => {
-   focusHandle.value?.focus()
-})
+
+// TODO: 待更新
+// const focusHandle = ref<HTMLElement>()
+// layout.footTabSize.on('resized', () => {
+//    focusHandle.value?.focus()
+// })
 
 // 给子组件提供通知，启动Teleport的渲染
 const mounted = ref(false)
@@ -103,14 +104,14 @@ onMounted(() => { mounted.value = true })
 
 <template>
    <div id="foottab" ref="focusHandle" :class="$style.foottab" @focusout="onFocusout"
-      @focusin="footTabSize.active = true" tabindex="-1">
+      @focusin="layout.footTabSize.active = true" tabindex="-1">
       <nav class="scrollx" :class="$theme['foottab-nav']" v-scrollx>
          <ul :class="$theme['foottab-nav-label']">
             <b></b>
-            <div v-for="tab in footTabList" @click="onTabClick(tab)" draggable="true" :key="tab.id"
+            <div v-for="tab in <FootTab[]>foottab.footTabList" @click="onTabClick(tab)" draggable="true" :key="tab.id"
                @drop="onTabDrop($event, tab)" @dragstart="onTabDragStart($event, tab)" @dragover.prevent
                :style="{ order: tab.order }">
-               <li :selected="selected.id === tab.id">
+               <li :selected="foottab.selected.id === tab.id">
                   <span v-svgicon="tab.label" padding="13%"></span>
                   <b>{{ tab.name }}</b>
                   <em style="visibility: hidden;">{{ tab.badge }}</em>
@@ -121,15 +122,15 @@ onMounted(() => { mounted.value = true })
             <!-- 脚部tab工具按钮 -->
             <p v-svgicon="arrowUp" @click="onUpClick"></p>
             <p v-svgicon="arrowDown" @click="onDownClick"></p>
-            <q v-svgicon="minSvg" padding="15%" :selected="footTabSize.canHidden"
-               @click="footTabSize.canHidden = !footTabSize.canHidden"></q>
+            <q v-svgicon="minSvg" padding="15%" :selected="layout.footTabSize.canHidden"
+               @click="layout.footTabSize.canHidden = !layout.footTabSize.canHidden"></q>
             <q v-svgicon="fix" :selected="isFixSelected" @click="isFixSelected = !isFixSelected"></q>
             <span id="foottab-tools" :class="$style['foottab-tools']"></span>
          </ul>
       </nav>
       <main>
          <KeepAlive>
-            <component :is="selected.type" :key="selected.type"></component>
+            <component :is="foottab.selected.type" :key="foottab.selected.type"></component>
          </KeepAlive>
       </main>
    </div>

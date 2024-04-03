@@ -1,4 +1,4 @@
-import { computed, Directive, ref, watch, WatchStopHandle } from 'vue';
+import { Directive, ref, watch, WatchStopHandle } from 'vue';
 
 import { PanelParam } from '@/states/panelList';
 

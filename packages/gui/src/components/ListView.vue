@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import { computed, reactive } from 'vue';
+import { computed } from 'vue';
 import closeSvg from '@/asset/icons/close.svg?raw';
 import { PopupBox } from '@ra2inier/wc';
 import { EmitType, IItem, Item } from './ListViewState';

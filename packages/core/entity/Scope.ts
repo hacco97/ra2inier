@@ -11,6 +11,7 @@ export interface GameEnv {
 }
 
 
+
 /**
  * 对象实例作用域：
  * singleton：单例模式，如果一个项目存在两个该类型的同名对象，将会报错；

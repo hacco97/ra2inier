@@ -1,12 +1,11 @@
 import { reactive, ref } from 'vue';
-
-import { packageNames } from '@/stores/projectStore';
 import {
-  IniObjectRo, overrideArray, WordValueType, WordValueTypeParam,
+   IniObjectRo, overrideArray, WordValueType, WordValueTypeParam,
 } from '@ra2inier/core';
 
 import { EntryRo } from '../ObjectEditor/Entry';
 import { PromptState, PromptType } from './promptState';
+import { useProjectStore } from '@/stores/projectStore';
 
 export interface Option {
    id: number,
@@ -22,8 +21,12 @@ export function useOption(state: PromptState) {
    const options: Option[] = reactive([])
    // enum 类型的辅助参数
    const cursor = ref(0)
-   state.on('init-' + PromptType.enum, (entry: EntryRo) =>
-      overrideArray(createOptions(entry.typeParam), options))
+   const store = useProjectStore()
+   state.on('init-' + PromptType.enum, (entry: EntryRo) => {
+      const word = store.queryWord(entry.wordName)
+      const param = word.valueParam[entry.vid]
+      overrideArray(createOptions(param), options)
+   })
 
    function nextOption() { cursor.value = (cursor.value + 1) % options.length }
    function prevOption() { cursor.value = (cursor.value - 1 + options.length) % options.length }
@@ -80,10 +83,6 @@ export function useObjects(state: PromptState) {
       }
    })
 
-   function getObjectPath(object: IniObjectRo) {
-      return `${packageNames.value[object.package]}/${object.group}/${object.name}.${object.scope}`
-   }
-
    state.on('prev-' + PromptType.obj, () => {
       if (cursor.value - 1 < 0) cursor.value += objects.value.length
       cursor.value--
@@ -94,7 +93,6 @@ export function useObjects(state: PromptState) {
 
    return {
       objects,
-      getObjectPath,
       cursor
    }
 }

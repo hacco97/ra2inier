@@ -5,7 +5,7 @@ import editSvg from '@/asset/icons/edit.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
 import ListBox from '@/components/dirty/ListBox.vue';
 import Markdown from '@/components/Markdown.vue';
-import { ask, DialogType } from '@/states/dialog';
+import { DialogType, useDialogState } from '@/states/dialog';
 import { PanelParam } from '@/states/panelList';
 import { useMarkdown } from '@/stores/markdownStore';
 import {
@@ -19,6 +19,7 @@ import { useFilp } from './flip';
 const props = defineProps<{ param: PanelParam }>()
 const param = props.param
 const word: WordRo = shallowReactive(props.param.data)
+const dialog = useDialogState()
 const { onChanged, vFlip, disabled } = useFilp(props, word)
 
 const isMarkdownShowed = computed(() => {
@@ -46,7 +47,7 @@ async function onTemplateClick() {
    } else {
       if (asking) return
       asking = true
-      const res: boolean = await ask('是否覆盖现有的文本', DialogType.askIf, true)
+      const res: boolean = await dialog.ask('是否覆盖现有的文本', DialogType.askIf, true)
       asking = false
       if (res) word.hookScript = HOOK_FILE_TEMPLATE
    }

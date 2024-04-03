@@ -3,8 +3,8 @@ import { shallowReactive } from 'vue';
 import { globalEvent } from '@/boot/apis';
 import { useConfigStore } from '@/stores/config';
 import { EventEmitter, useMemo } from '@ra2inier/core';
-
-import { logger } from './log';
+import { defineStore } from 'pinia';
+import { useMessageStore } from '@/stores/messageStore';
 
 /**
  * 内容主体页面的选项卡类型,每一个新的页面均需要注册到此
@@ -24,7 +24,6 @@ export enum PanelType {
    NewProject = 'NewProject',
    ObjectViewer = 'ObjectViewer'
 }
-
 
 const CHANGED = Symbol()
 const DATA = Symbol()
@@ -100,143 +99,160 @@ export interface PanelTab {
    param: PanelParam
 }
 
-const { config, IS_DEV } = useConfigStore()
+const createPanelState = () => {
 
-const initLeftPanel: PanelTab = {
-   id: 1,
-   order: 0,
-   position: true,
-   param: new PanelParam({
-      label: PanelType.Welcome,
-      type: IS_DEV ? PanelType.API : PanelType.Welcome
-   })
-}
+   const { config, IS_DEV } = useConfigStore()
 
-const NONE: PanelTab[] = [
-   {
-      id: -1,
-      order: -1,
+   const initLeftPanel: PanelTab = {
+      id: 1,
+      order: 0,
       position: true,
-      param: new PanelParam({ label: PanelType.None, type: PanelType.None }),
-   },
-   {
-      id: -2,
-      order: -2,
-      position: false,
-      param: new PanelParam({ label: PanelType.None, type: PanelType.None })
+      param: new PanelParam({
+         label: PanelType.Welcome,
+         type: IS_DEV ? PanelType.API : PanelType.Welcome
+      })
    }
-]
 
-export const panelList = shallowReactive<PanelTab[]>([initLeftPanel])
-export const curPanel = shallowReactive<PanelTab[]>([initLeftPanel, NONE[1]])
+   const NONE: PanelTab[] = [
+      {
+         id: -1,
+         order: -1,
+         position: true,
+         param: new PanelParam({ label: PanelType.None, type: PanelType.None }),
+      },
+      {
+         id: -2,
+         order: -2,
+         position: false,
+         param: new PanelParam({ label: PanelType.None, type: PanelType.None })
+      }
+   ]
 
-function initPanel() {
-   panelList.splice(0)
-   panelList[0] = initLeftPanel
-   curPanel[0] = initLeftPanel
-   curPanel[1] = NONE[1]
-}
-globalEvent.on('project-loaded', initPanel)
+   const panelList = shallowReactive<PanelTab[]>([initLeftPanel])
+   const curPanel = shallowReactive<PanelTab[]>([initLeftPanel, NONE[1]])
 
-export function selectTab(tab: PanelTab) {
-   const position = tab.position ? 0 : 1
-   curPanel[position] = tab
-}
+   function initPanel() {
+      panelList.splice(0)
+      panelList[0] = initLeftPanel
+      curPanel[0] = initLeftPanel
+      curPanel[1] = NONE[1]
+   }
 
-export function selectTabByID(id: number) {
-   let tab = panelList.find(tab => tab.id === id)
-   if (tab) selectTab(tab)
-}
+   // globalEvent.on('project-loaded', initPanel)
 
+   function selectTab(tab: PanelTab) {
+      const position = tab.position ? 0 : 1
+      curPanel[position] = tab
+   }
 
-/**
- * 关闭所给定id值的panel，并且触发param的回调函数
- */
-export function closeTab(id: number) {
-   // @ts-ignore
-   let rm: PanelTab = {}
-   for (let i = 0; 0 < panelList.length; ++i) {
-      if (id === panelList[i].id) {
-         doCloseTab(rm = panelList.splice(i, 1)[0])
-         break
+   function selectTabByID(id: number) {
+      let tab = panelList.find(tab => tab.id === id)
+      if (tab) selectTab(tab)
+   }
+
+   /**
+    * 关闭所给定id值的panel，并且触发param的回调函数
+    */
+   function closeTab(id: number) {
+      // @ts-ignore
+      let rm: PanelTab = {}
+      for (let i = 0; 0 < panelList.length; ++i) {
+         if (id === panelList[i].id) {
+            doCloseTab(rm = panelList.splice(i, 1)[0])
+            break
+         }
+      }
+      for (let panel of panelList) {
+         if (panel.order > rm.order) panel.order--
+      }
+      if (rm.id == curPanel[0].id || rm.id == curPanel[1].id) {
+         if (panelList.length > 0) selectTab(panelList[0])
+      }
+      if (panelList.length == 0) {
+         const position = rm.position ? 0 : 1
+         selectTab(NONE[position])
       }
    }
-   for (let panel of panelList) {
-      if (panel.order > rm.order) panel.order--
+
+   function doCloseTab(rm: PanelTab) {
+      const p = rm.param
+      p.emit('before-closed', p.result)
+      if (!p.readonly && p.changed) {
+         p[CHANGED] = false
+         p.emit('save', p.result)
+      }
+      p.emit('closed', p.result)
    }
-   if (rm.id == curPanel[0].id || rm.id == curPanel[1].id) {
-      if (panelList.length > 0) selectTab(panelList[0])
+
+   /**
+    * 关闭所有选项卡
+    */
+   function colseAllTabs(pos: 'left' | 'right') {
+      const position = pos === 'left'
+      for (const tab of panelList) {
+         if (position === tab.position) closeTab(tab.id)
+      }
    }
-   if (panelList.length == 0) {
-      const position = rm.position ? 0 : 1
-      selectTab(NONE[position])
+
+   /**
+    * 添加页面逻辑
+    */
+   const [getRandom] = useMemo(
+      (a) => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+      undefined,
+      999_999_999
+   )
+   function createId(param: PanelParam) {
+      const str = param.type
+      const str2 = param.data
+         ? (param.data.key ? param.data.key : 'k')
+         : param.label
+      return getRandom(str + str2)
+   }
+
+
+   const log = useMessageStore()
+   /**
+    * 添加一个新的页面，需要传入页面所需的必要参数
+    */
+   function addPanel(param: PanelParam) {
+      // 查看是否已经相同的panel，判定的依据是两个页面的data和panelType是否相同，
+      // 如果相同则聚焦该panel,不再添加新的panel
+      const target = panelList.find((val) => {
+         let d1, d2
+         if (!(val.param && (d1 = val.param.data) && (d2 = param.data))) return false
+         let a = val.param.type === param.type && d1 === d2
+         if (d1.key && d1.key === d2.key) a = true
+         return a
+      })
+      if (target) {
+         selectTab(target)
+         return false
+      }
+      if (panelList.length > (config.MAX_TAB_AMOUNT || 30)) {
+         return false
+      }
+      panelList.push({
+         id: createId(param),
+         order: panelList.length,
+         param: shallowReactive(param),
+         position: true
+      })
+      selectTab(panelList[panelList.length - 1])
+      return true
+   }
+
+
+   return {
+      panelList,
+      curPanel,
+      closeTab,
+      addPanel,
+      selectTab,
+      selectTabByID,
+      colseAllTabs
    }
 }
 
-export function doCloseTab(rm: PanelTab) {
-   const p = rm.param
-   p.emit('before-closed', p.result)
-   if (!p.readonly && p.changed) {
-      p[CHANGED] = false
-      p.emit('save', p.result)
-   }
-   p.emit('closed', p.result)
-}
-
-/**
- * 关闭所有选项卡
- */
-export function colseAllTabs(pos: 'left' | 'right') {
-   const position = pos === 'left'
-   for (const tab of panelList) {
-      if (position === tab.position) closeTab(tab.id)
-   }
-}
-
-
-
-/**
- * 添加页面逻辑
- */
-const { get: getRandom } =
-   useMemo((a) => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER), undefined, 999_999_999)
-function createId(param: PanelParam) {
-   const str = param.type
-   const str2 = param.data
-      ? (param.data.key ? param.data.key : 'k')
-      : param.label
-
-   return getRandom(str + str2)
-}
-
-
-/**
- * 添加一个新的页面，需要传入页面所需的必要参数
- */
-export function addPanel(param: PanelParam) {
-   // 查看是否已经相同的panel，判定的依据是两个页面的data和panelType是否相同，
-   // 如果相同则聚焦该panel,不再添加新的panel
-   const target = panelList.find((val) => {
-      let d1, d2
-      if (!(val.param && (d1 = val.param.data) && (d2 = param.data))) return false
-      let a = val.param.type === param.type && d1 === d2
-      if (d1.key && d1.key === d2.key) a = true
-      return a
-   })
-   if (target) {
-      selectTab(target)
-      return false
-   }
-   if (panelList.length > (config.MAX_TAB_AMOUNT || 30)) {
-      logger.warn('打开的页面太多')
-      return false
-   }
-   panelList.push({
-      id: createId(param),
-      order: panelList.length,
-      param: shallowReactive(param),
-      position: true
-   })
-   selectTab(panelList[panelList.length - 1])
-   return true
-}
+export const usePanelState = defineStore('panel-state', { state: createPanelState })
+export type PanelState = ReturnType<typeof usePanelState>

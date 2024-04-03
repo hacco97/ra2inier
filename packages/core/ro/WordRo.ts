@@ -4,9 +4,12 @@ import { MarkdownRo } from './MarkdownRo';
 
 export class WordRo extends Word implements ToDto {
    /**
-    * markdown文件的键值
+    * markdown文件的内容
     */
    detail: string = ''
+   /**
+    * word的所在文件夹的名字
+    */
    dir: string = ''
    /**
     * markdown文件本体

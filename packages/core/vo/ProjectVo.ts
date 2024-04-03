@@ -1,10 +1,9 @@
-import { Reference } from '..';
 import { Project } from '../entity/Project';
 import { PackageVo } from './PackageVo';
 
 export interface ProjectVo extends Project {
    /**
-    * 主包的名字
+    * 主包的key值
     */
    main: string
    packages: Record<string, PackageVo>
@@ -14,14 +13,19 @@ export interface ProjectVo extends Project {
    workspace: string
 
    path: string
+
+   isEmpty: boolean
 }
 
 export class EMPTY_PROJECTVO implements Partial<ProjectVo> {
+   name = ''
+   author = ''
    cache = {}
    path = ''
    workspace = ''
    main = ''
    packages = {}
    remote = {}
+   isEmpty = true
 }
 

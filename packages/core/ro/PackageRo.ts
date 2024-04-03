@@ -1,6 +1,7 @@
-import { fromRaw, PackageDto } from '../';
+import { PackageDto } from '../dto';
 import { ToDto } from '../dto';
 import { Package } from '../entity/Package';
+import { fromRaw } from '../utils/object';
 import { IniObjectRo } from './IniObejctRo';
 import { MapperRo } from './MapperRo';
 import { ResourceRo } from './ResourseRo';

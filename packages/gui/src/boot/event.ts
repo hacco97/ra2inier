@@ -7,14 +7,20 @@ class GlobalEmitter extends EventEmitter {
    }
 
    offBack: EventEmitter['off'] = (event, callback) => {
-      super.on.call(this, 'backend::' + event, callback)
+      super.off.call(this, 'backend::' + event, callback)
    }
 }
-export const globalEvent = new GlobalEmitter
 
+function createGlobalEvent() {
+   const globalEvent = new GlobalEmitter
+   window.eApi.on('event-from-backend', (ev, channel: string, data: Record<string, any>) => {
+      globalEvent.emit(channel, data)
+   })
 
-window.eApi.on('event-from-backend', (ev, channel: string, data: Record<string, any>) => {
-   globalEvent.emit(channel, data)
-})
+   return globalEvent
+}
+
+export const globalEvent = createGlobalEvent()
+
 
 

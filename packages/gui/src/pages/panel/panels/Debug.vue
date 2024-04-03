@@ -1,69 +1,43 @@
 <script lang='ts' setup>
-import { markRaw, reactive, readonly } from 'vue';
+import { defineStore } from 'pinia';
+import { reactive, readonly, ref } from 'vue';
 
-import { PanelParam } from '@/states/panelList';
+const useStore = defineStore('demo-store', () => {
+   const name = ref('zs')
+   const age = ref(32)
 
-
-const props = defineProps<{ param: PanelParam }>()
-
-const user = reactive({
-   name: 'zs',
-   age: 19,
-   son: markRaw({
-      name: 'ls',
-      age: 3
+   const rd = reactive({
+      a: 'zs',
+      b: 32
    })
+   setInterval(() => { rd.b++ }, 1234)
+
+   return {
+      name,
+      age,
+      rd: readonly(rd)
+   }
 })
 
-const rUser = readonly(user)
+const store = useStore()
 
+// store.age=34
+
+const onClick = () => {
+
+   const a = 13
+   const b = a + 3
+
+   return
+}
 
 </script>
 
 
 <template>
-   <div :class="$style.debug">
-      {{ rUser }}
+   <div @click="onClick">
+      {{ store.rd }}
    </div>
 </template>
 
-<style module scoped lang='scss'>
-.debug {
-   position: relative;
-   display: flex;
-   flex-direction: column;
-   min-height: 1em;
-   // background: rgb(183, 149, 149);
-
-   input {
-      // user-select: none;
-      pointer-events: none;
-   }
-
-   section {
-      user-select: none;
-   }
-
-   h1 {}
-
-   h1:hover+ul {
-
-      section {
-         transform: translate(0, 0);
-      }
-   }
-
-   ul {
-      top: 1lh;
-      position: absolute;
-      overflow: hidden;
-      pointer-events: none;
-
-      section {
-         transform: translate(0, -100%);
-         transition: all 0.4s ease;
-         background: pink;
-      }
-   }
-}
-</style>
+<style module scoped lang='scss'></style>

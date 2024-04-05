@@ -2,22 +2,22 @@ $height: layout-size(menu);
 $item-height: line-height(small);
 $item-width: 50px;
 
-> section {
+>section {
    flex: 2 1 0;
    min-width: 0;
 
-   > ul {
+   >ul {
       width: 100%;
       height: 100%;
       overflow-x: auto;
       overflow-y: hidden;
 
-      > h2 {
+      >h2 {
          display: flex;
          flex-wrap: nowrap;
          align-items: center;
 
-         > div {
+         >div {
             flex: 0 0 $item-width;
 
             li {
@@ -33,19 +33,20 @@ $item-width: 50px;
       }
    }
 
-   > ol {
+   >ol {
       position: relative;
       z-index: 10;
       height: 0px;
       width: 0px;
+      line-height: 1.5em;
 
-      > div {
+      >div {
          display: flex;
          position: absolute;
          top: 0;
          flex-wrap: nowrap;
 
-         > p {
+         >p {
             flex: 0 0 $item-width;
             text-align: left;
             overflow: visible;
@@ -57,17 +58,19 @@ $item-width: 50px;
             }
 
             em {
-               display: inline-block;
-               height: $item-height;
-               padding-left: align-size(large);
+               display: block;
+               padding: 0 align-size(large);
                height: fit-content;
             }
 
             h4 {
                width: 10em;
-               height: $item-height;
-               line-height: $item-height;
                text-overflow: ellipsis;
+            }
+
+            b {
+               display: block;
+               height: 1lh;
             }
          }
       }

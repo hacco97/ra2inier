@@ -8,13 +8,13 @@ import { PanelParam } from '@/states/panelList';
 import { ScopeRo } from '@ra2inier/core';
 import { FlexArea, FlexInput, LazyButton } from '@ra2inier/wc';
 import HeaderLayout from '../HeaderLayout.vue';
-import { useFilp } from './flip';
+import { useFlip } from './flip';
 
 defineOptions({ name: 'ScopeEditor' })
 const props = defineProps<{ param: PanelParam }>()
-const scope: ScopeRo = shallowReactive(props.param.data!)
+const scope: ScopeRo = shallowReactive(props.param.init!)
 const param = props.param
-const { onChanged, disabled, vFlip } = useFilp(props, scope)
+const { onChanged, disabled, vFlip } = useFlip(props, scope)
 
 
 

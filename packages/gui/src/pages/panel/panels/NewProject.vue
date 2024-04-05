@@ -8,14 +8,24 @@ import { FlexInput, LazyButton } from '@ra2inier/wc';
 import HeaderLayout from './HeaderLayout.vue';
 import ReferView from './ReferView.vue';
 import { openDirectory } from '@/boot/file';
-import { useProjectStore } from '@/stores/projectStore';
-const store = useProjectStore()
+import { newProject } from '@/stores/projectStore';
+import { PanelParam } from '@/states/panelList';
 
 const { config } = useConfigStore()
+const props = defineProps<{ param: PanelParam }>()
+const param = props.param
 
-const defaultPath = config.DEFAULT_PROJECT_DIR + '/new_project'
 const name = ref('new_project')
+const defaultPath = config.DEFAULT_PROJECT_DIR + '/new_project'
 const targetPath = ref(defaultPath)
+
+function onNameInput() {
+   setTimeout(() => {
+      const id = targetPath.value.lastIndexOf('/')
+      targetPath.value = targetPath.value.substring(0, id + 1)
+         + (name.value || 'new_project')
+   })
+}
 
 async function onOpenClick() {
    const path = await openDirectory()
@@ -24,7 +34,8 @@ async function onOpenClick() {
 
 
 function onAddClick() {
-   // createNewProject(targetPath.value, name.value)
+   newProject({ path: targetPath.value, name: name.value })
+
 }
 </script>
 
@@ -48,7 +59,8 @@ function onAddClick() {
             <li>
                <h2>
                   <span>项目名称：</span>
-                  <flex-input v-model="name" class="normal-rpanel" placeholder="new_project"></flex-input>
+                  <flex-input v-model="name" @input="onNameInput" class="normal-rpanel"
+                     placeholder="new_project"></flex-input>
                </h2>
             </li>
             <li>

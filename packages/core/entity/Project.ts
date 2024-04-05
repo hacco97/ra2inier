@@ -1,10 +1,8 @@
 
 export class Project {
-   name: string
-   author = ''
+   buildConfig = {}
 
-   constructor(name?: string) {
-      this.name = name || ''
+   constructor() {
    }
 }
 

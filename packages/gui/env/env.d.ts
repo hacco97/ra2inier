@@ -38,6 +38,6 @@ declare global {
    type RejectHandle = (reason: any) => ServResponse<any>
 
 
-   var projectVo: ProjectVo
+   var projectVo: ProjectVo | undefined
 }
 

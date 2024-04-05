@@ -3,7 +3,7 @@ import { Directive } from 'vue';
 import { EventEmitter, IniObjectRo, WordValueType } from '@ra2inier/core';
 
 import { EntryRo } from '../ObjectEditor/Entry';
-import { ProjectStore, useProjectStore } from '@/stores/projectStore';
+import { ProjectStore } from '@/stores/projectStore';
 
 /**
  * 常量定义

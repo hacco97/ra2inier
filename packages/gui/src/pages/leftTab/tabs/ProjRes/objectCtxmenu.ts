@@ -1,20 +1,15 @@
-import { globalEvent } from "@/boot/event"
 import { work } from "@/boot/worker"
 import { useCtxMenuState } from "@/states/ctxMenu"
-import { IniObjectRo } from "@ra2inier/core"
-import { Directive } from "vue"
-
+import { IniObjectRo, useMemo, useSingleton } from "@ra2inier/core"
 
 export type CtxItem = {
    object: IniObjectRo,
    openHandle: () => void
 }
 
-let objectCtx: Directive<HTMLElement, any> | undefined
-// globalEvent.on('project-loaded', () => objectCtx = undefined)
-export function useObjectCtxmenu() {
+export const useObjectCtxmenu = useSingleton(() => {
    const ctxmenu = useCtxMenuState()
-   if (!objectCtx) objectCtx = ctxmenu.useCtxMenu<CtxItem>({
+   return ctxmenu.useCtxMenu<CtxItem>({
       '编辑对象'(item) {
          item.openHandle()
       },
@@ -27,5 +22,4 @@ export function useObjectCtxmenu() {
       },
       '克隆对象'() { },
    })
-   return objectCtx!
-}
+})

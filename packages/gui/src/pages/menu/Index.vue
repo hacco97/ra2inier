@@ -1,19 +1,19 @@
 <script lang='ts' setup>
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import closeSvg from '@/asset/icons/close.svg?raw';
 import minSvg from '@/asset/icons/min.svg?raw';
 import toggleSvg from '@/asset/icons/toggle.svg?raw';
 import toggle2Svg from '@/asset/icons/toggle2.svg?raw';
 import { on, send } from '@/boot/apis';
 import CheckBox from './menuItem/CheckBox.vue';
-import FileBox from './menuItem/FileBox.vue';
+import Space from './menuItem/Space.vue'
 import { useScroller } from './scroll';
 import { useProjectStore } from '@/stores/projectStore';
 import { useMenuState } from '@/states/menu';
 
 defineOptions({
    name: 'Menu',
-   components: { FileBox, CheckBox }
+   components: { CheckBox, Space }
 })
 
 const { scrolled, subLeft, makeScrollxer } = useScroller()
@@ -28,7 +28,6 @@ const focused = ref(false)
 const menu = useMenuState()
 
 const store = useProjectStore()
-const pName = computed(() => store.projectName || 'ra2 inier')
 
 const onMenuClick = (i: number, j: number) => {
    menu.invokeMenuOption(i, j)
@@ -102,7 +101,7 @@ on('unmaximize', () => {
       </section>
       <!-- 标题 -->
       <b></b>
-      <h1 :class="[$layout.title, $theme['menu-title']]">{{ pName }}</h1>
+      <h1 :class="[$layout.title, $theme['menu-title']]">{{ store.projectName }}</h1>
       <i></i>
       <!-- 窗口按键 -->
       <aside :class="[$layout['no-drag'], $theme['svg-icon']]">

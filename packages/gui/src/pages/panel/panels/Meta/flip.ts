@@ -2,7 +2,7 @@ import { Directive, ref, watch, WatchStopHandle } from 'vue';
 
 import { PanelParam } from '@/states/panelList';
 
-export function useFilp(props: { param: PanelParam }, data: any) {
+export function useFlip(props: { param: PanelParam }, data: any) {
    const disabled = ref(true)
    const changed = ref(false)
 

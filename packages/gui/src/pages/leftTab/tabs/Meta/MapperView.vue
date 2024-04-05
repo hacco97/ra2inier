@@ -26,10 +26,10 @@ function openMapperPanel(mapper: MapperRo) {
    const p = new PanelParam({
       label: mapper.name,
       type: PanelType.Mappers,
-      data: newOne,
+      init: newOne,
       readonly
    })
-   if (!readonly) p.on('save', onSave)
+   if (!readonly) p.on('saved', onSave)
    panel.addPanel(p)
 }
 

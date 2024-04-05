@@ -19,14 +19,12 @@ const defaultOptions = {
 }
 
 export function useKeyMap(keymap: KeyMap, options?: KeymapOptions) {
-   // const vm = new WeakMap<HTMLElement, KeyMap>()
    const vmData = new WeakMap<HTMLElement, any>()
    const f = (key: any) => key
    const customOptions = { ...defaultOptions, ...options }
 
    function map(e: KeyboardEvent) {
       const el = <HTMLElement>e.target
-      // const keymap = <KeyMap>vm.get(el)
       customOptions.stop && e.stopPropagation()
       if (!keymap) return
       const keys = [
@@ -52,7 +50,6 @@ export function useKeyMap(keymap: KeyMap, options?: KeymapOptions) {
    }
 
    function makeKeymap(el: HTMLElement, binding: { value: KeyMap }) {
-      // vm.set(el, keymap)
       vmData.set(el, binding.value)
       if (el.getAttribute('tabindex') === null)
          el.setAttribute('tabindex', customOptions.tabindex + '')

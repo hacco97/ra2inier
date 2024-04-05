@@ -1,1 +1,0 @@
-{"id":1708259690619,"seed":96169660081,"version":1708259690619,"name":"Sight","brief":"视野范围","default":"6","author":"","files":["rules.ini","artmo.ini"],"values":"int(0,)","valueParam":[{"type":"int","exp":"int(0,)","min":0,"max":2147483647,"repeat":1}],"scopes":["VehicleTypes","InfantryTypes","BuildingTypes"]}

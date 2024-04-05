@@ -1,14 +1,10 @@
 
 
-import { Directive, StyleValue, reactive, ref, watch } from 'vue';
+import { Directive, StyleValue, reactive, watch } from 'vue';
 import { PanelParam, PanelType, usePanelState } from '@/states/panelList';
 import { cloneTyped, EventEmitter, forIn, IniObjectRo, isEmptyObject, isUniqueObject, PackageRo } from '@ra2inier/core';
-import { globalEvent } from '@/boot/apis';
-import { useCtxMenuState } from '@/states/ctxMenu';
 import { FlexInput } from '@ra2inier/wc';
-import { showInFileFloder } from '@/boot/file';
 import { useProjectStore } from '@/stores/projectStore';
-
 
 export const DEFAULT_GROUP_NAME = 'G0'
 
@@ -61,7 +57,7 @@ export function createPkgViewState(props: PkgViewProp) {
       const p: PanelParam = new PanelParam({
          label: opened.name,
          type: props.isMain ? PanelType.ObjectEditor : PanelType.ObjectViewer,
-         data: opened,
+         init: opened,
          readonly: !props.isMain
       })
       const onSave = (o: IniObjectRo) => {
@@ -71,7 +67,7 @@ export function createPkgViewState(props: PkgViewProp) {
          addNewObjectToView(tmp)
          reOrder()
       }
-      if (props.isMain) { p.on('save', onSave) }
+      if (props.isMain) { p.on('saved', onSave) }
       panel.addPanel(p)
    }
 
@@ -115,14 +111,14 @@ export function createPkgViewState(props: PkgViewProp) {
 
    return {
       view,
+      viewInfo,
       addNewObjectToView,
+      deleteGroup,
+      renameGroup,
+      createGroup,
       onAddClick,
       onObjectOpen,
       openObjectPanel,
-      deleteGroup,
-      renameGroup,
-      viewInfo,
-      createGroup,
       get path() { return props.pkg.path }
    }
 }
@@ -130,7 +126,7 @@ export function createPkgViewState(props: PkgViewProp) {
 /**
  * 组名的重叠控制
  */
-export function useVFlod(state: PkgViewState) {
+export function useVFold(state: PkgViewState) {
    // 组名折叠
    const isGroupFoldedMap: Record<string, boolean> = reactive({})
 
@@ -154,57 +150,7 @@ export function useVFlod(state: PkgViewState) {
    }
 }
 
-/**
- * 分组的右键菜单逻辑
- */
-let groupCtx: Directive<HTMLElement, any> | undefined
-// globalEvent.on('project-loaded', () => groupCtx = undefined)
-export function useGroupCtxmenu(state: PkgViewState) {
-   const cursor = ref('')
-   const ctxmenu = useCtxMenuState()
-
-   if (!groupCtx) groupCtx = ctxmenu.useCtxMenu({
-      '新建对象'(groupKey: string) {
-         state.onAddClick(groupKey)
-      },
-      '删除分组': state.deleteGroup,
-      '重命名分组'(groupKey: string, el: HTMLElement) {
-         const name = <FlexInput>el.querySelector('flex-input.group-name')
-         name.setAttribute('disabled', 'false')
-         name.focus()
-      }
-   })
-
-   return {
-      vGroupMenu: groupCtx!,
-      cursor
-   }
-}
-
-
-/**
- * 包整体的右键菜单逻辑
- */
-let pkgviewCtx: Directive<HTMLElement, any> | undefined
-// globalEvent.on('project-loaded', () => groupCtx = undefined)
-export function usePkgviewCtxmenu(state: PkgViewState) {
-   const ctxmenu = useCtxMenuState()
-   if (!pkgviewCtx) pkgviewCtx = ctxmenu.useCtxMenu({
-      '新建分组'() {
-         state.createGroup()
-      },
-      '打开所在位置'() {
-         showInFileFloder(state.path)
-      }
-   })
-
-   return pkgviewCtx!
-}
-
-
 export function useVRename(emitter: EventEmitter) {
-
-
    return <Directive<FlexInput, string>>{
       mounted(el, { value: gkey }) {
          el.value = gkey

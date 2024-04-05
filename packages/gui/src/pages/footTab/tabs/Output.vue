@@ -3,15 +3,17 @@ import { computed, inject, Ref } from 'vue';
 
 import playSvg from '@/asset/icons/compile.svg?raw';
 import openDirSvg from '@/asset/icons/openDir.svg?raw';
-import { FoottabState, FootTabType, useFoottabState } from '@/states/footTabList';
+import { FootTabType, useFoottabState } from '@/states/footTabList';
 import { useConfigStore } from '@/stores/config';
 import { FlexInput, LazyButton } from '@ra2inier/wc';
 import { openDirectory } from '@/boot/file';
+import { useLayoutState } from '@/states/layout';
 
 defineOptions({ name: 'Output' })
 const { config, set } = useConfigStore()
 
 const foottab = useFoottabState()
+const { footTabSize } = useLayoutState()
 
 function onOutputClick() {
    // build()
@@ -29,6 +31,8 @@ async function onOpenPathClick() {
 
 // foottab的自定义按钮逻辑
 const mounted = <Ref<boolean>>inject('foottab-mounted')
+
+const tabindex = computed(() => footTabSize.height > 100 ? 0 : -1)
 </script>
 
 
@@ -42,7 +46,7 @@ const mounted = <Ref<boolean>>inject('foottab-mounted')
       </li>
       <li>
          <span>输出目录</span><span>::</span>
-         <flex-input class="rd ol-n" :value="outDir" :placeholder="outDir"></flex-input>
+         <flex-input class="rd ol-n" :value="outDir" :placeholder="outDir" :tabindex="tabindex"></flex-input>
          <lazy-button class="fore-button" @click="onOpenPathClick">
             <s v-svgicon="openDirSvg" padding="15%"></s>
          </lazy-button>

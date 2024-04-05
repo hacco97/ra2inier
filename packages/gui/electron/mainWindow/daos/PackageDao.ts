@@ -32,7 +32,7 @@ export class PackageDao {
     * 如果是相对路径，则读取相对路径处的包
     * 该方法只用于本地
     */
-   readPackageInfoByPath = useMemo((pkgPath: string) => {
+   readPackageInfoByPath = (pkgPath: string) => {
       const info = readJson(join(pkgPath, this.config.PACKAGE_INFO_FILE))
       if (isEmptyObject(info)) return undefined
       const pkg = fromRaw(info, Package)
@@ -41,7 +41,7 @@ export class PackageDao {
          pkg.references[key] = Reference.parser(<any>pkg.references[key])
       }
       return <PackageVo>pkg
-   })[0]
+   }
 
    /**
     * 直接读取一个包文件夹，将其变为PackageVo对象，不涉及引用的读取
@@ -60,7 +60,13 @@ export class PackageDao {
 
    writePackageInfoByPath(pkg: Package, pkgPath: string) {
       const infoPath = escapePath(pkgPath, this.config.PACKAGE_INFO_FILE)
+      const refers = pkg.references
+      for (const key in refers) {
+         // @ts-ignore
+         refers[key] = Reference.toJSON(refers[key])
+      }
       writeJson(infoPath, pkg)
+      return true
    }
 
    writePackageByPath(pkg: Package, pkgPath: string,) {

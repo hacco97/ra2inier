@@ -4,18 +4,34 @@ import { usePanelHeight } from './panelHeight';
 import PkgView from './PkgView.vue';
 import { isEmptyObject } from '@ra2inier/core';
 import Search from '@/pages/leftTab/tabs/Search.vue';
-import { useProjectStore } from '@/stores/projectStore';
+import { openProjectFromBrowser, useProjectStore } from '@/stores/projectStore';
+import { LazyButton } from '@ra2inier/wc';
+import dirSvg from '@/asset/icons/openDir.svg?raw'
+import newSvg from '@/asset/icons/new.svg?raw';
+import { PanelParam, PanelType, usePanelState } from '@/states/panelList';
 
 const store = useProjectStore()
+const panel = usePanelState()
 
 const {
    onReferClick,
    onDragerMousemove,
    isReferFolded,
    isDragerPanelShowed,
-   referHeightVBind
+   referHeightStyle
 } = usePanelHeight()
 
+function onOpenClick() {
+   openProjectFromBrowser(undefined)
+}
+
+function onNewClick() {
+   panel.addPanel(new PanelParam({
+      label: '新建项目',
+      type: PanelType.NewProject,
+      init: 'NewProject'
+   }))
+}
 </script>
 
 <template>
@@ -26,7 +42,7 @@ const {
          </div>
       </template>
       <template #panel>
-         <div :class="$style.panel">
+         <div :class="$style.panel" v-if="store.loaded">
             <ul>
                <!-- 上半 -->
                <p class="scroll">
@@ -39,7 +55,7 @@ const {
                      :dragging="isDragerPanelShowed"></b>
                </legend>
                <!-- 下半 -->
-               <p>
+               <p :style="referHeightStyle">
                <h2 @click="onReferClick" :class="$theme['projres-referbar']">
                   <em><span class="folder" :folded="isReferFolded">&gt;</span><span>引用</span></em>
                </h2>
@@ -51,6 +67,16 @@ const {
             </ul>
             <i @mouseup="isDragerPanelShowed = false" @mouseout="isDragerPanelShowed = false"
                v-show="isDragerPanelShowed" @mousemove="onDragerMousemove"></i>
+         </div>
+         <div v-else :class="$style.open">
+            <lazy-button @click="onOpenClick" class="vertical-center">
+               <s v-svgicon="dirSvg" class="normal-button" padding="15%"></s>
+               <h2>打开项目</h2>
+            </lazy-button>
+            <lazy-button @click="onNewClick" class="vertical-center">
+               <s v-svgicon="newSvg" class="normal-button" padding="15%"></s>
+               <h2>新建项目</h2>
+            </lazy-button>
          </div>
       </template>
    </LeftTabLayout>
@@ -88,7 +114,7 @@ const {
 
    p:nth-child(3) {
       flex: 0;
-      flex-basis: v-bind(referHeightVBind);
+      flex-basis: 200px;
       overflow: hidden;
       min-height: 1lh;
 
@@ -132,6 +158,29 @@ const {
       height: 100%;
       width: 100%;
       cursor: ns-resize;
+   }
+}
+
+.open {
+   @include font-size(big);
+   padding: align-size(normal);
+
+   lazy-button {
+      display: block;
+      height: 1.5lh;
+      white-space: nowrap;
+   }
+
+   h2 {
+      display: inline-block;
+      height: 1lh;
+      margin-left: 1ch;
+   }
+
+   s {
+      display: inline-block;
+      height: 1lh;
+      aspect-ratio: 1;
    }
 }
 </style>

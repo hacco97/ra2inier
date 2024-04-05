@@ -18,6 +18,14 @@ export class ProjectRo extends Project implements ToDto {
     * 获得主包的引用
     */
    get references() { return this.main ? this.main.references : {} }
+   /**
+    * 记录着IniObeject的翻译后数据，可以减少不必要的翻译
+    */
+   cache: Record<string, string> = {}
+   /**
+    * 标志位
+    */
+   isEmpty?: boolean
 
    toDto() {
       const d = fromRaw(this, ProjectDto)

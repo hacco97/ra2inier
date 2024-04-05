@@ -19,10 +19,16 @@ export class ProjectDao {
    @inject('static-dao') declare staticDao: StaticDao
 
    checkPath(path: string) {
-      path = escapePath(path, this.config.PROJECT_INFO_FILE)
-      if (!fs.existsSync(path)) return false
-      const json = readJson(path)
-      return isUniqueObject(json)
+      // 检查project.json文件
+      const projectPath = escapePath(path, this.config.PROJECT_INFO_FILE)
+      if (!fs.existsSync(projectPath)) return false
+
+      // 检查info.json文件
+      const packagePath = escapePath(path, this.config.PACKAGE_INFO_FILE)
+      if (!fs.existsSync(packagePath)) return false
+      const json = readJson(packagePath)
+      if (!isUniqueObject(json)) return false
+      return true
    }
 
    /**
@@ -52,6 +58,7 @@ export class ProjectDao {
          const pkg = this.packageDao.readPackageByPath(refers[referkey].path)
          pkg && (projectVo.packages[referkey] = pkg)
       }
+      projectVo.isEmpty = false
       return projectVo
    }
 
@@ -64,14 +71,11 @@ export class ProjectDao {
          [UniqueObject.getKey(pkg)]: pkg
       }
       function dfs(pkg: Package) {
-         for (const [key, refer] of Object.entries(pkg.references)) {
+         for (const key in pkg.references) {
             // 尝试从本地读取
             if (key in references) continue
             if (key in globalPackages) {
-               const newPkg = references[key] = globalPackages[key]
-               refer.path = newPkg.path
-               dfs(newPkg)
-               continue
+               dfs(references[key] = globalPackages[key])
             }
          }
       }

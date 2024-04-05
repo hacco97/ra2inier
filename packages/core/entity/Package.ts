@@ -44,10 +44,6 @@ export class Reference {
     */
    url = ''
    /**
-    * 依赖的本地路径
-    */
-   path = ''
-   /**
     * 依赖的版本
     */
    version = 0;
@@ -62,12 +58,11 @@ export class Reference {
       this.name = pkg.name
       this.key = pkg.key
       this.url = pkg.link
-      this.path = pkg.path
       this.version = pkg.version
    }
 
-   toJSON() {
-      return [this.name, this.key, this.url, this.version].join('\n')
+   static toJSON(r: Reference) {
+      return [r.name, r.key, r.url, r.version].join('\n')
    }
 
    static parser(val: string) {
@@ -76,8 +71,7 @@ export class Reference {
          name: ret[0],
          key: ret[1],
          url: ret[2],
-         version: parseInt(ret[3]),
-         path: ''
+         version: parseInt(ret[3]) || -1,
       }
    }
 

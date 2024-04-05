@@ -25,10 +25,10 @@ function openWordPanel(word: WordRo) {
    const p = new PanelParam({
       label: word.name,
       type: PanelType.WordEditor,
-      data: newWord,
+      init: newWord,
       readonly: isReadonly(word)
    })
-   if (!isReadonly(word)) p.on('save', onSave)
+   if (!isReadonly(word)) p.on('saved', onSave)
    panel.addPanel(p)
 }
 

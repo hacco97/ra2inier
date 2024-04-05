@@ -1,12 +1,12 @@
 <script lang='ts' setup>
-import { computed, ref, StyleValue, watchEffect } from 'vue';
+import { computed, inject, Ref, ref, StyleValue, watchEffect } from 'vue';
 import iniSvg from '@/asset/icons/ini.svg?raw'
 import addonSvg from '@/asset/icons/addon.svg?raw'
 import { setStatus } from '@/pages/footer/state';
 import { IniObjectRo } from '@ra2inier/core';
 import { useObjectCtxmenu, CtxItem } from './objectCtxmenu'
 
-const props = defineProps<{ object: IniObjectRo }>()
+const props = defineProps<{ object: IniObjectRo, readonly?: boolean }>()
 const emit = defineEmits(['open'])
 const object = ref(props.object)
 watchEffect(() => { object.value = props.object })
@@ -14,7 +14,7 @@ const ctxItem: CtxItem = {
    object: object.value,
    openHandle() { emit('open', props.object) }
 }
-const vCtxmenu = useObjectCtxmenu()
+const vCtxmenu = props.readonly ? {} : useObjectCtxmenu()
 
 function onMouseEnter(msg: string) { setStatus(msg) }
 

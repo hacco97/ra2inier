@@ -8,8 +8,8 @@
    },
    "keywords": [],
    "exports": {
-      "./node": "./node/index.ts",
       ".": "./index.ts",
+      "./node": "./node/index.ts",
       "./boot": "./boot.ts"
    },
    "author": "",

@@ -1,6 +1,6 @@
 import { reactive, readonly } from 'vue';
 import { exec } from '@/boot/apis';
-import { Config } from '@ra2inier/core';
+import { Config, useSingleton } from '@ra2inier/core';
 import { defineStore } from 'pinia';
 
 // 全局配置信息的仓库
@@ -14,9 +14,9 @@ async function loadConfig() {
 }
 
 /**
- * 真单例
+ * 真单例，配置文件仓库，一次应用程序只会加载一次
  */
-export const useConfigStore = defineStore('config-store', () => {
+export const useConfigStore = defineStore('config-store', useSingleton(() => {
    const config: Config = reactive(new Config);
    loadConfig().then((res) => {
       Object.assign(config, res)
@@ -41,4 +41,4 @@ export const useConfigStore = defineStore('config-store', () => {
       set: setConfig,
       $reset
    }
-})
+}))

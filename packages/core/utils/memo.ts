@@ -9,7 +9,7 @@ export function useMemo<T, A extends any[]>(
 ) {
    const map = new Map<string, T>()
    const timeout = new Map<any, number>()
-   expiresTime || (expiresTime = 1000 * 60 * 15)
+   expiresTime || (expiresTime = Number.MAX_SAFE_INTEGER)
    const _getKey = getKey || ((...x: A) => <string>x[0])
 
    return [

@@ -24,14 +24,14 @@ export function objectTranslator(object: IniObjectRo, words: Record<string, Word
    const outputs: Record<string, WordHooks['output']> = {}
    try {
       for (const entry of object.entry) {
-         const hooks: any = words[entry.key]?.hooks ?? {}
+         const hooks: any = words[entry.wordName]?.hooks ?? {}
          const ret = entryTranslator(entry, hooks.translate, ctx)
          if (!ret) return false
          translation.push(ret)
 
          // 记录adjust和output hook
-         if (hooks.adjust) adjusts[entry.key] = hooks.adjust
-         if (hooks.output) outputs[entry.key] = hooks.output
+         if (hooks.adjust) adjusts[entry.wordName] = hooks.adjust
+         if (hooks.output) outputs[entry.wordName] = hooks.output
       }
    } catch (e) {
       ctx.log(e)
@@ -51,7 +51,7 @@ export function entryTranslator(entry: Entry, translate: WordHooks['translate'],
       const ret: string[][] = []
       const tr = translate(entry.values, ctx)
       if (typeof tr === 'string') {
-         ret.push([entry.key, tr])
+         ret.push([entry.wordName, tr])
       } else if (tr instanceof Array) {
          ret.push(...tr)
       } else if (typeof tr === 'object') {
@@ -67,7 +67,7 @@ export function entryTranslator(entry: Entry, translate: WordHooks['translate'],
 }
 
 export function nullTranslator(entry: Entry) {
-   return [entry.key, entry.values.join(',')]
+   return [entry.wordName, entry.values.join(',')]
 }
 
 export function objectAdjuster(entrys: string[][], adjusts: Record<string, WordHooks['adjust']>, ctx: HookCtx) {

@@ -61,7 +61,7 @@ function createAPI() {
    function makeExecMethod<T>(command: string, errerHeader?: string, successHeader?: string) {
       return new Pipe(async (option: RequestOptions = {}) => {
          const { status, data } = await exec<T>(command, option)
-         if (!status) throw Error(void logger.warn(`${errerHeader || ''}${data}`))
+         if (!status) throw logger.warn(`${errerHeader || ''}${data}`)
          logger.info(`${successHeader || ''}${option.msg || ''}`)
          return data
       })
@@ -70,7 +70,7 @@ function createAPI() {
    function makeExecCtx<T>(command: string, errerHeader?: string, successHeader?: string) {
       return new Pipe(async (option: RequestOptions) => {
          const { status, data } = await exec<T>(command, option)
-         if (!status) throw Error(void logger.warn(`${errerHeader || ''}${data}`))
+         if (!status) throw logger.warn(`${errerHeader || ''}${data}`)
          logger.info(`${successHeader || ''}${option.msg || ''}`)
          return [data, option] as const
       })

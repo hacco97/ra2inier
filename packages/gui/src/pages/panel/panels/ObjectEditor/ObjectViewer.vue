@@ -13,7 +13,7 @@ interface Prop {
    param: PanelParam
 }
 const props = defineProps<Prop>()
-const object: IniObjectRo = props.param.data
+const object: IniObjectRo = props.param.init
 const currentChild = ref('')
 const columnCount = ref(0)
 

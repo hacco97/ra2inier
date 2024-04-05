@@ -55,7 +55,7 @@ export class ProjServ {
    /**
     * 每隔3分钟清理一次项目缓存
     */
-   @task(60 * 3)
+   @task(config.IS_DEV ? 3 : 60 * 3)
    @mapping('clear-cache')
    clearCache() {
       for (const path in this.#projectCacheMap) {
@@ -87,7 +87,7 @@ export class ProjServ {
          if (dirent.length != 0) throw Error('新项目文件夹应当为空文件夹')
       }
       this.appConfig.addProjectHistory(newProjectPath)
-      const project = new Project(name)
+      const project = new Project()
       this.projectDao.writeProjectInfoByPath(project, newProjectPath)
       this.packageDao.writePackageInfoByPath(new Package(name), newProjectPath)
       return this.openProject(newProjectPath)
@@ -103,8 +103,11 @@ export class ProjServ {
    }
 
    @mapping('save-pkginfo')
-   saveProjectInfo(@param('data') pkgInfo: Package) {
+   saveProjectInfo(@param('pkg') pkgInfo: Package, @param('project') projectInfo: Project) {
+      this.projectDao.writeProjectInfoByPath(fromRaw(projectInfo, Project), this.path)
+      this.packageDao.writePackageInfoByPath(fromRaw(pkgInfo, Package), this.path)
 
+      return true
    }
 
    @mapping('add-refer')
@@ -123,8 +126,6 @@ export class ProjServ {
          let path = ''
          if (refer.key in locals) {
             path = locals[refer.key].path
-         } else if (refer.path) {
-            path = escapePath(refer.path)
          }
          const pkg = this.packageDao.readPackageByPath(path)
          if (pkg) packages[UniqueObject.getKey(pkg)] = pkg

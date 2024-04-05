@@ -1,4 +1,4 @@
-import { Package, PackageVo, Reference, } from '@ra2inier/core';
+import { Package, PackageVo, Project, Reference, fromRaw, } from '@ra2inier/core';
 import { exec, useLogger } from '@/boot/apis';
 import { createEmpty, ProjectBoot } from './boot';
 
@@ -13,12 +13,12 @@ export function createProjectAction(boot: ProjectBoot) {
    /**
     * 保存项目的info文件
     */
-   function savePackageInfo(pkg: Package) {
-      if (!pkg) return
-      return exec('project/save-pkginfo', { data: pkg }).then(({ status, data }) => {
-         if (!status) return void logger.warn('保存包信息失败', data)
-         return true
-      })
+   async function saveProjectInfo() {
+      const project = fromRaw(boot.project, Project, true)
+      const pkg = fromRaw(boot.project.main, Package, true)
+      const { status, data } = await exec('project/save-pkginfo', { project, pkg })
+      if (!status) return logger.warn('保存包信息失败', data)
+      return true
    }
 
    /**
@@ -48,11 +48,13 @@ export function createProjectAction(boot: ProjectBoot) {
    }
 
    /**
-    * 给定一个引用的集合，对该集合中的包进行加载，
+    * 给定一个引用的集合，对该集合中的包进行加载
+    * 如果addMap中不包含已加载的某个包，那么这将删除已经加载的包
     */
-   async function loadPackage(addMap: Record<string, Reference>) {
+   async function updatePackage(addMap: Record<string, Reference>) {
       const [toAdd] = diffReference(addMap)
-      if (!toAdd.length) return
+      const saved = await saveProjectInfo()
+      if (!saved || !toAdd.length) return
       // 检查哪些包需要下载
       const loaded = await loadLocalPackage(toAdd)
       const toDownload: Reference[] = []
@@ -65,12 +67,13 @@ export function createProjectAction(boot: ProjectBoot) {
       const newLoaded = await loadLocalPackage(downloaded)
       console.log('正在下载')
       // TODO:
+
    }
 
    return {
-      savePackageInfo,
+      saveProjectInfo,
       loadLocalPackage,
-      loadPackage,
+      updatePackage,
       downloadPackage
    }
 }

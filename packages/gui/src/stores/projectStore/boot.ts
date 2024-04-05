@@ -18,6 +18,7 @@ export function createProject(projectVo: ProjectVo) {
     */
    const main = computed(() => project.main || new PackageRo)
    const mainKey = computed(() => project.main?.key || '')
+   const loaded = computed(() => !project.isEmpty)
 
    /**
     * 修改主包中的对象
@@ -80,15 +81,24 @@ export function createProject(projectVo: ProjectVo) {
       })
    }
 
+   /**
+    * 修改project的头部数据信息
+    */
+   function setProjectInfo(info: Record<string, any>) {
+
+   }
+
    return {
       project,
       main,
       mainKey,
+      loaded,
       setValue,
+      setProjectInfo,
       setPackage,
       setReference,
       diffReference,
-      mergePackages
+      mergePackages,
    }
 }
 

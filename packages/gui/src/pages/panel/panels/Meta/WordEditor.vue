@@ -1,6 +1,5 @@
 <script lang='ts' setup>
-import { computed, ref, shallowReactive } from 'vue';
-
+import { computed, ref, shallowReactive, watch } from 'vue';
 import editSvg from '@/asset/icons/edit.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
 import ListBox from '@/components/dirty/ListBox.vue';
@@ -8,38 +7,41 @@ import Markdown from '@/components/Markdown.vue';
 import { DialogType, useDialogState } from '@/states/dialog';
 import { PanelParam } from '@/states/panelList';
 import { useMarkdown } from '@/stores/markdownStore';
-import {
-   copy, HOOK_FILE_TEMPLATE, MarkdownRo, parseValueTypeExp, WordRo,
-} from '@ra2inier/core';
+import { copy, HOOK_FILE_TEMPLATE, MarkdownRo, parseValueTypeExp, WordRo } from '@ra2inier/core';
 import { FlexArea, FlexInput, LazyButton } from '@ra2inier/wc';
-
 import HeaderLayout from '../HeaderLayout.vue';
-import { useFilp } from './flip';
+import { useFlip } from './flip';
 
 const props = defineProps<{ param: PanelParam }>()
-const param = props.param
-const word: WordRo = shallowReactive(props.param.data)
+const word: WordRo = shallowReactive(props.param.init)
 const dialog = useDialogState()
-const { onChanged, vFlip, disabled } = useFilp(props, word)
+const { onChanged, vFlip, disabled } = useFlip(props, word)
+const isMarkdownShowed = computed(() => !!word.markdown && word.markdown.key)
 
-const isMarkdownShowed = computed(() => {
-   return !!word.markdown && word.markdown.key
-})
-
-if (!isMarkdownShowed.value) {
-   useMarkdown(word.detail).then(res => {
-      word.markdown = res
-   })
-}
-
+/**
+ * md逻辑
+ */
 const md = ref<InstanceType<typeof Markdown>>()
 function submit() {
    word.markdown || (word.markdown = new MarkdownRo)
    copy(md.value?.value, word.markdown)
    word.valueParam = parseValueTypeExp(word.values)
 }
-param.on('before-closed', submit)
 
+/**
+ * 在数据保存之前计算valueParam
+ */
+watch(() => props.param, () => {
+   props.param.on('before-saved', submit)
+   if (!isMarkdownShowed.value) {
+      useMarkdown(word.detail).then(res => word.markdown = res)
+   }
+}, { immediate: true })
+
+
+/**
+ * 防止覆盖现有hook文本的逻辑
+ */
 let asking = false
 async function onTemplateClick() {
    if (!word.hookScript.trim()) {

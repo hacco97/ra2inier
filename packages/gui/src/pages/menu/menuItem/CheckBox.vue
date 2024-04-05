@@ -4,8 +4,9 @@ defineOptions({ name: 'CheckBox'})
 
 
 <template>
-
-
+<div>
+   这里是checkBox
+</div>
 </template>
 
 <style scoped lang='scss'></style>

@@ -12,7 +12,7 @@ export function createDerived(boot: ProjectBoot) {
    const mainDictionary = computed(() => get<WordRo>('dictionary'))
    const mainMappers = computed(() => get<MapperRo>('mappers'))
    const mainScopes = computed(() => get<ScopeRo>('objects'))
-   const projectName = computed(() => project.main?.name || 'no project')
+   const projectName = computed(() => project.main?.name || 'ra2 inier')
    const packages = computed(() => project.packages || {})
    const referPackages = computed(() => {
       const refers = { ...project.packages }
@@ -62,12 +62,15 @@ export function createDerived(boot: ProjectBoot) {
    }
 
    // TODO: 后期添加缓存逻辑
+   const NULL_WORD = new WordRo
+   NULL_WORD.isNull = true
+   NULL_WORD.name = ''
    function queryWord(wordName: string) {
       for (const key in allOfPackages.dictionary) {
          const word = allOfPackages.dictionary[key]
          if (word.name === wordName) return word
       }
-      return new WordRo
+      return NULL_WORD
    }
    // TODO: 后期添加缓存逻辑
    async function queryWordAsync(wordName: string) {
@@ -76,7 +79,7 @@ export function createDerived(boot: ProjectBoot) {
          const word = allOfPackages.dictionary[key]
          if (word.name === wordName) return word
       }
-      return new WordRo
+      return NULL_WORD
    }
 
 

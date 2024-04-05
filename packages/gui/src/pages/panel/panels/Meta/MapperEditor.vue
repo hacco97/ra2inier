@@ -8,13 +8,13 @@ import { PanelParam } from '@/states/panelList';
 import { MapperRo } from '@ra2inier/core';
 import { FlexArea, FlexInput, LazyButton } from '@ra2inier/wc';
 import HeaderLayout from '../HeaderLayout.vue';
-import { useFilp } from './flip';
+import { useFlip } from './flip';
 
 const props = defineProps<{ param: PanelParam }>()
-const mapper: MapperRo = reactive(props.param.data)
+const mapper: MapperRo = reactive(props.param.init)
 const param = props.param
 
-const { onChanged, disabled, vFlip } = useFilp(props, mapper)
+const { onChanged, disabled, vFlip } = useFlip(props, mapper)
 
 function onNameChange() {
    param.label = mapper.name

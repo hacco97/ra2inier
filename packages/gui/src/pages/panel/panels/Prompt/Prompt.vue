@@ -25,6 +25,7 @@ const state = props.state
 const word = shallowRef(new WordRo)
 const store = useProjectStore()
 function getWordPath(word: WordRo) {
+   if (word.isNull) return 'not found'
    return `${store.packageNames[word.package]}/${word.dictionary}/${word.fullname}`
 }
 const author = computed(() => word.value.author ? '作者：' + word.value.author : '')
@@ -145,14 +146,14 @@ state.on('submit-request', () => submit(getValue()))
 
 <template>
    <div v-if="!disabled" :class="[$style.prompt, $theme.prompt]" v-keymap @keydown="onPromptSubmit"
-      @focusin.stop="onPromptFocus" @focusout.stop="onPromptBlur" v-show="state.entry">
+      @focusin.stop="onPromptFocus" @focusout.stop="onPromptBlur">
       <h2>
-         <h3 :title="author">{{ word.name }}</h3>
+         <h3 :title="author">{{ state.entry?.wordName }}</h3>
          <h4>{{ getWordPath(word) }}</h4>
          <hr>
-         <li>{{ word?.brief }}</li>
-         <li v-if="word.default">默认值：{{ word.default ?? 'unknown' }}</li>
-         <li v-if="word.values">取值：{{ word.values ?? 'unknown' }}</li>
+         <li v-if="word.brief">{{ word.brief }}</li>
+         <li v-if="word.default">默认值：{{ word.default }}</li>
+         <li v-if="word.values">取值：{{ word.values }}</li>
       </h2>
 
       <!-- 枚举类型 -->
@@ -214,13 +215,16 @@ state.on('submit-request', () => submit(getValue()))
    padding: align-size(normal);
 
    h2 {
+      line-height: 1.2em;
 
       >* {
-         margin: align-size(normal) 0;
+         height: 1lh;
+         margin: align-size(tiny) 0;
       }
 
       h3 {
-         padding: align-size(tiny) align-size(large);
+         padding: 0 align-size(large);
+         font-weight: bolder;
       }
 
       h4 {
@@ -229,7 +233,7 @@ state.on('submit-request', () => submit(getValue()))
 
       hr {
          display: block;
-         height: 1px;
+         height: 1px !important;
          width: 100%;
       }
 

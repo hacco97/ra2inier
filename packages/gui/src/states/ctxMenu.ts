@@ -92,14 +92,14 @@ const createCtxMenuState = () => {
          updated(el, { value }) {
             elMap.set(el, value)
          },
-         unmounted(el) {
-            elMap.delete(el)
-            if (elMap.size) return
-            for (let id = 0; id < ctxMemuItems.length; id++) {
-               const item = ctxMemuItems[id];
-               if (itemIdList.has(item.id)) ctxMemuItems.splice(id--, 1)
-            }
-         }
+         // unmounted(el) {
+         //    elMap.delete(el)
+         //    if (elMap.size) return
+         //    for (let id = 0; id < ctxMemuItems.length; id++) {
+         //       const item = ctxMemuItems[id];
+         //       if (itemIdList.has(item.id)) ctxMemuItems.splice(id--, 1)
+         //    }
+         // }
       }
    }
 

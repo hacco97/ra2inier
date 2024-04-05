@@ -18,7 +18,7 @@ const store = useProjectStore()
 
 const props = defineProps<{ param: PanelParam }>()
 let param: PanelParam = props.param
-const state = shallowReactive(new EditorState(param.data))
+const state = shallowReactive(new EditorState(param.init))
 const changed = ref(false)
 
 watch(() => props.param, () => {

@@ -24,10 +24,10 @@ function openScopePanel(scope: ScopeRo) {
    const p = new PanelParam({
       label: scope.name,
       type: PanelType.ScopeEditor,
-      data: newOne,
+      init: newOne,
       readonly: isReadonly(scope)
    })
-   if (!isReadonly(scope)) p.on('save', onSave)
+   if (!isReadonly(scope)) p.on('saved', onSave)
    panel.addPanel(p)
 }
 

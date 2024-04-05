@@ -134,9 +134,11 @@ export function parsePackages(pkgsVo: Record<string, PackageVo>) {
  * 从vo对象创建一个ro对象
  */
 export function createProjectRo(vo: ProjectVo) {
-   const ro = new ProjectRo(vo.name)
-   ro.author = vo.author
+   const ro = new ProjectRo()
+   vo.isEmpty && (ro.isEmpty = vo.isEmpty)
    ro.packages = parsePackages(vo.packages)
-   ro.main = ro.packages[vo.main]
+   const main = ro.main = ro.packages[vo.main] || new PackageRo('')
+   ro.cache = vo.cache
+   ro.name = main.name
    return ro
 }

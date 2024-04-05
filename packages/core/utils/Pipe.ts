@@ -19,11 +19,10 @@ export class Pipe<A, R> {
    }
 
    comp<E>(f: Fc<E, A>) {
-      const tmp = new Pipe(this[PIPE][0])
-      for (let i = 1; i < this[PIPE].length; ++i) {
+      const tmp = new Pipe(f)
+      for (let i = 0; i < this[PIPE].length; ++i) {
          tmp[PIPE].push(this[PIPE][i])
       }
-      tmp[PIPE].unshift(f)
       return <Pipe<Awaited<E>, Awaited<R>>>tmp
    }
 
@@ -50,7 +49,6 @@ export class Pipe<A, R> {
             try {
                data = await f(data)
             } catch (error) {
-               console.error(error)
                return this[CATCH]?.(error)
             }
          }

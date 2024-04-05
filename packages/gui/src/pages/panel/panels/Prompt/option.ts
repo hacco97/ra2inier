@@ -58,7 +58,7 @@ function createOptions(param: WordValueTypeParam) {
          text: (param.optionRemarks?.[1]) ?? ''
       })
    } else if (param.type === WordValueType.enum) {
-      for (const p in param.optiontmp) {
+      for (const p of param.optiontmp || []) {
          newOne.push({
             id,
             value: p,

@@ -1,6 +1,6 @@
 import { exec, send } from '@/boot/apis';
 import { PanelParam, PanelType, usePanelState } from './panelList';
-import { openProjectFromBrowser, saveProject, useProjectStore } from '@/stores/projectStore';
+import { openProjectFromBrowser, saveProject, closeProject } from '@/stores/projectStore';
 import { defineStore } from 'pinia';
 
 interface ListItem {
@@ -18,8 +18,6 @@ interface SubItem {
 }
 
 const createMenuList = () => {
-
-   const store = useProjectStore()
    const panel = usePanelState()
    const menuList: ListItem[] = [
       {
@@ -33,14 +31,13 @@ const createMenuList = () => {
                   panel.addPanel(new PanelParam({
                      label: '新建项目',
                      type: PanelType.NewProject,
-                     data: 'NewProject'
+                     init: 'NewProject'
                   }))
                }
             },
             {
                id: 1,
                label: '打开项目',
-               component: 'FileBox',
                exec: openProjectFromBrowser,
             },
             {
@@ -63,10 +60,20 @@ const createMenuList = () => {
                   panel.addPanel(new PanelParam({
                      label: '项目设置',
                      type: PanelType.ProjectInfo,
-                     data: 'ProjectInfo'
+                     init: 'ProjectInfo'
                   }))
                }
             },
+            {
+               id: 6,
+               label: '',
+               component: 'Space'
+            },
+            {
+               id: 7,
+               label: '关闭项目',
+               exec: closeProject
+            }
          ]
       },
       {
@@ -150,7 +157,7 @@ const createMenuList = () => {
                   panel.addPanel(new PanelParam({
                      label: '设置',
                      type: PanelType.Setting,
-                     data: 'project-setting'
+                     init: 'project-setting'
                   }))
                }
             },
@@ -185,7 +192,7 @@ const createMenuList = () => {
                   panel.addPanel(new PanelParam({
                      type: PanelType.DEBUG,
                      label: 'DEBUG',
-                     data: 'debug-panel'
+                     init: 'debug-panel'
                   }))
                },
             },

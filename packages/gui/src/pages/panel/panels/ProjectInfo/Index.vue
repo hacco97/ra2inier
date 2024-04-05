@@ -1,17 +1,16 @@
 <script lang='ts' setup>
-import { reactive, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import openSvg from '@/asset/icons/openDir.svg?raw';
 import githubSvg from '@/asset/icons/github.svg?raw';
 import copySvg from '@/asset/icons/copy.svg?raw';
-import rightSvg from '@/asset/icons/right.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
 import submitSvg from '@/asset/icons/submit.svg?raw';
 import MapBox from '@/components/dirty/MapBox.vue';
 import ListView from '@/components/ListView.vue';
-import { LazyButton, PopupBox, FlexInput } from '@ra2inier/wc';
+import { LazyButton, FlexInput } from '@ra2inier/wc';
 import { FileLink } from '@/components/FileLink';
 import HeaderLayout from '../HeaderLayout.vue'
-import { ProjectInfo, ReferItem, useReferHelper } from './state';
+import { DetailType, ReferItem, createProjectInfo, useReferHelper } from './state';
 import { openDirectory } from '@/boot/apis';
 import { useDisabled } from '@/hooks/disabledFn'
 import { IItem } from '@/components/ListViewState';
@@ -20,8 +19,8 @@ import { useFolder } from '@/hooks/folder';
 
 defineOptions({ name: 'ProjectInfo' })
 const store = useProjectStore()
-const info = reactive(new ProjectInfo(store.project))
-watch(() => store.project, () => Object.assign(info, new ProjectInfo(store.project)))
+const info = createProjectInfo(store.project)
+watch(() => store.project, () => Object.assign(info, createProjectInfo(store.project)))
 
 const { localList, addRefer, getReferMap, deleteRefer } = useReferHelper(info)
 const newPath = ref('')
@@ -47,7 +46,10 @@ function onLocalSelect(item: IItem, order: number) {
 const [onFlushClick] = useDisabled(async () => {
    // 获取需要添加的包
    const map = getReferMap()
-   await store.loadPackage(map)
+   await store.updatePackage(map)
+   for (const r of info.references) {
+      r.detail = (r.key in store.packages) ? DetailType.loaded : DetailType.unloaded
+   }
 })
 
 async function onOpenClick() {
@@ -90,8 +92,8 @@ const { folded: isLocalFolded, vFolder } = useFolder()
       </template>
       <template #default>
          <li class="line"><span>项目名称：</span><span>{{ info.name }}</span></li>
-         <li class="line"><span>项目作者：</span><span>{{ info.author }}</span></li>
-         <li class="line"><span>目标环境：</span><span>{{ info.target }}</span></li>
+         <li class="line"><span>项目作者：</span><flex-input class="normal-rpanel" v-model.lazy="info.author" /></li>
+         <li class="line"><span>目标环境：</span><flex-input class="normal-rpanel" v-model.lazy="info.target" /></li>
          <ul>
             <ListView :list="info.references" :check-box="false" @delete="onReferDelete">
                <template #default>
@@ -171,6 +173,10 @@ $align: align-size(normal);
    li {
       padding: 0 $align;
       height: 1lh;
+
+      >*{
+         vertical-align: top;
+      }
    }
 
 
@@ -223,7 +229,7 @@ $align: align-size(normal);
 
 
    flex-input {
-      display: block;
+      display: inline-block;
       height: 1lh;
       min-width: 4em;
    }

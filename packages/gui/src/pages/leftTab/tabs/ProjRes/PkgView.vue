@@ -1,21 +1,18 @@
 <script lang='ts' setup>
-import addSvg from '@/asset/icons/add.svg?raw';
 import pkgSvg from '@/asset/icons/package.svg?raw';
 import groupSvg from '@/asset/icons/group.svg?raw';
 import ObjView from './ObjView.vue';
-import { PkgViewProp, createPkgViewState, useVFlod } from './pkgViewState';
-import { useGroupCtxmenu, usePkgviewCtxmenu } from './pkgViewState'
+import { PkgViewProp, createPkgViewState, useVFold } from './pkgViewState';
+import { useGroupCtxmenu, usePkgviewCtxmenu } from './pkgCtxmenu'
 import { FlexInput } from '@ra2inier/wc';
-import rightSvg from '@/asset/icons/right.svg?raw';
 import { useFolder } from '@/hooks/folder';
-
 
 const props = defineProps<PkgViewProp>()
 const pkgViewState = createPkgViewState(props)
-const { view, onAddClick, onObjectOpen, renameGroup } = pkgViewState
-const { getFolderStyle, getFoldedStyle, flip, isGroupFoldedMap } = useVFlod(pkgViewState)
-const { vGroupMenu, } = useGroupCtxmenu(pkgViewState)
-const vPkgviewMenu = usePkgviewCtxmenu(pkgViewState)
+const { view, onObjectOpen, renameGroup } = pkgViewState
+const { getFolderStyle, getFoldedStyle, flip, isGroupFoldedMap } = useVFold(pkgViewState)
+const vGroupMenu = props.isMain ? useGroupCtxmenu(pkgViewState) : {}
+const vPkgviewMenu = props.isMain ? usePkgviewCtxmenu(pkgViewState) : {}
 
 function onGroupNameChange(input: FlexInput, gkey: string) {
    renameGroup(gkey, input.value)
@@ -27,7 +24,7 @@ function onGroupNameBlur(input: FlexInput) {
    getSelection()?.removeAllRanges()
 }
 
-const { folded, vFolder } = useFolder()
+const { folded, vFolder } = useFolder(undefined, !props.isMain)
 </script>
 
 
@@ -55,7 +52,7 @@ const { folded, vFolder } = useFolder()
             <ol v-for="(object, key) of group" :key="key">
                <!-- 对象 -->
                <div v-if="!object.parent">
-                  <ObjView :object="object" :key="key" @open="onObjectOpen"></ObjView>
+                  <ObjView :object="object" :key="key" :readonly="!isMain" @open="onObjectOpen"></ObjView>
                </div>
             </ol>
          </ul>

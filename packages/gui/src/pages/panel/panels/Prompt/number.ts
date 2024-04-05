@@ -33,6 +33,14 @@ export function useInt(state: PromptState) {
       intInput.value!.text = e.value
    })
 
+   state.on('prev-' + PromptType.int, () => {
+      intInput.value?.add(1)
+   })
+
+   state.on('next-' + PromptType.int, () => {
+      intInput.value?.add(-1)
+   })
+
    return {
       getInt,
       setInt,

@@ -1,1 +1,0 @@
-{"id":1708260605062,"seed":1121754569142,"version":1708260605062,"name":"Laser","brief":"激光的颜色","default":"0,0,0","author":"","files":["art.ini"],"values":"color","valueParam":[{"type":"color","exp":"color()","repeat":1}],"scopes":["WeaponTypes"]}

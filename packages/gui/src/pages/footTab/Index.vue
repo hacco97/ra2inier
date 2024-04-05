@@ -18,14 +18,13 @@ defineOptions({
 
 defineEmits(['toggleTab'])
 
-const layout = useLayoutState()
+const { footTabSize, tryUnFocusFoottab } = useLayoutState()
 const foottab = useFoottabState()
 
 const draging = ref(<Readonly<FootTab>>foottab.footTabList[0])
 
 //选项卡开启与关闭
 function onTabClick(tab: FootTab) {
-   const { footTabSize } = layout
    if (foottab.selected.id === tab.id) {
       if (footTabSize.height <= 25) {
          footTabSize.height = 300
@@ -75,24 +74,24 @@ const onTabDrop = function (e: DragEvent, tab: FootTab) {
 
 
 function onUpClick() {
-   layout.footTabSize.max()
+   footTabSize.max()
 }
 
 function onDownClick() {
-   layout.footTabSize.min()
+   footTabSize.min()
 }
 
 const isFixSelected = ref(false)
 
 function onFocusout() {
-   layout.footTabSize.active = false
+   footTabSize.active = false
    if (isFixSelected.value) return
-   setTimeout(layout.tryUnFocusFoottab, 20)
+   setTimeout(tryUnFocusFoottab, 20)
 }
 
 // TODO: 待更新
 // const focusHandle = ref<HTMLElement>()
-// layout.footTabSize.on('resized', () => {
+// footTabSize.on('resized', () => {
 //    focusHandle.value?.focus()
 // })
 
@@ -104,7 +103,7 @@ onMounted(() => { mounted.value = true })
 
 <template>
    <div id="foottab" ref="focusHandle" :class="$style.foottab" @focusout="onFocusout"
-      @focusin="layout.footTabSize.active = true" tabindex="-1">
+      @focusin="footTabSize.active = true" tabindex="-1">
       <nav class="scrollx" :class="$theme['foottab-nav']" v-scrollx>
          <ul :class="$theme['foottab-nav-label']">
             <b></b>
@@ -122,8 +121,8 @@ onMounted(() => { mounted.value = true })
             <!-- 脚部tab工具按钮 -->
             <p v-svgicon="arrowUp" @click="onUpClick"></p>
             <p v-svgicon="arrowDown" @click="onDownClick"></p>
-            <q v-svgicon="minSvg" padding="15%" :selected="layout.footTabSize.canHidden"
-               @click="layout.footTabSize.canHidden = !layout.footTabSize.canHidden"></q>
+            <q v-svgicon="minSvg" padding="15%" :selected="footTabSize.canHidden"
+               @click="footTabSize.canHidden = !footTabSize.canHidden"></q>
             <q v-svgicon="fix" :selected="isFixSelected" @click="isFixSelected = !isFixSelected"></q>
             <span id="foottab-tools" :class="$style['foottab-tools']"></span>
          </ul>

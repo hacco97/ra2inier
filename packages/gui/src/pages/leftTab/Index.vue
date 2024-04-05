@@ -83,7 +83,7 @@ function onTabDragDrop(e: DragEvent, tab: LeftTab) {
          </ol>
          <section></section>
          <ol>
-            <li v-for=" star in lefttab.starList " :key="star.id" :class="$theme['lefttab-label']"
+            <li v-for=" star in lefttab.starList" :key="star.id" :class="$theme['lefttab-label']"
                class="lefttab-button">
                <a :href="star.url" :title="star.name" tabindex="-1">
                   <div v-svgicon="cllected" padding="15%"></div>

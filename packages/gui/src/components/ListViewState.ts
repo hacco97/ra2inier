@@ -11,13 +11,13 @@ export interface IItem {
 export class Item implements IItem {
    [s: string]: any
    id = ''
-   src: Partial<IItem> = {}
+   src: any = {}
    key = ''
    value = ''
    selected = false
    detail = ''
 
-   constructor(x: Partial<IItem>) {
+   constructor(x: Partial<IItem> | string) {
       if (typeof x === 'string') {
          this.value = x
       } else {
@@ -27,7 +27,7 @@ export class Item implements IItem {
          this.key = x.key || Math.random() + ''
       }
       this.src = x
-      this.id = '+' + Math.random() + x.key
+      this.id = '+' + Math.random() + (this.src.key || this.src)
    }
 }
 

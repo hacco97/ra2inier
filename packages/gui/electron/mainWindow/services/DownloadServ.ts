@@ -11,8 +11,6 @@ export class DownloadServ {
    @inject('app-config') declare appConfig: Config
    @inject('front-logger') declare private frontLogger: FrontLogger
 
-   demoUrl = 'https://github.com/ra2inier/debug-project/zip/refs/heads/main'
-
    /**
     * 传入一组Reference对象，下载这些包
     */
@@ -20,15 +18,14 @@ export class DownloadServ {
    async downloadRemotePackage(@param('data') refers: Reference[]) {
       refers = refers.filter(x => !!x.url)
       const ret: Reference[] = []
+      const dir = escapePath(this.appConfig.GLOBAL_PACKAGE_CACHE)
       for (const refer of refers) {
          const path = escapePath(this.appConfig.GLOBAL_PACKAGE_CACHE, refer.name || Math.random().toString())
          let tmp
-         try {
-            tmp = await this.api.downloadPackage(refer.url, path, (e) => {
-               console.log(e)
-               this.frontLogger.info(e.progress + '')
-            })
-         } catch (_) { }
+         tmp = await this.api.downloadPackage(refer.url, path, (e) => {
+            console.log(e)
+            this.frontLogger.info(e.progress + '')
+         })
          if (tmp) ret.push(refer)
       }
       return ret

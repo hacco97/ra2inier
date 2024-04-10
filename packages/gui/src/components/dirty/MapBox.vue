@@ -114,10 +114,6 @@ function onValBlur(e: Event, order: number) {
    s {
       @include plane-color(normal);
 
-      &:focus {
-         filter: brightness(1.3);
-      }
-
       &[disabled=true] {
          user-select: text;
          background-color: inherit;

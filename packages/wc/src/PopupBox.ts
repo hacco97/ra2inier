@@ -51,7 +51,7 @@ const styleSheet = css`
 `
 
 /**
- * 能够弹性伸缩的单行文本输入框
+ * 能够显示和隐藏气泡的box
  */
 export class PopupBox extends HTMLElement implements WebComponent {
 

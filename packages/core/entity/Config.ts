@@ -1,18 +1,8 @@
 /**
  * 程序前端的设置
  */
-export interface ClientConfig {
-   saveConfig(): void
-   setByKey(key: string, val: any): void
-   getClientConfig(): Record<string, string>
-   addProjectHistory(history: string): string
-   [x: string]: any
-}
-
-/**
- * 程序前端的设置
- */
 export class ClientConfig {
+   [x: string]: any
    /**
     * 当前的主题名称
     */
@@ -26,10 +16,6 @@ export class ClientConfig {
     */
    PROJECT_PATH: string = ''
    /**
-    * 项目的自动保存时间间隔
-    */
-   PROJECT_AUTO_SAVE_INTERVAL = 5 * 60 * 1000
-   /**
     * 在提示框被关闭时自动确认提示框的内容
     */
    PROMPT_SUBMIT_ON_CLOSE = false
@@ -38,22 +24,38 @@ export class ClientConfig {
     */
    OUTPUT_DIR = './out'
    /**
-    * 窗口大小，用于记录上次工作的窗口大小
-    */
-   readonly WINDOW_SIZE: string = ''
-   /**
     * 近期打开过的历史项目，最多保存8个
     */
    PROJECT_HISTORY: string[] = []
    /**
     * 默认的新建项目位置
     */
-   DEFAULT_PROJECT_DIR: string = ''
+   readonly DEFAULT_PROJECT_DIR: string = ''
+   /**
+    * 窗口大小，用于记录上次工作的窗口大小
+    */
+   readonly WINDOW_SIZE: string = ''
+   /**
+    * 项目的自动保存时间间隔
+    */
+   readonly PROJECT_AUTO_SAVE_INTERVAL = 5 * 60 * 1000
+   /**
+    * 客户端主题文件夹
+    */
+   readonly THEME_DIR: string = ''
 }
+
 
 /**
  * 程序前后端的设置
  */
+export interface Config {
+   saveConfig(): void
+   setByKey(key: string, val: any): void
+   getClientConfig(): Record<string, string>
+   addProjectHistory(history: string): string
+   [x: string]: any
+}
 export class Config extends ClientConfig {
    /**
     * 当前程序的启动位置

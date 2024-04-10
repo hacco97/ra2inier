@@ -27,6 +27,8 @@ export function useKeyMap(keymap: KeyMap, options?: KeymapOptions) {
       const el = <HTMLElement>e.target
       customOptions.stop && e.stopPropagation()
       if (!keymap) return
+
+      // 判断按键组合值
       const keys = [
          e.ctrlKey && 'ctrl',
          e.shiftKey && 'shift',
@@ -36,14 +38,15 @@ export function useKeyMap(keymap: KeyMap, options?: KeymapOptions) {
       const key = keys.join('+').toLowerCase()
       if (!keymap[key]) return
       const prevent = customOptions.prevent
+
+      // 调用相匹配的键位处理函数
       const tmp = keymap[key]
       if (tmp instanceof Array) {
          tmp.forEach(cb => {
             if (cb.call(el, e, vmData.get(el)) !== false)
                prevent && e.preventDefault()
          })
-      }
-      else {
+      } else {
          if (tmp.call(el, e, vmData.get(el)) !== false)
             prevent && e.preventDefault()
       }

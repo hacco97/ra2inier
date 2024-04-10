@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, shallowReactive } from 'vue';
+import { Ref, computed, inject, ref, shallowReactive } from 'vue';
 import ListBox from '@/components/dirty/ListBox.vue';
 import MapBox from '@/components/dirty/MapBox.vue';
 import { useFocus } from '@/hooks/focus';
@@ -117,6 +117,8 @@ function onSubFoldClick(entry: EntryRo) {
 
 // 分栏
 const columCount = computed(() => ({ columns: state.columnCount }))
+
+const detailFolded = inject<Ref<boolean>>('detail-folded')!
 </script>
 
 <template>
@@ -133,7 +135,7 @@ const columCount = computed(() => ({ columns: state.columnCount }))
             </nav>
 
             <!-- 对象info -->
-            <h2>
+            <h2 v-show="!detailFolded">
                <p>附属对象：</p>
                <ListBox :list="object.inline" :disabled="false"></ListBox>
                <p>局部变量：</p>

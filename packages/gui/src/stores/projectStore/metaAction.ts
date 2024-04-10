@@ -1,5 +1,5 @@
 import { exec, useLogger, work } from '@/boot/apis';
-import { MapperRo, MarkdownRo, ScopeRo, WordRo, WordValidity, useMemoAsync } from '@ra2inier/core';
+import { MapperRo, MarkdownRo, ScopeRo, WordRo, WordValidity, useMemo } from '@ra2inier/core';
 
 import { ProjectBoot, createEmpty } from './boot';
 
@@ -41,7 +41,7 @@ export function createMetaAction(boot: ProjectBoot) {
    }
 
    const NONE_VALIDITY = new WordValidity
-   const [validateWord, setCache] = useMemoAsync(_validateWord, x => x, 3500)
+   const [validateWord, setCache] = useMemo(_validateWord, x => x, 3500)
    async function _validateWord(wordKey: string, values: string[]): Promise<WordValidity> {
       const word = main.value.dictionary[wordKey]
       if (!word) return setCache(wordKey, NONE_VALIDITY)

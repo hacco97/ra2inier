@@ -39,6 +39,7 @@ export class ProjectDao {
       const projectInfoFile = escapePath(projectPath, this.config.PROJECT_INFO_FILE)
       const project = fromRaw(readJson(projectInfoFile), Project)
       // TODO: 添加更多属性
+
       return project
    }
 
@@ -46,18 +47,28 @@ export class ProjectDao {
     * 读取项目的所有资源文件，创建一个Vo对象
     */
    resolveProjectVo(project: Project, projectPath: string): ProjectVo {
-      const projectVo: ProjectVo = enhance(project, new EMPTY_PROJECTVO)
+      const projectVo: ProjectVo = { ...(new EMPTY_PROJECTVO), ...project }
       // 读取并装载每个package的属性
       let main = this.packageDao.readPackageByPath(projectPath)
       if (!main) main = enhance<PackageVo>(new Package, new EMPTY_PACKAGEVO)
       projectVo.main = UniqueObject.getKey(main)
       projectVo.path = projectPath
 
+      // 读取除了主包以外的reference包中的数据
       const refers = this.resolveReferences(main)
       for (const referkey in refers) {
          const pkg = this.packageDao.readPackageByPath(refers[referkey].path)
          pkg && (projectVo.packages[referkey] = pkg)
       }
+
+      // 尝试在Project的referPathMap中提前读取一些引用的包
+      for (const key in project.referPathMap) {
+         if (!(key in main.references)) continue
+         const pkg = this.packageDao.readPackageByPath(project.referPathMap[key])
+         pkg && (projectVo.packages[key] = pkg)
+      }
+
+      // 通过这种方式创建的VO对象需要明确指明isEmpty为false
       projectVo.isEmpty = false
       return projectVo
    }

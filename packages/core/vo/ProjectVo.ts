@@ -26,6 +26,7 @@ export interface ProjectVo extends Project {
 
 export class EMPTY_PROJECTVO implements Partial<ProjectVo> {
    buildConfig = {}
+   referPathMap = {}
 
    cache = {}
    path = ''

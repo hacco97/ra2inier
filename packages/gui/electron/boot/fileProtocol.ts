@@ -26,6 +26,7 @@ app.whenReady().then(() => import('node:url')).then(nodeUrl => {
       let url = req.url.slice(config.FILE_PROTOCOL.length + 3)
       if (url.match(diskCode)) url = escapePath(url.replace(diskCode, url[0].toUpperCase() + ':/'))
       else url = escapePath(config.CWD, url)
+      url = decodeURI(url)
       // 拒绝访问在本程序根目录文件夹之外的文件
       if (!url.startsWith(config.CWD)) {
          return new Response('access denied', { status: 403 })

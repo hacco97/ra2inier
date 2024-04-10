@@ -1,6 +1,6 @@
 
 import { Logger, Pipe } from '@ra2inier/core';
-export { openDirectory } from './file'
+export * from './file'
 export { work, listenWorker } from './worker'
 export const on = window.eApi.on
 export const send = window.eApi.send

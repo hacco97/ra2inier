@@ -7,7 +7,7 @@ export type CtxItem = {
    openHandle: () => void
 }
 
-export const useObjectCtxmenu = useSingleton(() => {
+export const useObjectCtxmenu = useMemo((mainKey: string) => {
    const ctxmenu = useCtxMenuState()
    return ctxmenu.useCtxMenu<CtxItem>({
       '编辑对象'(item) {
@@ -22,4 +22,4 @@ export const useObjectCtxmenu = useSingleton(() => {
       },
       '克隆对象'() { },
    })
-})
+})[0]

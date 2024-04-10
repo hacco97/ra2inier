@@ -1,4 +1,4 @@
-import { round } from 'lodash';
+import { round } from 'lodash-es';
 
 import { styleSheet } from './FlexInput';
 import { html, WebComponent } from './WebComponent';

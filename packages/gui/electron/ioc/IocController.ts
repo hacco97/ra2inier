@@ -84,7 +84,7 @@ export function createIocController() {
    /**
      * 将该类的一个方法注册成为一个测试方法，必须在controller类中有效
      */
-   function test(key: string, options: RequestOptions[] = []) {
+   function test(key: string, options: RequestOptions[] = [{}]) {
       return (target: object, fkey: string, descriptor: any): any => {
          const info: Info = mapping(key)(target, fkey, descriptor)
          info.tests[key] = options

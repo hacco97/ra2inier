@@ -67,20 +67,25 @@ const createCtxMenuState = () => {
        */
       const elMap = new Map<HTMLElement, any>()
       let target: HTMLElement
-      forIn(ctxMenuMap, (key, cb) => {
-         if (typeof cb !== 'function') return
-         const tmp = new CtxMemuItem(key, () => {
-            cb(elMap.get(target), target)
+      let deleted = false
+      function create() {
+         forIn(ctxMenuMap, (key, cb) => {
+            if (typeof cb !== 'function') return
+            const tmp = new CtxMemuItem(key, () => {
+               cb(elMap.get(target), target)
+            })
+            itemIdList.add(tmp.id)
+            ctxMemuItems.push(tmp)
+            itemList.push(tmp)
          })
-         itemIdList.add(tmp.id)
-         ctxMemuItems.push(tmp)
-         itemList.push(tmp)
-      })
-
+         deleted = false
+      }
+      create()
 
       return <Directive<HTMLElement, any>>{
          mounted(el, { value }) {
             elMap.set(el, value)
+            if (deleted) create()
             el.addEventListener('contextmenu', (ev) => {
                for (const item of itemList) {
                   item.enabled = true
@@ -92,14 +97,17 @@ const createCtxMenuState = () => {
          updated(el, { value }) {
             elMap.set(el, value)
          },
-         // unmounted(el) {
-         //    elMap.delete(el)
-         //    if (elMap.size) return
-         //    for (let id = 0; id < ctxMemuItems.length; id++) {
-         //       const item = ctxMemuItems[id];
-         //       if (itemIdList.has(item.id)) ctxMemuItems.splice(id--, 1)
-         //    }
-         // }
+         unmounted(el) {
+            elMap.delete(el)
+            if (elMap.size) return
+            deleted = true
+            for (let id = 0; id < ctxMemuItems.length; id++) {
+               const item = ctxMemuItems[id];
+               if (itemIdList.has(item.id)) ctxMemuItems.splice(id--, 1)
+            }
+            itemList.splice(0)
+            itemIdList.clear()
+         }
       }
    }
 

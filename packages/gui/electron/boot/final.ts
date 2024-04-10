@@ -28,7 +28,8 @@ process.on('uncaughtException', async (e) => {
    finalCallback()
    const msg = '请联系开发者或尝试更新版本\n' + e.message + '\n' + e.stack
    setTimeout(() => dialog.showErrorBox('程序出bug啦', msg))
-   app.quit()
+   // app.quit()
+   return false
 })
 
 
@@ -37,5 +38,6 @@ process.on('unhandledRejection', async (e) => {
    finalCallback()
    const msg = '请联系开发者或尝试更新版本\n' + e
    setTimeout(() => dialog.showErrorBox('程序出bug啦', msg))
-   app.quit()
+   // app.quit()
+   return false
 })

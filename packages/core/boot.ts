@@ -139,6 +139,8 @@ export function createProjectRo(vo: ProjectVo) {
    ro.packages = parsePackages(vo.packages)
    const main = ro.main = ro.packages[vo.main] || new PackageRo('')
    ro.cache = vo.cache
+   ro.buildConfig = vo.buildConfig || {}
+   ro.referPathMap = vo.referPathMap || {}
    ro.name = main.name
    return ro
 }

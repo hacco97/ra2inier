@@ -1,17 +1,20 @@
 <script lang='ts' setup>
-import { computed } from 'vue';
 import closeSvg from '@/asset/icons/close.svg?raw';
 import { PopupBox } from '@ra2inier/wc';
 import { EmitType, IItem, Item } from './ListViewState';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
    list: { type: Array<Partial<IItem>>, required: true },
    deleteButton: { type: Boolean, default: true },
    checkBox: { type: Boolean, default: true },
    selectable: { type: Boolean, default: true },
+   singleSelect: { type: Boolean, default: false }
 })
 
-const data = computed(() => props.list.map(x => new Item(x)))
+const _f = (x: any) => new Item(x)
+const data = ref(props.list.map(_f))
+watch(() => props.list, () => data.value = props.list.map(_f))
 
 defineExpose({
    get value(): Partial<IItem>[] {
@@ -22,15 +25,17 @@ defineExpose({
    }
 })
 
+function onSelectChange(...a: EmitType) {
+   emit('select', ...a)
+   if (!props.singleSelect) return
+   data.value.forEach(el => el.selected = false);
+   a[0].selected = true
+}
+
 const emit = defineEmits<{
    select: EmitType,
    delete: EmitType
 }>()
-
-
-function onDeleteClick(item: Item, order: number) {
-   emit('delete', item, order)
-}
 </script>
 
 
@@ -41,8 +46,9 @@ function onDeleteClick(item: Item, order: number) {
       </header>
       <section>
          <li v-for="(item, order) in data" class="reactive-h">
-            <input v-if="checkBox" type="checkbox" class="normal-button" :id="item.id" v-model="item.selected"
-               @change="emit('select', item, order)" :disabled="!selectable" :selected="item.selected">
+            <input v-if="checkBox" tabindex="-1" type="checkbox" class="normal-button" :id="item.id"
+               v-model="item.selected" @change="onSelectChange(item, order)" :disabled="!selectable"
+               :selected="item.selected">
             <popup-box>
                <label :for="item.id">
                   <span>{{ item.value }}</span>
@@ -53,7 +59,7 @@ function onDeleteClick(item: Item, order: number) {
                </pre>
             </popup-box>
             <i></i>
-            <s v-if="deleteButton" @click="onDeleteClick(item, order)" v-svgicon="closeSvg" class="normal-button"></s>
+            <s v-if="deleteButton" @click="emit('delete', item, order)" v-svgicon="closeSvg" class="normal-button"></s>
          </li>
       </section>
       <footer>
@@ -87,6 +93,9 @@ function onDeleteClick(item: Item, order: number) {
    }
 
    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       position: relative;
       z-index: 1;
    }
@@ -125,6 +134,10 @@ function onDeleteClick(item: Item, order: number) {
       content: '';
    }
 
+   input[selected=true] {
+      filter: hue-rotate(30deg);
+   }
+
    input,
    label {
       margin-right: align-size(normal);
@@ -138,7 +151,6 @@ function onDeleteClick(item: Item, order: number) {
    }
 
    popup-box {
-
       text-align: left;
    }
 

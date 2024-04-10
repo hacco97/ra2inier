@@ -8,8 +8,9 @@ import { FlexInput, LazyButton } from '@ra2inier/wc';
 import HeaderLayout from './HeaderLayout.vue';
 import ReferView from './ReferView.vue';
 import { openDirectory } from '@/boot/file';
-import { newProject } from '@/stores/projectStore';
+import { ProjectInfo, newProject } from '@/stores/projectStore';
 import { PanelParam } from '@/states/panelList';
+import { useReferViewState } from './ReferViewState';
 
 const { config } = useConfigStore()
 const props = defineProps<{ param: PanelParam }>()
@@ -34,9 +35,18 @@ async function onOpenClick() {
 
 
 function onAddClick() {
-   newProject({ path: targetPath.value, name: name.value })
+   const info = new ProjectInfo
+   info.name = name.value
 
+   newProject({ path: targetPath.value, info: new ProjectInfo() })
+   console.log(referList.value?.value)
 }
+
+const referState = useReferViewState([])
+const referList = ref<InstanceType<typeof ReferView>>()
+
+
+
 </script>
 
 
@@ -73,8 +83,8 @@ function onAddClick() {
                <div><flex-input class="normal-rpanel" v-model="targetPath" :placeholder="defaultPath"></flex-input>
                </div>
             </li>
-            <li>
-               <ReferView />
+            <li style="width: 400px; min-width: fit-content;">
+               <ReferView ref="referList" :state="referState" :folded="false" />
             </li>
          </main>
       </template>

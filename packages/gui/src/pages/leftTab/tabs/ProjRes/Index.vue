@@ -47,7 +47,7 @@ function onNewClick() {
                <!-- 上半 -->
                <p class="scroll">
                   <Search placeholder="搜索对象"></Search>
-                  <PkgView :pkg="store.main" :isMain="true"></PkgView>
+                  <PkgView :key="store.mainKey" :pkg="store.main" :isMain="true"></PkgView>
                </p>
                <!-- 拖动框 -->
                <legend>

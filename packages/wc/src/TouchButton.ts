@@ -25,7 +25,7 @@ const styleSheet = css`
 `
 
 /**
- * 限流按钮
+ * 可以通过长按多次触发touch事件的按钮
  */
 export class TouchButton extends HTMLElement implements WebComponent {
    delay = 400

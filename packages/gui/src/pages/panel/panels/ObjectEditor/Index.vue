@@ -1,7 +1,8 @@
 <script lang='ts' setup>
-import { ref, shallowReactive, watch } from 'vue';
+import { provide, ref, shallowReactive, watch } from 'vue';
 import checkSvg from '@/asset/icons/check.svg?raw';
 import columnSvg from '@/asset/icons/column.svg?raw';
+import rightSvg from '@/asset/icons/right.svg?raw';
 import delSvg from '@/asset/icons/delete.svg?raw';
 import saveSvg from '@/asset/icons/save.svg?raw';
 import { PanelParam } from '@/states/panelList';
@@ -11,6 +12,7 @@ import EditorView from './EditorView.vue';
 import { EditorState } from './EditorState';
 import { useProjectStore } from '@/stores/projectStore';
 import { useQueryWord } from './hooks'
+import { useFolder } from '@/hooks/folder';
 
 defineOptions({ name: 'ObjectEditor' })
 const store = useProjectStore()
@@ -48,6 +50,8 @@ function onCheckClick() {
 
 }
 const labelHelper = ref<HTMLElement>()
+const { folded: detailFolded, vFolder } = useFolder(undefined, true)
+provide('detail-folded', detailFolded)
 </script>
 
 
@@ -78,6 +82,7 @@ const labelHelper = ref<HTMLElement>()
                      <lazy-button @click="onCheckClick">
                         <s title="检查(Ctrl + A)" v-svgicon="checkSvg" class="fore-button"></s>
                      </lazy-button>
+                     <s title="详情" v-folder padding="15%" v-svgicon="rightSvg" class="fore-button"></s>
                      <s title="分栏" padding="15%" v-svgicon="columnSvg" class="fore-button" :column="state.columnCount"
                         :class="$style.column" @click="onColumnClick"></s>
                      <em></em>

@@ -32,7 +32,7 @@ app.whenReady().then(() => {
    }
 })
 
-// 每6分钟自动存储一下，配置文件
+// 每5分钟自动存储一下，配置文件
 setInterval(saveConfig, config.CONFIG_AUTOSAVE_INTERVAL)
 
 // 在程序结束的时候保存配置文件

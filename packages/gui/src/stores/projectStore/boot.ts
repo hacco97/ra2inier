@@ -77,7 +77,7 @@ export function createProject(projectVo: ProjectVo) {
       const parsed = parsePackages(pkgs)
       forIn(parsed, (key, pkg) => {
          setPackage(key, pkg)
-         setReference(key, new Reference(pkg))
+         setReference(key, Reference.of(pkg))
       })
    }
 

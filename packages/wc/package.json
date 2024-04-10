@@ -10,8 +10,8 @@
    "keywords": [],
    "author": "",
    "devDependencies": {
-      "@types/lodash": "^4.14.202",
-      "lodash": "^4.17.21",
-      "vite": "^5.0.12"
+      "@types/lodash-es": "^4.17.12",
+      "lodash-es": "^4.17.21",
+      "vite": "^5.2.8"
    }
 }

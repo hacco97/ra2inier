@@ -5,7 +5,9 @@ import.meta.glob('@/css/global/**/*', { eager: true })
 import.meta.glob('@/css/classes/**/*', { eager: true })
 import '@/components/FileLink'
 import { onMounted } from 'vue';
+import { useThemeState } from './states/theme';
 
+useThemeState()
 onMounted(() => {
    document.body.addEventListener('contextmenu', (ev) => {
       ev.stopPropagation()
@@ -28,6 +30,7 @@ onMounted(() => {
    -webkit-user-select: none;
    -webkit-font-smoothing: antialiased;
    @include app-panel();
+   @include font-family(normal);
 
    *::selection {
       @include selection();

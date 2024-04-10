@@ -1,5 +1,5 @@
 import { Package, PackageVo, Project, Reference, fromRaw, } from '@ra2inier/core';
-import { exec, useLogger } from '@/boot/apis';
+import { downloadPackage, exec, useLogger } from '@/boot/apis';
 import { createEmpty, ProjectBoot } from './boot';
 
 
@@ -31,21 +31,10 @@ export function createProjectAction(boot: ProjectBoot) {
       else option.references = references
       const { status, data } = await exec<Record<string, PackageVo>>('project/load-package', option)
       if (!status) return void logger.warn('加载包出错', data) || {}
-      mergePackages(data)
+      await mergePackages(data)
       return data
    }
 
-
-   /**
-    * 下载远程包，下载的时候会检查是否存在url属性如果不存在
-    */
-   async function downloadPackage(refers: Reference[]) {
-      const tmp = refers.filter(x => !!x.url)
-      if (!tmp.length) return []
-      const { status, data } = await exec('download/remote-package', { data: tmp, timeout: 999_999_999_999 })
-      if (!status) return void logger.warn('下载包失败') || []
-      return <Reference[]>data
-   }
 
    /**
     * 给定一个引用的集合，对该集合中的包进行加载
@@ -74,7 +63,6 @@ export function createProjectAction(boot: ProjectBoot) {
       saveProjectInfo,
       loadLocalPackage,
       updatePackage,
-      downloadPackage
    }
 }
 

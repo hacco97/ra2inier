@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 import { WordValueType, WordValueTypeParam } from '@ra2inier/core/boot';
 

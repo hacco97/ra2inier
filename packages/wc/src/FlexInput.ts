@@ -1,6 +1,5 @@
 import { css, html, WebComponent } from './WebComponent';
 
-;
 
 export const styleSheet = css`
    :host {
@@ -56,6 +55,7 @@ export class FlexInput extends HTMLElement implements WebComponent {
    set value(val: string) {
       this.#input.value = val
       this.#span.textContent = val
+      this.checkPlaceholder()
    }
 
    set disabled(val: boolean) {

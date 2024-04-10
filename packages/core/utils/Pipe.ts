@@ -1,7 +1,7 @@
 const PIPE = Symbol()
 const VALUE = Symbol()
 const CATCH = Symbol()
-export type Fc<A, R> = (arg: A) => R
+export type Fc<A, R> = (arg: A, ctx?: Record<string, any>) => R
 
 /**
  * 异步Pipe函子
@@ -45,9 +45,10 @@ export class Pipe<A, R> {
       // @ts-ignore
       if (!this[VALUE]) this[VALUE] = async (data: A) => {
          data = await data
+         let ctx = {}
          for (const f of this[PIPE]) {
             try {
-               data = await f(data)
+               data = await f(data, ctx)
             } catch (error) {
                return this[CATCH]?.(error)
             }

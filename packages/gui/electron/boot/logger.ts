@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-import { date } from '@ra2inier/core';
+import { date, dateTime } from '@ra2inier/core';
 
 import config from './config';
 
@@ -10,8 +10,11 @@ import config from './config';
 export function useLogger(sender: string) {
 
    return function (e: any) {
-      const stack = e.stack ? '\n' + e.stack : ''
-      fs.appendFile(`${config.LOG_FILE_DIR}/${date()}.log`,
-         `${date()} from ${sender}\n${e}${stack}\n\n`, { encoding: 'utf-8' }, () => { })
+      const tmp: any[] = []
+      tmp.push(`from: ${sender} [${dateTime()}]`)
+      tmp.push(e.command)
+      tmp.push(e.stack || e.message || e)
+      const msg = tmp.filter(x => !!x).join('\n') + '\n\n'
+      fs.appendFileSync(`${config.LOG_FILE_DIR}/${date()}.log`, msg, 'utf-8')
    }
 }

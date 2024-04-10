@@ -25,7 +25,7 @@ onMounted(() => {
       <s v-svgicon="closeSvg" class="fore-button" @click="layout.closeMask"></s>
    </div>
    <!-- <li :class="$style.radius" :style="wavePosition"><span></span></li> -->
-   <ul id="contextMenu" v-ctxmenu :class="[$style['context-menu'], $theme['context-menu']]" class="scrollx normal-panel"
+   <ul id="ctxmenu" v-ctxmenu :class="[$style['context-menu'], $theme['context-menu']]" class="scrollx normal-panel"
       v-show="ctxmenu.isCtxMenuShowed" :style="ctxmenu.ctxMenuPostion">
       <li v-for="item in ctxmenu.ctxMemuItems" @click="item.callback" v-show="item.enabled"
          class="fore-panel reactive-hc">

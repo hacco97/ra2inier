@@ -1,29 +1,41 @@
 <script lang='ts' setup>
-import { Directive, ref } from 'vue';
+import { Directive, computed, ref, watch } from 'vue';
 
 import { useKeyMap } from '@/hooks/keymap';
 import { FlexInput } from '@ra2inier/wc';
+import { useFolder } from '@/hooks/folder';
 
 const props = defineProps({
-   list: { type: Array<any>, default: [] },
-   modelValue: { type: String, default: '' },
-   input: { type: Boolean, default: true },
+   alias: { type: Array<string>, default: [] },
+   values: { type: Array<string>, required: true },
+   modelValue: { default: '' },
+   input: { type: Boolean, default: false },
+   default: { type: String, default: '?' }
 })
 
-let cursor = ref(0)
+const cursor = ref(-1)
+watch(() => props.modelValue, () => {
+   const vs = props.values, as = props.alias, mv = props.modelValue
+   cursor.value = -1
+   for (let i = 0; i < vs.length; ++i) {
+      if (vs[i] === mv || as[i] === mv) {
+         cursor.value = i; break
+      }
+   }
+}, { immediate: true })
+const cursorValue = computed(() => props.alias[cursor.value] || props.values[cursor.value] || props.default)
 const emit = defineEmits(['update:model-value'])
-function submit(id?: number) {
-   id || (id = cursor.value)
-   emit('update:model-value', props.list[id])
+function submitById(id: number) {
+   emit('update:model-value', props.values[id])
 }
 
 function onInputChange(e: Event) {
-   const ret = (<FlexInput>e.target).value
-   let index = 0
-   for (; index < props.list.length; index++) {
-      const el = props.list[index];
-      if (el === ret) {
-         emit('update:model-value', ret)
+   const newValue = (<FlexInput>e.target).value
+   const len = props.values.length
+   cursor.value = -1
+   for (var index = 0; index < len; index++) {
+      if (props.values[index] === newValue) {
+         submitById(index)
          break
       }
    }
@@ -33,31 +45,39 @@ function onInputChange(e: Event) {
 const vFocus: Directive<HTMLElement> = { mounted(el) { el.focus() } }
 
 function onItemClick(id: number) {
-   submit(id)
+   submitById(id)
    cursor.value = id
+   folded.value = true
 }
 const vKeymap = useKeyMap({
    arrowup() {
-      cursor.value = (cursor.value - 1 + props.list.length) % props.list.length
-      submit(cursor.value)
+      cursor.value = (cursor.value - 1 + props.values.length) % props.values.length
+      submitById(cursor.value)
    },
    arrowdown() {
-      cursor.value = (cursor.value + 1) % props.list.length
-      submit(cursor.value)
+      cursor.value = (cursor.value + 1) % props.values.length
+      submitById(cursor.value)
    },
-})
+   enter() {
+      folded.value = true
+   }
+}, { prevent: true })
+
+const { folded, vFolder } = useFolder()
 </script>
 
 
 <template>
-   <div :class="$style.enumbox" tabindex="-1" v-focus v-keymap>
-      <flex-input :value="modelValue" @change="onInputChange" :disabled="!input"></flex-input>
-      <ol v-show="list.length > 0" class="scroll">
-         <ul>
-            <li v-for="(item, order) in list" :selected="cursor === order" @click="onItemClick(order)" :key="order">
-               {{ item }}
-            </li>
-         </ul>
+   <div :class="[$style.enumbox, $theme.enumbox]" v-focus v-keymap @focusout="folded = true">
+      <s v-folder>&gt;</s>
+      <flex-input v-if="input" class="normal-input" :value="cursorValue" @click="folded = !folded"
+         @change="onInputChange" />
+      <span v-else class="normal-input" @click="folded = !folded">{{ cursorValue }}</span>
+      <ol v-show="values.length > 0 && !folded" class="normal-rpanel scroll">
+         <li v-for="(item, order) in values" class="reactive-hcs" :selected="cursor === order"
+            @click="onItemClick(order)" :key="order">
+            {{ alias[order] || item }}
+         </li>
       </ol>
    </div>
 </template>
@@ -71,30 +91,31 @@ const vKeymap = useKeyMap({
 
    ol {
       position: absolute;
+      z-index: 999;
       top: 100%;
       height: fit-content;
-      min-height: 10em;
+      max-height: 400px;
       min-width: 8em;
-      padding: align-size(large) 0;
-
-      background-color: aqua;
+      padding: align-size(normal) 0;
    }
 
-   ul {
-      background-color: red;
+   span {
+      display: inline-block;
+      height: 100%;
+      text-align: center;
    }
 
    li {
-      padding: align-size(tiny) align-size(large);
+      padding: 0 align-size(normal);
+   }
 
-      &:hover {
-         background-color: var(--color-bg-3);
-         filter: brightness(1.25);
-      }
 
-      &[selected=true] {
-         background-color: var(--color-background-highlight);
-      }
+}
+</style>
+<style module="$theme" lang="scss">
+.enumbox {
+   li {
+      background-color: inherit;
    }
 }
 </style>

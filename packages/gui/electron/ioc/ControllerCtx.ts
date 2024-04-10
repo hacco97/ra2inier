@@ -72,24 +72,24 @@ export class ControllerCtx {
 
    // 调用服务处理函数controller
    async test(options: Record<string, any>) {
-      if (!this.isTest) return false
+      if (!this.isTest) return []
       const testResult: any[] = await []
       for (const test of this.info.tests[this.fKey]) {
-         const r = {
+         const r: Record<string, any> = {
             status: true,
             res: undefined,
             options: test
          }
          testResult.push(r)
-         this.call({
-            ...options,
-            ...test
-         }).then((res) => {
-            r.res = res
-         }).catch((reason) => {
+         try {
+            r.res = await this.call({
+               ...options,
+               ...test
+            })
+         } catch (error: any) {
             r.status = false
-            r.res = reason
-         })
+            r.res = error.stack || error
+         }
       }
       return testResult
    }

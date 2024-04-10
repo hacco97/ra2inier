@@ -1,7 +1,6 @@
 import { controller, inject, param, test } from "~/mainWindow/ioc.config";
 import { MarkdownDao } from "../daos/MarkdownDao";
 
-
 @controller('test::markdown')
 export class Test {
    @inject('markdown-dao') declare markdownDao: MarkdownDao

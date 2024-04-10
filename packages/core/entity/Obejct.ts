@@ -62,11 +62,20 @@ export class UniqueObject implements IUniqueObject {
     * 对外有重名时，使用全名可以加以区分
     */
    get fullname() {
-      return `${this.name}(${this.hash})`
+      return `${this.name}.i${this.hash}.v${this.version}`
    }
 
    static getKey(object: UniqueObject) {
       return `${object.id}!${object.seed}`
+   }
+
+   static getFullname(object:UniqueObject){
+      return `${object.name}.i${object.hash}.v${object.version}`
+   }
+
+   static getVString(version: number) {
+      const d = new Date(version)
+      return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
    }
 }
 

@@ -36,9 +36,12 @@ export function useIocControllers(windowName: string): IocContainerInfo {
    return containerMap.get(window)!
 }
 
+
 const CHANNEL_1 = 'establish-renderer-port'
 const CHANNEL_2 = 'establish-worker-port'
-
+/**
+ * 为窗口绑定controller
+ */
 function attachController(window: BrowserWindow, iocController: IocContainerInfo) {
    const container = iocController.container
    // 为容器绑定一些初始对象
@@ -55,42 +58,43 @@ function attachController(window: BrowserWindow, iocController: IocContainerInfo
    createPortConnection(window, iocController, CHANNEL_2)
 }
 
-function parseCommand(command: string) {
-   let [cKey, fKey, pathVar] = command.split('/').map((val) => val ? val.trim() : '')
-   return {
-      cKey,
-      fKey,
-      pathVar
-   }
-}
 
+/**
+ * 建立一个连接通道
+ */
 function createPortConnection(window: BrowserWindow, iocController: IocContainerInfo, channel: string) {
    let port: MessagePortMain
-
    function initPort() {
       const { port1, port2 } = new MessageChannelMain
       window.webContents.postMessage(channel + '-response', null, [port2])
       port = port1
-      port1.addListener('message', (ev) => {
-         const { id, command, options } = ev.data
-         handler(id, command, options)
-      })
+      port1.addListener('message', listener)
       port1.start()
    }
    initPort()
-
    ipcMain.on(channel, initPort)
 
    function sendBack(id: number, res: any) {
-      if (!window) throw Error('ioc容器的window没有初始化')
+      if (!window) throw Error('ioc window没有初始化')
       port.postMessage({ id, res })
    }
 
-   function handler(id: number, command: string, options: RequestOptions) {
+   async function listener(ev: Electron.MessageEvent) {
+      const { id, command, options } = ev.data
+      try { sendBack(id, servSolve(await handle(command, options))) }
+      catch (e: any) {
+         const msg = `命令执行失败：${command}，${e.stack || e}`
+         sendBack(id, servReject(msg))
+         e.command = command
+         logger(e)
+      }
+   }
+
+   function handle(command: string, options: RequestOptions) {
       // 从ioc容器中获取相应的对象和handler
       const { cKey, fKey, pathVar } = parseCommand(command)
       const controller = iocController.createController(cKey, fKey)
-      if (!controller) return sendBack(id, servReject('没有该命令：' + command))
+      if (!controller) throw Error('没有该命令：' + command)
 
       //为服务注册参数和环境变量
       options = { ...options }
@@ -99,14 +103,17 @@ function createPortConnection(window: BrowserWindow, iocController: IocContainer
       options[PATH_VARIABLE] = pathVar
 
       // 调用处理函数
-      if (!controller.isTest) {
-         controller.call(options)
-            .then((res: any) => sendBack(id, servSolve(res)))
-            .catch((reason) => {
-               logger(reason)
-               sendBack(id, servReject('命令执行失败：' + command + '。' + reason.message))
-            })
-      }
-      else controller.test(options).then((res: any) => { sendBack(id, servSolve(res)) })
+      if (!controller.isTest) return controller.call(options)
+      else return controller.test(options)
+   }
+}
+
+const _f = (val: string) => val ? val.trim() : ''
+function parseCommand(command: string) {
+   let [cKey, fKey, pathVar] = command.split('/').map(_f)
+   return {
+      cKey,
+      fKey,
+      pathVar
    }
 }

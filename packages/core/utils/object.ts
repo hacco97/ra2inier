@@ -1,4 +1,4 @@
-import { cloneDeep, isArrayLikeObject } from 'lodash';
+import { cloneDeep, isArrayLikeObject } from 'lodash-es';
 
 type Constructor<E> = new (...args: any) => E
 

@@ -1,4 +1,4 @@
-import { showInFileFloder } from "@/boot/file"
+import { showInFileBroser } from "@/boot/file"
 import { WebComponent, css, html } from "@ra2inier/wc"
 
 const styleSheet = css`
@@ -23,7 +23,7 @@ export class FileLink extends HTMLElement implements WebComponent {
       `
       const a = shadow.querySelector('a')
       a?.addEventListener('click', () => {
-         if (this.path) showInFileFloder(this.path)
+         if (this.path) showInFileBroser(this.path)
       })
       shadow.adoptedStyleSheets.push(styleSheet)
    }

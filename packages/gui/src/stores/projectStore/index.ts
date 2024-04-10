@@ -9,8 +9,10 @@ import { ProjectVo } from '@ra2inier/core'
 import { globalEvent, makeExecMethod } from '@/boot/apis'
 import { useConfigStore } from '../config'
 import { useDisabled } from '@/hooks/disabledFn'
+import { ProjectInfo } from './Info'
 
 export * from '../build'
+export * from './Info'
 
 function parseProjectVo(vo: ProjectVo) {
    globalThis.projectVo = vo
@@ -53,7 +55,7 @@ export const saveProject = makeExecMethod<boolean>('project/save', '保存项目
  * 新建一个项目
  */
 export const newProject = makeExecMethod<ProjectVo>('project/new', '创建项目失败')
-   .comp((o: { path: string, name: string }) => o)
+   .comp((o: { path: string, info: ProjectInfo }) => o)
    .pipe((vo) => {
       if (vo) parseProjectVo(vo)  // 如果成功创建，就打开这个项目
    }).value

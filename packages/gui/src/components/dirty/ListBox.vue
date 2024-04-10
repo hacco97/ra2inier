@@ -94,10 +94,6 @@ const vNkeymap = useKeyMap({
       user-select: text;
       background-color: inherit;
    }
-
-   &:focus {
-      filter: brightness(1.3);
-   }
 }
 </style>
 

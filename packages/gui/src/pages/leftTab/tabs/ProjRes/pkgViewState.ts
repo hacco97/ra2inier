@@ -110,6 +110,7 @@ export function createPkgViewState(props: PkgViewProp) {
    }
 
    return {
+      key: store.mainKey + Math.random(),
       view,
       viewInfo,
       addNewObjectToView,

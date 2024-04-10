@@ -189,7 +189,8 @@
 .folder {
    display: inline-block;
    height: 1lh;
-   width: 1.5ch;
+   width: 1ch;
+   min-width: fit-content;
    @include font-family(code);
    transition: rotate 0.3s ease;
    @extend .text-center;

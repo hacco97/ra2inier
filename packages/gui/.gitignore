@@ -3,3 +3,5 @@ env/.env.local
 library
 resources
 out
+projects
+demo

@@ -1,7 +1,5 @@
 import { css, html, WebComponent } from './WebComponent';
 
-;
-
 const styleSheet = css`
    :host {
       display: inline-block;
@@ -80,24 +78,23 @@ export class FlexArea extends HTMLElement implements WebComponent {
       <p></p>
       </div>
       `
-
       const textarea = this.#textarea = shadow.querySelector('textarea')!
       const p = this.#p = shadow.querySelector('p')!
       const update = (e: Event) => {
          textarea.style.height = '1em'
          p.style.height = textarea.style.height = textarea.scrollHeight + 'px'
       }
-      textarea.addEventListener('paste', update)
-      textarea.addEventListener('input', update)
-      function insert(str: string) {
+      const insert = (str: string) => {
          const i = Math.min(textarea.selectionStart, textarea.selectionEnd)
          const j = Math.max(textarea.selectionStart, textarea.selectionEnd)
          textarea.setRangeText(str, i, j)
          textarea.setSelectionRange(i + str.length, i + str.length)
       }
-      const getTab = () => {
-         return (new Array(this.tabsize)).fill(' ').join('')
-      }
+      const getTab = () => (new Array(this.tabsize)).fill(' ').join('')
+
+
+      textarea.addEventListener('paste', update)
+      textarea.addEventListener('input', update)
 
       let prev = true
       textarea.addEventListener('keydown', (e: KeyboardEvent) => {
@@ -110,6 +107,8 @@ export class FlexArea extends HTMLElement implements WebComponent {
             insert('\n')
             e.preventDefault()
             update(e)
+         } else if (e.key === 's' && e.ctrlKey) {
+            this.dispatchEvent(new CustomEvent('change', { detail: this.#textarea.value }))
          }
       })
       textarea.addEventListener('change', () => {

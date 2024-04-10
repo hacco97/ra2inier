@@ -116,7 +116,7 @@ $z-index-panel: 1;
       z-index: $z-index-panel;
       height: calc(100% - $height);
       overflow: hidden;
-      transition: all 1.5s ease-in-out;
+      // transition: all 1.5s ease-in-out;
    }
 
    // 导航条

@@ -27,9 +27,6 @@ export class Package extends UniqueObject {
    link: string = ''
 }
 
-
-const LOADED = Symbol()
-
 export class Reference {
    /**
     * 依赖的包名
@@ -47,18 +44,12 @@ export class Reference {
     * 依赖的版本
     */
    version = 0;
-   /**
-    * 是否已经被加载，进前端使用
-    */
-   [LOADED] = false
-   get() { return this[LOADED] }
-   set(val: boolean) { this[LOADED] = val }
 
-   constructor(pkg: Package) {
-      this.name = pkg.name
-      this.key = pkg.key
-      this.url = pkg.link
-      this.version = pkg.version
+   constructor(r: Partial<Reference> = {}) {
+      this.name = r.name || ''
+      this.key = r.key || ""
+      this.url = r.url || ''
+      this.version = r.version || -1
    }
 
    static toJSON(r: Reference) {
@@ -75,4 +66,12 @@ export class Reference {
       }
    }
 
+   static of(pkg: Package) {
+      return new Reference({
+         name: pkg.name,
+         key: pkg.key,
+         url: pkg.link,
+         version: pkg.version
+      })
+   }
 }

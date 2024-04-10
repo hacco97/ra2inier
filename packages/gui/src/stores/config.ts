@@ -1,31 +1,44 @@
 import { reactive, readonly } from 'vue';
-import { exec } from '@/boot/apis';
-import { Config, useSingleton } from '@ra2inier/core';
+import { exec, useLogger } from '@/boot/apis';
+import { ClientConfig, Config, useSingleton } from '@ra2inier/core';
 import { defineStore } from 'pinia';
 
 // 全局配置信息的仓库
 const IS_DEV = import.meta.env.DEV;
 
 async function loadConfig() {
-   return exec<Config>('config/client').then((res) => {
-      if (res.status) return res.data
-      return <Config>{}
-   })
+   const { status, data } = await exec<Config>('config/client')
+   return status && data
+}
+
+export async function getThemeMap() {
+   const { status, data } = await exec<Record<string, string>>('config/themes')
+   return status ? data : {}
+}
+
+export async function saveTheme(name: string, text: string) {
+   const { status, data } = await exec<boolean>('config/save-theme', { name, text })
+   return (status && data)
 }
 
 /**
- * 真单例，配置文件仓库，一次应用程序只会加载一次
+ * 配置文件仓库，全局单例
  */
 export const useConfigStore = defineStore('config-store', useSingleton(() => {
-   const config: Config = reactive(new Config);
-   loadConfig().then((res) => {
-      Object.assign(config, res)
-   })
+   const config = reactive(new ClientConfig)
+   loadConfig().then((res) => Object.assign(config, res))
+   const logger = useLogger('config-store')
 
-   function setConfig(key: string, value: string) {
-      exec('config/set', { key, value }).then((res) => {
-         if (res.status) { config[key] = value }
-      })
+   async function getConfig(key: string) {
+      const { status, data } = await exec<string>('config/get/' + key)
+      return status ? data : ""
+   }
+
+   async function setConfig(key: keyof Config, value: string) {
+      const { status, data } = await exec<boolean>('config/set', { key, value })
+      if (status && data) config[key] = value
+      else logger.warn('配置保存失败')
+      return !!(status && data)
    }
 
    function $reset() {
@@ -39,6 +52,7 @@ export const useConfigStore = defineStore('config-store', useSingleton(() => {
       get IS_DEV() { return IS_DEV },
       config: readonly(config),
       set: setConfig,
+      get: getConfig,
       $reset
    }
 }))

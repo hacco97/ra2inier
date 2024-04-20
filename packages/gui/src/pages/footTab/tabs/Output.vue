@@ -16,17 +16,17 @@ const foottab = useFoottabState()
 const { footTabSize } = useLayoutState()
 
 function onOutputClick() {
-   // build()
+	// build()
 }
 
 const outDir = computed({
-   get() { return config.OUTPUT_DIR ?? "" },
-   set(val: string) { set('OUTPUT_DIR', val) }
+	get() { return config.OUTPUT_DIR ?? "" },
+	set(val: string) { set('OUTPUT_DIR', val) }
 })
 
 async function onOpenPathClick() {
-   const path = await openDirectory()
-   path && (outDir.value = path[0])
+	const path = await openDirectory()
+	path && (outDir.value = path[0])
 }
 
 // foottab的自定义按钮逻辑
@@ -37,61 +37,56 @@ const tabindex = computed(() => footTabSize.height > 100 ? 0 : -1)
 
 
 <template>
-   <div class="scroll" :class="$style.output">
-      <li>
-         <span>输出</span><span>::</span>
-         <lazy-button class="fore-button" @click="onOutputClick">
-            <s v-svgicon="playSvg" padding=" 15%"></s>
-         </lazy-button>
-      </li>
-      <li>
-         <span>输出目录</span><span>::</span>
-         <flex-input class="rd ol-n" :value="outDir" :placeholder="outDir" :tabindex="tabindex"></flex-input>
-         <lazy-button class="fore-button" @click="onOpenPathClick">
-            <s v-svgicon="openDirSvg" padding="15%"></s>
-         </lazy-button>
-      </li>
-   </div>
-   <Teleport v-if="mounted" to="#foottab-tools" :disabled="foottab.selected.type !== FootTabType.Output">
-      <lazy-button class="fore-button" :class="$style['icon-margin']" @click="onOutputClick">
-         <s v-svgicon="playSvg"></s>
-      </lazy-button>
-   </Teleport>
+	<div class="scroll list-view" :class="$style.output">
+		<li>
+			<span>输出目录：</span>
+			<flex-input class="fore-rpanel" :value="outDir" :placeholder="outDir" :tabindex="tabindex"></flex-input>
+			<lazy-button class="fore-button" @click="onOpenPathClick">
+				<s v-svgicon="openDirSvg" padding="15%"></s>
+			</lazy-button>
+		</li>
+	</div>
+	<Teleport v-if="mounted" to="#foottab-tools" :disabled="foottab.selected.type !== FootTabType.Output">
+		<lazy-button class="fore-button" :class="$style['icon-margin']" @click="onOutputClick">
+			<s v-svgicon="playSvg"></s>
+		</lazy-button>
+	</Teleport>
 </template>
 
 <style scoped lang='scss' module>
 $height: line-height(normal);
+$align: align-size(normal);
 
 .output {
-   padding: align-size(large) 0;
+	padding: $align 0;
 
-   li {
-      display: flex;
-      align-items: center;
-      height: $height;
-      line-height: $height;
-      padding: 0 align-size(large);
+	li {
+		display: flex;
+		align-items: center;
+		height: $height;
+		line-height: $height;
+		padding: 0 $align;
 
-      span {
-         float: left;
-         height: $height;
-      }
-   }
+		span {
+			float: left;
+			height: $height;
+		}
+	}
 
-   flex-input {
-      height: 100%;
-      line-height: 100%;
-      padding: 0 align-size(normal);
-   }
+	flex-input {
+		height: 100%;
+		line-height: 100%;
+		padding: 0 $align;
+	}
 
-   s {
-      height: 100%;
-      aspect-ratio: 1;
-   }
+	s {
+		height: 100%;
+		aspect-ratio: 1;
+	}
 }
 
 
 .icon-margin {
-   margin: 0 align-size(tiny);
+	margin: 0 align-size(tiny);
 }
 </style>

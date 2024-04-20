@@ -4,8 +4,6 @@ import { Ref, computed, inject, reactive } from 'vue';
 import clearSvg from '@/asset/icons/clear.svg?raw';
 import forbidSvg from '@/asset/icons/forbid.svg?raw';
 import { useMessageStore } from '@/stores/messageStore'
-import { LogLevel } from '@ra2inier/core';
-
 
 defineOptions({ name: 'Message' })
 const foottab = useFoottabState()
@@ -36,7 +34,7 @@ function onReadClick() {
 				<em>:&nbsp;</em>
 				<b :read="msg.read">[{{ msg.time }}]</b>
 			</h2>
-			<div :level="msg.level">
+			<div :level="msg.level" class="fore-rpanel">
 				<span class="folder" v-if="msg.remark" :folded="!foldedMap[id]">&gt;</span>
 				<span @click="foldedMap[id] = !foldedMap[id]">{{ msg.content }}</span>
 			</div>
@@ -44,11 +42,12 @@ function onReadClick() {
 		</li>
 	</div>
 	<Teleport v-if="mounted" to="#foottab-tools" :disabled="foottab.selected.type !== FootTabType.Message">
-		<lazy-button class="fore-button" :class="$style['icon-margin']" @click="onClearClick">
-			<s v-svgicon="clearSvg" padding="5%"></s>
-		</lazy-button>
 		<lazy-button class="fore-button" :class="$style['icon-margin']" @click="onReadClick">
 			<s v-svgicon="forbidSvg" padding="15%"></s>
+		</lazy-button>
+		<i style="width: 1em;"></i>
+		<lazy-button class="fore-button" :class="$style['icon-margin']" @click="onClearClick">
+			<s v-svgicon="clearSvg" padding="5%"></s>
 		</lazy-button>
 	</Teleport>
 </template>
@@ -81,6 +80,11 @@ $align: align-size(normal);
 		transform: translateY(-50%);
 		aspect-ratio: 1;
 		border-radius: 50%;
+	}
+
+	div {
+		width: fit-content;
+		padding: 0 $align;
 	}
 
 	pre {

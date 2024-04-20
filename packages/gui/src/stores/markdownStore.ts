@@ -13,7 +13,7 @@ async function openMarkdownByKey(key: string) {
 		const tmp = fromRaw(data, MarkdownRo)
 		return markdowns[tmp.key] = tmp
 	} else {
-		logger.warn('加载markdown文件失败：' + key, data)
+		logger.warn('加载markdown文件失败', key)
 		return undefined
 	}
 }

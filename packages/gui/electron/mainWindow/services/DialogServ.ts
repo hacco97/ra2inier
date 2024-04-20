@@ -20,10 +20,10 @@ export class DialogServ {
       const properties = TYPE_MAP[type] || TYPE_MAP.file
       let ret: Electron.OpenDialogReturnValue
       const option: any = { properties }
-      path && (option.defaultPath = path)
+      path && (option.defaultPath = resolve(path))
       if (isModal) ret = await dialog.showOpenDialog(this.window, option)
-      else ret = await dialog.showOpenDialog({ properties })
-      if (ret.canceled) throw Error('用户取消了操作')
+      else ret = await dialog.showOpenDialog(option)
+      if (ret.canceled) throw Error('用户取消了选择')
       else return ret.filePaths.map(p => p.replaceAll('\\', '/'))
    }
 

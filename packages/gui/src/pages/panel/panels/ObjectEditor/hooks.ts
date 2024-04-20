@@ -1,9 +1,10 @@
 import { useProjectStore } from "@/stores/projectStore"
-import { ref } from "vue"
+import { Ref, onMounted, onUnmounted, ref } from "vue"
 import { EntryRo } from "./Entry"
 import { PromptState, PromptType } from "../Prompt/promptState"
 import { FlexInput } from "@ra2inier/wc"
 import { WordValueType } from "@ra2inier/core"
+import { useDisabled } from "@/hooks/disabledFn"
 
 /**
  * 状态抽出：游标的定位数据
@@ -46,19 +47,16 @@ export function useQueryWord() {
  * 对象查询逻辑
  */
 export function useQueryObject(promptState: PromptState) {
-   let querying = false
    const store = useProjectStore()
 
-   async function onInputKeyup(e: KeyboardEvent) {
+   const [onInputKeyup] = useDisabled(async (e: KeyboardEvent) => {
       if (promptState.type !== PromptType.obj) return
-      if (querying) return
       if (e.ctrlKey || e.altKey) return
       if (e.key.length !== 1 && !whiteName.has(e.key)) return
-      querying = true
       await changeObjectsOptions((<FlexInput>e.target).value)
       await waitALittle()
-      querying = false
-   }
+      return undefined
+   })
 
    function changeObjectsOptions(startString: string) {
       const word = store.queryWord(promptState.entry.wordName)
@@ -78,13 +76,16 @@ export function useQueryObject(promptState: PromptState) {
    function waitALittle() {
       return new Promise(r => setTimeout(r, 50))
    }
-
-   const whiteName = new Set([
-      'Backspace', 'Delete'
-   ])
+   const whiteName = new Set(['Backspace', 'Delete'])
 
    return {
       onInputKeyup
    }
 }
 
+export function useWindowResize(cb: (e: Event) => void) {
+   window.addEventListener('resize', cb)
+   onUnmounted(() => {
+      window.removeEventListener('resize', cb)
+   })
+}

@@ -2,7 +2,7 @@
 import { reactive } from 'vue';
 import cllected from '@/asset/icons/cllected.svg?raw';
 import { LeftTab, useLefttabState } from '@/states/leftTabList';
-import Addons from '../panel/panels/Addons.vue';
+import Addons from './tabs/Addons.vue';
 import Launcher from './tabs/Launcher.vue';
 import Meta from './tabs/Meta/Index.vue';
 import ProjRes from './tabs/ProjRes/Index.vue';

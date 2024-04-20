@@ -5,53 +5,52 @@ import { computed, onMounted, reactive, readonly, watch } from "vue"
 
 // 主题和皮肤控制模块
 export enum BuildinTheme {
-   dark = '灰暗',
-   light = '明亮'
+	dark = '灰暗',
+	light = '明亮'
 }
 
 function createThemeState() {
-   const { config, set } = useConfigStore()
+	const { config, set } = useConfigStore()
 
-   // 派生当前的主题<config.THEME>的管理变量
-   const themeName = computed<string>({
-      get() { return config.THEME },
-      set(val) { set('THEME', val) }
-   })
-
-
-   // 临时数据，保存着当前的样式方案
-   const themeMap: Record<string, string> = reactive({})
-   async function setThemeText(name: string, text: string = '') {
-      if (typeof name !== 'string') return
-      if (!await saveTheme(name, text)) return
-      if (!text) delete themeMap[name]
-      else themeMap[name] = text
-   }
-   getThemeMap().then((res) => Object.assign(themeMap, res))
-   // 持久化
+	// 派生当前的主题<config.THEME>的管理变量
+	const themeName = computed<string>({
+		get() { return config.THEME },
+		set(val) { set('THEME', val) }
+	})
 
 
-   // 页面样式管理
-   let style: HTMLStyleElement
-   onMounted(() => style = document.querySelector('#theme-ctrl')!)
-   function setTheme(name: string) {
-      console.log('set')
+	// 临时数据，保存着当前的样式方案
+	const themeMap: Record<string, string> = reactive({})
+	async function setThemeText(name: string, text: string = '') {
+		if (typeof name !== 'string') return
+		if (!await saveTheme(name, text)) return
+		if (!text) delete themeMap[name]
+		else themeMap[name] = text
+	}
+	getThemeMap().then((res) => Object.assign(themeMap, res))
+	// 持久化
 
-      if (!style) style = document.querySelector('#theme-ctrl')!
-      if (style) style.textContent = themeMap[name] || ''
-   }
-   watch(() => themeMap[themeName.value], () => setTheme(themeName.value))
+
+	// 页面样式管理
+	let style: HTMLStyleElement
+	onMounted(() => style = document.querySelector('#theme-ctrl')!)
+	function setTheme(name: string) {
+		if (!style) style = document.querySelector('#theme-ctrl')!
+		if (style) style.textContent = themeMap[name] || ''
+	}
+	watch(() => themeMap[themeName.value], () => setTheme(themeName.value))
 
 
-   return {
-      name: themeName,
-      map: readonly(themeMap),
-      setTheme: setThemeText,
-      addTheme(name: string) {
-         if (!(name in themeMap))
-            setThemeText(name, `/* 自定义主题：${name} */` + DEFAULT_THEME_TEXT)
-      }
-   }
+	return {
+		name: themeName,
+		map: readonly(themeMap),
+		setTheme: setThemeText,
+		useTheme: setTheme,
+		addTheme(name: string) {
+			if (!(name in themeMap))
+				setThemeText(name, `/* 自定义主题：${name} */` + DEFAULT_THEME_TEXT)
+		}
+	}
 }
 
 export const useThemeState = defineStore('theme-state', { state: useSingleton(createThemeState) })

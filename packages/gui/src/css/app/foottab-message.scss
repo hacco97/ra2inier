@@ -7,7 +7,7 @@
       }
    }
 
-   li {
+   * {
       &[level="debug"] {
          color: info-color(success);
       }

@@ -18,11 +18,9 @@ const { folded, vFolder } = useFolder()
          <s v-svgicon="searchSvg" padding="20%" @click="folded = !folded"></s>
          <input type="text" class="fore-input" :placeholder="placeholder">
       </header>
-      <nav v-show="!folded">
-         <main>
-            <li><span>类型</span><input class="fore-input" type="text"></li>
-            <li><span>包</span></li>
-         </main>
+      <nav v-show="!folded" class="list-view">
+         <li><span>类型</span><input class="fore-input" type="text"></li>
+         <li><span>包</span></li>
       </nav>
    </aside>
 </template>

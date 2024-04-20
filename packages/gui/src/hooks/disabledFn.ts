@@ -9,8 +9,9 @@ export function useDisabled<T extends any[], K>(fn: (...args: T) => K, defaultRe
    : [(...args: T) => Promise<Awaited<K>>, Ref<boolean>]
 export function useDisabled<T extends any[], K>(fn: (...args: T) => K, defaultReturn?: any) {
    let disabled = ref(false)
+   defaultReturn = defaultReturn ?? undefined
    async function disabledFn(...args: T): Promise<K | undefined> {
-      if (disabled.value) return Promise.resolve(defaultReturn ?? undefined)
+      if (disabled.value) return defaultReturn
       disabled.value = true
       const ret = await fn(...args)
       disabled.value = false

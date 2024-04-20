@@ -1,41 +1,27 @@
 <script lang='ts' setup>
 import closeSvg from '@/asset/icons/close.svg?raw';
 import { PopupBox } from '@ra2inier/wc';
-import { EmitType, IItem, Item } from './ListViewState';
-import { ref, watch } from 'vue';
+import { EmitType, ListViewState } from './ListViewState';
+import { reactive } from 'vue';
 
-const props = defineProps({
-   list: { type: Array<Partial<IItem>>, required: true },
-   deleteButton: { type: Boolean, default: true },
-   checkBox: { type: Boolean, default: true },
-   selectable: { type: Boolean, default: true },
-   singleSelect: { type: Boolean, default: false }
-})
-
-const _f = (x: any) => new Item(x)
-const data = ref(props.list.map(_f))
-watch(() => props.list, () => data.value = props.list.map(_f))
-
-defineExpose({
-   get value(): Partial<IItem>[] {
-      return data.value.map(x => ({
-         value: x.value,
-         selected: x.selected
-      }))
-   }
-})
-
-function onSelectChange(...a: EmitType) {
-   emit('select', ...a)
-   if (!props.singleSelect) return
-   data.value.forEach(el => el.selected = false);
-   a[0].selected = true
-}
-
+const props = defineProps<{ readonly state: ListViewState }>()
+const state = reactive(props.state)
 const emit = defineEmits<{
    select: EmitType,
    delete: EmitType
 }>()
+
+function onSelectChange(...a: EmitType) {
+   emit('select', ...a)
+   if (!state.singleSelect) return
+   state.forEach(el => el.selected = false)
+   a[0].selected = true
+}
+
+function onDeleteClick(...a: EmitType) {
+   emit('delete', ...a)
+   state.remove(a[0].id)
+}
 </script>
 
 
@@ -44,10 +30,10 @@ const emit = defineEmits<{
       <header>
          <slot></slot>
       </header>
-      <section>
-         <li v-for="(item, order) in data" class="reactive-h">
-            <input v-if="checkBox" tabindex="-1" type="checkbox" class="normal-button" :id="item.id"
-               v-model="item.selected" @change="onSelectChange(item, order)" :disabled="!selectable"
+      <section class="list-view">
+         <li v-for="(item, order) in state" class="reactive-h">
+            <input v-if="state.checkBox" tabindex="-1" type="checkbox" class="normal-button" :id="item.id"
+               v-model="item.selected" @change="onSelectChange(item, order)" :disabled="!state.selectable"
                :selected="item.selected">
             <popup-box>
                <label :for="item.id">
@@ -55,11 +41,12 @@ const emit = defineEmits<{
                   <u v-if="item.detail">({{ item.detail }})</u>
                </label>
                <pre slot="pop" class="popup">
-                  <slot name="popup" v-bind="item.src"></slot>
+                  <slot name="popup" v-bind="item"></slot>
                </pre>
             </popup-box>
             <i></i>
-            <s v-if="deleteButton" @click="emit('delete', item, order)" v-svgicon="closeSvg" class="normal-button"></s>
+            <s v-if="state.deleteButton" @click="onDeleteClick(item, order)" v-svgicon="closeSvg"
+               class="normal-button"></s>
          </li>
       </section>
       <footer>

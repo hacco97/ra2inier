@@ -26,13 +26,14 @@ export async function importString<T>(str: string) {
 /**
  * 从一个对象中删除符合条件的数据
  */
-export function removeFrom<T extends any>(object: Record<any, T>, predicate: (x: T) => boolean): void
+export function removeFrom<T extends any>(object: Record<any, T>, predicate: (x: T) => boolean): T | undefined
 /**
  * 从一个数组中删除符合条件的数据
  */
-export function removeFrom<T extends any>(array: T[], predicate: (x: T) => boolean): void
-export function removeFrom<T extends any>(arrayOrObject: T[] | Record<any, T>, predicate: (x: T) => boolean): void {
-   if (arrayOrObject instanceof Array) {
+export function removeFrom<T extends any>(array: T[], predicate: (x: T) => boolean): T | undefined
+export function removeFrom<T extends any>(arrayOrObject: T[] | Record<any, T>, predicate: (x: T) => boolean) {
+   let tmp: T | undefined
+   if (Array.isArray(arrayOrObject)) {
       for (let i = 0; i < arrayOrObject.length;) {
          if (predicate(arrayOrObject[i]))
             arrayOrObject.splice(i, 1)
@@ -44,6 +45,7 @@ export function removeFrom<T extends any>(arrayOrObject: T[] | Record<any, T>, p
             delete arrayOrObject[key]
       }
    }
+   return tmp
 }
 
 /**

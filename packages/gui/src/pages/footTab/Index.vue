@@ -105,7 +105,7 @@ onMounted(() => { mounted.value = true })
    <div id="foottab" ref="focusHandle" :class="$style.foottab" @focusout="onFocusout"
       @focusin="footTabSize.active = true" tabindex="-1">
       <nav class="scrollx" :class="$theme['foottab-nav']" v-scrollx>
-         <ul :class="$theme['foottab-nav-label']">
+         <ul :class="$theme['foottab-nav-label']" class="footnav">
             <b></b>
             <div v-for="tab in <FootTab[]>foottab.footTabList" @click="onTabClick(tab)" draggable="true" :key="tab.id"
                @drop="onTabDrop($event, tab)" @dragstart="onTabDragStart($event, tab)" @dragover.prevent

@@ -9,17 +9,19 @@ $height: layout-size(foottab);
       z-index: 10;
       left: 0;
       width: 100%;
-      height: line-width(slim);
-      background-color: line-color(normal);
    }
 
-   &::before {
-      top: 0;
-   }
+	&::before {
+		top: 0px;
+		height: 0px;
+		border-top: 1px solid line-color(normal);
+	}
 
-   &::after {
-      bottom: 0;
-   }
+	&::after {
+		bottom: 0px;
+		height: 0px;
+		border-bottom: 1px solid line-color(normal);
+	}
 }
 
 .foottab-nav-label {

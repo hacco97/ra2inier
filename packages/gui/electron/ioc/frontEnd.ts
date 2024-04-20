@@ -1,4 +1,4 @@
-import { EventEmitter, LogLevel, Logger } from "@ra2inier/core";
+import { LogLevel, Logger } from "@ra2inier/core";
 import { BrowserWindow } from "electron/main";
 
 

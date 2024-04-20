@@ -3,14 +3,10 @@ import { IniObject, UniqueObject } from '../entity/Obejct';
 import { Scope } from '../entity/Scope';
 import { Word } from '../entity/Word';
 
-export class IniObjectDto extends IniObject {
+export class IniObjectDto extends IniObject {}
 
-}
+export class ScopeDto extends Scope {}
 
-
-export class ScopeDto extends Scope {
-
-}
 export class MarkdownDto extends UniqueObject {
    raw: string = ''
 
@@ -19,14 +15,9 @@ export class MarkdownDto extends UniqueObject {
 }
 
 const TMP = new MarkdownDto
-
 export class WordDto extends Word {
    detail: string = ''
    markdown: MarkdownDto = TMP
 }
 
-
-
-export class MapperDto extends Mapper {
-
-}
+export class MapperDto extends Mapper {}

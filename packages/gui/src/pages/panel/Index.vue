@@ -14,17 +14,19 @@ import None from './panels/None.vue';
 import ObjectEditor from './panels/ObjectEditor/Index.vue';
 import ObjectViewer from './panels/ObjectEditor/ObjectViewer.vue';
 import ProjectInfo from './panels/ProjectInfo/Index.vue';
-import Setting from './panels/Setting.vue';
+import Setting from './panels/Setting/Setting.vue';
 import Welcome from './panels/Welcome.vue';
 
 defineOptions({
    name: 'Panel',
    components: {
-      PanelLayout, Welcome, Debug, API, ProjectInfo,
+      Welcome, Debug, API, ProjectInfo,
       ObjectEditor, None, ScopeEditor, WordEditor,
       MapperEditor, Setting, NewProject, ObjectViewer
    },
 })
+
+const keepAlivedCmpt = [/.+Editor/, 'Setting']
 
 const panel = usePanelState()
 
@@ -97,7 +99,7 @@ const { config } = useConfigStore()
       </template>
 
       <template v-for="p in panel.curPanel" v-slot:[getMainSlotName(p)] :key="p.id">
-         <KeepAlive :max="config.MAX_TAB_AMOUNT">
+         <KeepAlive :max="config.MAX_TAB_AMOUNT" :include="keepAlivedCmpt">
             <component :is="p.param.type" :param="p.param" :key="p.id" />
          </KeepAlive>
       </template>

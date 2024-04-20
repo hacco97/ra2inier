@@ -9,8 +9,9 @@ import { PromptState, usePromptHelper } from '../Prompt/promptState';
 import { useEditorKeymap } from './editorKeymap';
 import { EditorState, usePromptCoord, } from './EditorState';
 import { EntryRo } from './Entry';
-import { useCursorCoord, useQueryObject } from './hooks';
+import { useCursorCoord, useQueryObject, useWindowResize } from './hooks';
 import { useProjectStore } from '@/stores/projectStore';
+import { useResizeObserver, useWindowSize } from '@vueuse/core';
 
 // 初始化数据
 const props = defineProps<{ state: EditorState }>()
@@ -58,6 +59,7 @@ function onInputCtxMenu(e: Event) {
    e.preventDefault()
    e.stopPropagation()
 }
+useWindowResize(() => promptState.close())
 
 // 键盘监听逻辑
 const {

@@ -71,3 +71,10 @@
       vertical-align: top;
    }
 }
+
+.list-view {
+
+   >* {
+      margin: align-size(tiny) 0;
+   }
+}

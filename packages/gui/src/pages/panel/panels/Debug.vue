@@ -1,13 +1,17 @@
 <script lang='ts' setup>
-import { FlexInput } from '@ra2inier/wc';
+
 
 </script>
 
 
 <template>
    <div>
-      <flex-input value="fds" />
-      <input type="text" value="nfasd">
+       <li>
+         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti, tempore.
+       </li>
+       <li>
+         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti, tempore.
+       </li>
    </div>
 </template>
 

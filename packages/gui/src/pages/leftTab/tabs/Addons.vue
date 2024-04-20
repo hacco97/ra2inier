@@ -1,7 +1,7 @@
 <script lang='ts'>
 import { defineComponent } from 'vue';
 
-import LeftTabLayout from '../../leftTab/tabs/Layout.vue';
+import LeftTabLayout from './Layout.vue';
 
 export default defineComponent({
   name: 'Addons',

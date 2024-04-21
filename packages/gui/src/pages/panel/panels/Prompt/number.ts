@@ -21,7 +21,6 @@ export function useInt(state: PromptState) {
    }
 
    function changeInt(n = 1) {
-      // setInt(getInt() + n)
       intInput.value?.add(n)
    }
 

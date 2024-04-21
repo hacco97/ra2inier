@@ -41,7 +41,7 @@ function onTextChange(e: CustomEvent) {
 }
 
 // 主题切换动画
-const { onThemeChange,onThemeMouseMove} = useThemeChangeAnimation()
+const { onThemeChange, onThemeMouseMove } = useThemeChangeAnimation()
 
 // 新主题添加
 const theNew = ref('')
@@ -90,6 +90,10 @@ function onAddThemeClick() {
 		<p v-if="!folded">
 			<flex-area :text="theme.map[cursorName]" @change="onTextChange" class="normal-rpanel"></flex-area>
 		</p>
+		<li>
+			<span>消息显示等级：</span>
+			<Options :values="['1', '2', '3', '4']" />
+		</li>
 		<h2>对象编辑器</h2>
 		<li>
 			<span>关闭标签时触发保存：</span>

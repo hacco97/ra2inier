@@ -40,7 +40,7 @@ function onNameChange() {
       <template #default>
          <main :class="[$style.main, $theme.main]" @keydown="onChanged">
             <!-- 中部info内容 -->
-            <ul>
+            <ul class="list-view">
                <h2>
                   <span class="required">类型名称*</span><span>：</span>
                   <flex-input v-model.lazy="scope.name" :disabled="disabled" @change="onNameChange" />

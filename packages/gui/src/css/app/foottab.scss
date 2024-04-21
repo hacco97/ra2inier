@@ -12,13 +12,13 @@ $height: layout-size(foottab);
    }
 
 	&::before {
-		top: 0px;
+		top: 0;
 		height: 0px;
 		border-top: 1px solid line-color(normal);
 	}
 
 	&::after {
-		bottom: 0px;
+		bottom: 0;
 		height: 0px;
 		border-bottom: 1px solid line-color(normal);
 	}

@@ -34,7 +34,7 @@ function onReadClick() {
 				<em>:&nbsp;</em>
 				<b :read="msg.read">[{{ msg.time }}]</b>
 			</h2>
-			<div :level="msg.level" class="fore-rpanel">
+			<div :level="msg.level" class="round">
 				<span class="folder" v-if="msg.remark" :folded="!foldedMap[id]">&gt;</span>
 				<span @click="foldedMap[id] = !foldedMap[id]">{{ msg.content }}</span>
 			</div>
@@ -85,6 +85,9 @@ $align: align-size(normal);
 	div {
 		width: fit-content;
 		padding: 0 $align;
+		font-weight: 900;
+		/* text-decoration: underline; */
+		background: color-mix(in srgb, currentColor 24%, transparent);
 	}
 
 	pre {

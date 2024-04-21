@@ -72,7 +72,7 @@ async function onTemplateClick() {
       <template #default>
          <!-- 中部info内容 -->
          <main :class="[$style.main, $theme.main]" @keydown="onChanged">
-            <ul>
+            <ul class="list-view">
                <h2>
                   <span class="required">词条</span><em>：</em>
                   <flex-input :disabled="disabled" v-model.lazy="word.name"

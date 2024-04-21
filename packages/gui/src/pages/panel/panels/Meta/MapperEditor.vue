@@ -36,7 +36,7 @@ function onNameChange() {
       </template>
       <template #default>
          <!-- 中部info内容 -->
-         <ul :class="[$style.main, $theme.main]" @keydown="onChanged">
+         <ul :class="[$style.main, $theme.main]" class="list-view" @keydown="onChanged">
             <h2>
                <span class="required">输出器名称</span><em>：</em>
                <flex-input :disabled="disabled" v-model.lazy="mapper.name" @change="onNameChange"></flex-input>

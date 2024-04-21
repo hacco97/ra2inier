@@ -67,6 +67,10 @@
    @include fore-panel();
 }
 
+.round {
+	@include plane-radius(normal);
+}
+
 .list-item {
    @include list-item();
    text-wrap: nowrap;

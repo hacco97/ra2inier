@@ -27,12 +27,13 @@ function onReadClick() {
 
 
 <template>
-	<div class="scroll" :class="[$style.message, $theme.message]">
+	<div class="scroll list-view" :class="[$style.message, $theme.message]">
 		<li v-for="(msg, id) in message.messageList" :key="msg.id">
 			<h2>
-				<em>{{ msg.id + 1 }}.</em><i>{{ msg.sender }}</i>
-				<em>:&nbsp;</em>
-				<b :read="msg.read">[{{ msg.time }}]</b>
+				<i :read="msg.read">[{{ msg.time }}]</i>
+				<i style="width: 1ch;"></i>
+				<em>{{ msg.id + 1 }}.</em>
+				<b>{{ msg.sender }}</b>
 			</h2>
 			<div :level="msg.level" class="round">
 				<span class="folder" v-if="msg.remark" :folded="!foldedMap[id]">&gt;</span>
@@ -43,11 +44,11 @@ function onReadClick() {
 	</div>
 	<Teleport v-if="mounted" to="#foottab-tools" :disabled="foottab.selected.type !== FootTabType.Message">
 		<lazy-button class="fore-button" :class="$style['icon-margin']" @click="onReadClick">
-			<s v-svgicon="forbidSvg" padding="15%"></s>
+			<s title="已读" v-svgicon="forbidSvg" padding="15%"></s>
 		</lazy-button>
 		<i style="width: 1em;"></i>
 		<lazy-button class="fore-button" :class="$style['icon-margin']" @click="onClearClick">
-			<s v-svgicon="clearSvg" padding="5%"></s>
+			<s title="清空" v-svgicon="clearSvg" padding="5%"></s>
 		</lazy-button>
 	</Teleport>
 </template>
@@ -63,7 +64,6 @@ $align: align-size(normal);
 	@include font-size(normal);
 
 	li {
-		margin-bottom: $align;
 		padding: 0 $align;
 	}
 
@@ -86,14 +86,21 @@ $align: align-size(normal);
 		width: fit-content;
 		padding: 0 $align;
 		font-weight: 900;
-		/* text-decoration: underline; */
 		background: color-mix(in srgb, currentColor 24%, transparent);
+	}
+
+	h2 {
+		@include font-size(small);
 	}
 
 	pre {
 		@include font-size(small);
 		text-wrap: wrap;
 		padding: 0 $align;
+	}
+
+	i {
+		display: inline-block
 	}
 }
 

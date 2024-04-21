@@ -126,7 +126,7 @@ export class ProjServ {
 		// TODO: 远程添加
 	}
 
-	@mapping('import-package')
+	@mapping('load-package')
 	loadPackages(@param('data') refers: ReferenceWithPath[]) {
 		const packages: Record<string, PackageVo> = {}
 		const locals = this.staticDao.readGlobalPackages()

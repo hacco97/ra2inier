@@ -48,13 +48,12 @@ const tabindex = computed(() => footTabSize.height > 100 ? 0 : -1)
 	</div>
 	<Teleport v-if="mounted" to="#foottab-tools" :disabled="foottab.selected.type !== FootTabType.Output">
 		<lazy-button class="fore-button" :class="$style['icon-margin']" @click="onOutputClick">
-			<s v-svgicon="playSvg"></s>
+			<s title="构建" v-svgicon="playSvg"></s>
 		</lazy-button>
 	</Teleport>
 </template>
 
 <style scoped lang='scss' module>
-$height: line-height(normal);
 $align: align-size(normal);
 
 .output {
@@ -63,24 +62,22 @@ $align: align-size(normal);
 	li {
 		display: flex;
 		align-items: center;
-		height: $height;
-		line-height: $height;
 		padding: 0 $align;
 
 		span {
 			float: left;
-			height: $height;
 		}
 	}
 
 	flex-input {
-		height: 100%;
-		line-height: 100%;
-		padding: 0 $align;
+		display: block;
+		padding: 0 1ch;
+		margin-right: $align;
 	}
 
 	s {
-		height: 100%;
+		display: block;
+		height: 1lh;
 		aspect-ratio: 1;
 	}
 }

@@ -10,20 +10,15 @@ import { downloadPackage, openDirectory, readPackageDir } from '@/boot/apis';
 import { computed, reactive, ref, watch } from 'vue';
 import { Package, Reference, fromRaw, isEmptyObject } from '@ra2inier/core';
 import { IItem, ListViewState } from '@/components/ListViewState';
-import { ReferViewState, useLocalList } from './ReferViewState'
+import { ReferViewState, pkg2ReferItem, useLocalList } from './ReferViewState'
 import Popup from './Popup.vue'
 import { useConfigStore } from '@/stores/config';
-import { useLogger } from '@/boot/logger';
-
-const logger = useLogger('reference-view')
 
 interface Prop {
 	state: ReferViewState,
-	folded?: boolean,
-	showDetail?: boolean
+	folded?: boolean
 }
 const props = defineProps<Prop>()
-const showDetail = computed(() => props.showDetail === undefined ? true : props.showDetail)
 const { config } = useConfigStore()
 
 const { references, deleteRefer, addRefer } = props.state
@@ -86,13 +81,14 @@ function onRemoteSubmitClick() {
 
 
 const loadUrl = async (url: string) => {
+	if (!url) return
 	const refer = new Reference({
 		name: getName(url),
 		url,
 	})
 	const downloaded = await downloadPackage([refer])
 	for (const refer of downloaded) {
-		addRefer(refer)
+		addRefer(pkg2ReferItem(refer))
 	}
 }
 

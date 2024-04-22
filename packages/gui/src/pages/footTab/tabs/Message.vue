@@ -32,10 +32,6 @@ function onReadClick() {
 			<h2>
 				<i :read="msg.read">[{{ msg.time }}]</i>
 				<i style="width: 1ch;"></i>
-<<<<<<< HEAD
-=======
-				<em>{{ msg.id + 1 }}.</em>
->>>>>>> 57ce1e4c20405d96044b3b1cb7c00fcc3b13d21e
 				<b>{{ msg.sender }}</b>
 			</h2>
 			<div :level="msg.level" class="round">

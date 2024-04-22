@@ -40,7 +40,7 @@ export class GithubApi {
 		targetPath: string,
 		onProgress?: (progressEvent: AxiosProgressEvent) => void,
 	) {
-		// 下载zip文件到'path'路径上
+		// 下载zip文件到'targetDir'路径上
 		const res = await this.#api.get<Transform>(url + this.#postFix, {
 			responseType: 'stream',
 			onDownloadProgress: onProgress,

@@ -1,4 +1,4 @@
-import { Config, Package, PackageVo, useMemo } from '@ra2inier/core';
+import { Config, PackageVo, useMemo } from '@ra2inier/core';
 import { escapePath, forDir } from '@ra2inier/core/node';
 
 import { component, inject } from '../ioc.config';
@@ -53,9 +53,14 @@ export class StaticDao {
 
 	private _readPackages(dir: string) {
 		const packages: Record<string, PackageVo> = {}
-		forDir(dir, (path, dirent) => {
+		forDir(dir, (path) => {
 			const pkg = this.packageDao.readPackageInfoByPath(path)
-			pkg && (packages[pkg.key] = pkg)
+			if (!pkg) return
+			if (pkg.key in packages) {
+				const tmp = packages[pkg.key]
+				if (tmp.version >= pkg.version) return
+			}
+			packages[pkg.key] = pkg
 		}, false)
 		return packages
 	}
@@ -66,6 +71,6 @@ export class StaticDao {
 	 */
 	checkPackageByUrl(url: string[]) {
 		const cache = this.readDownloadedPackages()
-		
+
 	}
 }

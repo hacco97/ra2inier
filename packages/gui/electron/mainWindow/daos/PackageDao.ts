@@ -1,14 +1,14 @@
-import fs from 'node:fs';
-import { join } from 'node:path';
+import fs, { rmSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 
 import { component, inject } from '~/mainWindow/ioc.config';
 
 import {
 	Config, enhance, fromRaw, IniObject,
-	isEmptyObject, Mapper, MapperDto, Markdown, Package,
+	isUniqueObject, Mapper, MapperDto, Markdown, Package,
 	PackageVo, Reference, Scope, useMemo, WordDto, WordRo, WordVo,
 } from '@ra2inier/core';
-import { escapePath, forDir, readJson, writeJson } from '@ra2inier/core/node';
+import { escapePath, forDir, readJson, removeFile, writeJson } from '@ra2inier/core/node';
 
 import { DaoConfig } from './DaoConfig';
 import { MapperDao } from './MapperDao';
@@ -34,7 +34,7 @@ export class PackageDao {
 	 */
 	readPackageInfoByPath = useMemo((pkgPath: string) => {
 		const json = readJson(join(pkgPath, this.config.PACKAGE_INFO_FILE))
-		if (isEmptyObject(json)) return undefined
+		if (!isUniqueObject(json)) return undefined
 		const pkg = fromRaw(json, Package)
 		pkg.path = pkgPath
 		for (const key in pkg.references) {
@@ -69,9 +69,10 @@ export class PackageDao {
 		return true
 	}
 
-	writePackageByPath(pkg: Package, pkgPath: string,) {
-		this.writePackageInfoByPath(pkg, pkgPath)
-
+	removePackageByPath(pkgPath: string) {
+		const pkg = this.readPackageInfoByPath(pkgPath)
+		if (pkg) return removeFile(resolve(pkgPath))
+		return false
 	}
 
 	// 读写object逻辑

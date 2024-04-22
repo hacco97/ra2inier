@@ -38,7 +38,8 @@ export async function downloadPackage(refers: Reference[]) {
 	if (!refers.length) return []
 	const msg = refers.map(_f).join('\n')
 	logger.info('正在下载包', msg)
-	const { status, data, detail } = await exec<Package[]>('download/remote-package', { data: refers, timeout: 1000 * 60 * 60 * 24 })
+	const { status, data, detail } = await exec<Package[]>('download/remote-package',
+		{ data: refers, timeout: 1000 * 60 * 60 * 24 })
 	if (status && data.length > 0) {
 		const msg = data.map(_f).join('\n')
 		logger.debug('包下载成功', msg)

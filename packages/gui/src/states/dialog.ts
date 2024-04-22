@@ -1,4 +1,4 @@
-import { reactive, readonly } from "vue";
+import { reactive, readonly, shallowReactive } from "vue";
 import { FootTabType, useFoottabState } from '@/states/footTabList'
 import { defineStore } from "pinia";
 import { useLayoutState } from "./layout";
@@ -13,6 +13,7 @@ export enum DialogType {
 
 
 const FINISH = Symbol()
+const COUNT = Symbol()
 
 export class Dialog {
 	[s: string]: any
@@ -37,6 +38,12 @@ export class Dialog {
 
 	declare finish: (res?: any) => void
 
+	/**
+	 * 计时器
+	 */;
+	[COUNT] = 10
+	get count() { return this[COUNT] }
+
 	constructor(question: any, type: DialogType = DialogType.show) {
 		this.id = Dialog.nextID++
 		this.question = question || ''
@@ -52,10 +59,8 @@ function createDialogState() {
 	const foottab = useFoottabState()
 
 	function addDialog(question: string, type = DialogType.askIf) {
-		let rejectHandler: Function
-		setTimeout(() => rejectHandler?.(), 10_000)
+		foottab.setDialogBadge(dialogs.length + 1)
 		return new Promise((solve) => {
-			rejectHandler = () => solve(undefined)
 			const d = new Dialog(question, type)
 			d.finish = (res?: any) => {
 				const target = dialogs.find(val => val.id === d.id)
@@ -65,7 +70,13 @@ function createDialogState() {
 				d.time = dateTime()
 				solve(res)
 			}
-			dialogs.push(d)
+			const r = shallowReactive(d)
+			dialogs.push(r)
+			const stop = setInterval(() => {
+				if (--r[COUNT] > 0) return;
+				d.finish()
+				clearInterval(stop)
+			}, 1000)
 		})
 	}
 

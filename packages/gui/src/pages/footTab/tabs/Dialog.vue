@@ -36,15 +36,17 @@ function getIcon(num: number) {
 				<!-- 对话头部 -->
 				<p class="vertical-center">
 					<em>[{{ dialog.time }}]</em>
+					<i style="width: 1ch;"></i>
 					<u :class="$style.status" v-svgicon="getIcon(dialog.finished)" padding="0" :key="dialog.finished"></u>
 					<span>{{ dialog.question }}</span>
 				</p>
-
+				<i style="display: inline-block;min-width: 1em;"></i>
 				<!-- 选项 -->
 				<template v-if="dialog.type === DialogType.askIf && dialog.finished < 0">
 					<p>
 						<u v-svgicon="submitSvg" class="fore-button" @click="dialog.finish(true)"></u>
-						<i style="width: 1em;"></i>
+						<span v-show="dialog.count > 0">({{ dialog.count }}s)</span>
+						<i style="width: 1ch;"></i>
 						<u v-svgicon="canselSvg" class="fore-button" @click="dialog.finish(false)"></u>
 					</p>
 				</template>
@@ -89,13 +91,9 @@ $align: align-size(normal);
 		align-items: center;
 	}
 
-	em {
+	em,
+	span {
 		@include font-size(small);
-		margin-right: $align;
-	}
-
-	i {
-		display: inline-block;
 	}
 }
 

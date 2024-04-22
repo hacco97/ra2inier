@@ -40,12 +40,10 @@ export const createMessageStore = () => {
 	const messageList: Message[] = reactive([])
 	let nextID = messageList.length
 
-	const hooks: Record<string, Set<Function>> = {
-		onMessage: new Set,
-	}
+	const hooks = new Set<Function>()
 
 	function onMessage(cb: () => void) {
-		hooks.onMessage.add(cb)
+		hooks.add(cb)
 	}
 
 	function pushMsg(sender: string, level: LogLevel, msg: string, remark?: any) {
@@ -58,7 +56,7 @@ export const createMessageStore = () => {
 			sender,
 			level
 		})
-		hooks.onMessage.forEach(cb => cb())
+		hooks.forEach(cb => cb())
 	}
 
 	function readAll() {

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { KeepAlive, onMounted, provide, ref } from 'vue';
-import arrowDown from '@/asset/icons/arrowDown.svg?raw';
-import arrowUp from '@/asset/icons/arrowUp.svg?raw';
+import arrowRight from '@/asset/icons/arrowRight.svg?raw';
 import minSvg from '@/asset/icons/min.svg?raw';
 import fix from '@/asset/icons/fix.svg?raw';
 import Dialog from './tabs/Dialog.vue';
@@ -45,7 +44,7 @@ function onFocusout() {
 const { onTabDragStart, onTabDrop } = useFootTabDrag()
 const focusHandle = ref<HTMLElement>()
 footTabSize.on('resized', () => {
-   focusHandle.value?.focus()
+	focusHandle.value?.focus()
 })
 
 // 给子组件提供通知，启动Teleport的渲染
@@ -72,8 +71,8 @@ onMounted(() => { mounted.value = true })
 				</div>
 				<i></i>
 				<!-- 脚部tab工具按钮 -->
-				<p title="最大化" v-svgicon="arrowUp" @click="footTabSize.max()"></p>
-				<p title="最小化" v-svgicon="arrowDown" @click="footTabSize.min()"></p>
+				<p title="最大化" v-svgicon="arrowRight" style="rotate: -90deg;" @click="footTabSize.max()"></p>
+				<p title="最小化" v-svgicon="arrowRight" style="rotate: 90deg;" @click="footTabSize.min()"></p>
 				<q title="折叠" v-svgicon="minSvg" padding="15%" :selected="footTabSize.canHidden"
 					@click="footTabSize.canHidden = !footTabSize.canHidden"></q>
 				<q title="固定" v-svgicon="fix" :selected="isFixSelected" @click="isFixSelected = !isFixSelected"></q>

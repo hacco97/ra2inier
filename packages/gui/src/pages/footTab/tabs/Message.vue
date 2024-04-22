@@ -1,14 +1,16 @@
 <script lang='ts' setup>
 import { FootTabType, useFoottabState } from '@/states/footTabList';
-import { Ref, computed, inject, reactive } from 'vue';
+import { Ref, computed, inject, reactive, shallowReactive } from 'vue';
 import clearSvg from '@/asset/icons/clear.svg?raw';
 import forbidSvg from '@/asset/icons/forbid.svg?raw';
+import rightSvg from '@/asset/icons/right.svg?raw';
 import { useMessageStore } from '@/stores/messageStore'
+import { useFolder } from '@/hooks/folder';
 
 defineOptions({ name: 'Message' })
 const foottab = useFoottabState()
 const message = useMessageStore()
-const foldedMap = computed(() => reactive(message.messageList.map(x => true)))
+const foldedMap = computed(() => shallowReactive(message.messageList.map(x => true)))
 
 foottab.setMessageBadge(message.messageList.length)
 
@@ -23,6 +25,12 @@ function onReadClick() {
 	message.readAll()
 	foottab.setMessageBadge(0)
 }
+
+const { vFolder } = useFolder((_, value) => {
+	for (const key in foldedMap.value) {
+		foldedMap.value[key] = !value
+	}
+}, false)
 </script>
 
 
@@ -43,10 +51,12 @@ function onReadClick() {
 		</li>
 	</div>
 	<Teleport v-if="mounted" to="#foottab-tools" :disabled="foottab.selected.type !== FootTabType.Message">
+		<s title="折叠消息" v-folder v-svgicon="rightSvg" class="fore-button" :class="$style['icon-margin']" padding="10%"
+			style="height: 100%;"></s>
 		<lazy-button class="fore-button" :class="$style['icon-margin']" @click="onReadClick">
 			<s title="已读" v-svgicon="forbidSvg" padding="15%"></s>
 		</lazy-button>
-		<i style="width: 1em;"></i>
+		<i style="min-width: 1em;"></i>
 		<lazy-button class="fore-button" :class="$style['icon-margin']" @click="onClearClick">
 			<s title="清空" v-svgicon="clearSvg" padding="5%"></s>
 		</lazy-button>
@@ -107,5 +117,7 @@ $align: align-size(normal);
 
 .icon-margin {
 	margin: 0 align-size(tiny);
+	height: 100%;
+	aspect-ratio: 1;
 }
 </style>

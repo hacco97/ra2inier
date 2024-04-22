@@ -2,7 +2,7 @@
 import Options from '@/components/Options.vue';
 import { useConfigStore } from '@/stores/config';
 import { FlexArea, FlexInput } from '@ra2inier/wc';
-import { computed, reactive, ref } from 'vue';
+import { Directive, computed, reactive, ref } from 'vue';
 import { useThemeState } from '@/states/theme'
 import { useFolder } from '@/hooks/folder';
 import ListView from '@/components/ListView.vue';
@@ -61,23 +61,28 @@ function onAddThemeClick() {
 	theNew.value = ''
 }
 
-
 </script>
 
 
 <template>
 	<div :class="$style.setting" class="scroll">
-		<h2>通用</h2>
+		<h3>通用</h3>
 		<li>
 			<span>GPU加速：</span>
 			<Options :alias="['开启', '关闭']" :values="['yes', 'no']" v-model="proxy.GPU"></Options>
 		</li>
+		<div>
+			使用GPU加速页面渲染，开启后支持更流畅的界面显示和界面特效，但需要更多性能消耗
+		</div>
 		<li>
 			<s v-folder>&gt;</s>
 			<span @click="folded = !folded">主题：</span>
 			<Options :values="themeList" :model-value="theme.name" @update:model-value="onThemeChange"
 				@mousemove="onThemeMouseMove"></Options>
 		</li>
+		<div>
+			选择、修改、删除、自定义主题
+		</div>
 		<p v-show="!folded" :class="$style.list">
 			<ListView :state="listState" @select="onThemeSelect" @delete="onThemeDelete">
 				<template #footer>
@@ -109,7 +114,6 @@ function onAddThemeClick() {
 
 <style scoped lang='scss' module>
 $align: align-size(normal);
-
 .setting {
 	padding: $align 0;
 
@@ -120,7 +124,8 @@ $align: align-size(normal);
 	li {
 		display: flex;
 		padding: 0 $align;
-		height: 1lh;
+		min-height: 1lh;
+		flex-wrap: wrap;
 	}
 
 	p {
@@ -153,6 +158,15 @@ $align: align-size(normal);
 	h2 {
 		padding-left: $align;
 		margin-top: align-size(large);
+	}
+
+	h3 {
+		padding-left: $align;
+	}
+
+	>div {
+		padding-left: align-size(large);
+		@include font-size(small);
 	}
 }
 </style>

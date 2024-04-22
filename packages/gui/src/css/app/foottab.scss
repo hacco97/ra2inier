@@ -1,54 +1,59 @@
 $height: layout-size(foottab);
 
 .foottab-nav {
-   position: relative;
-   &::before,
-   &::after {
-      content: "";
-      position: absolute;
-      z-index: 10;
-      left: 0;
-      width: 100%;
-   }
+	position: relative;
+	z-index: 1;
 
-	&::before {
-		top: 0;
+	&::before,
+	&::after {
+		content: "";
+		position: absolute;
+		z-index: 10;
+		left: 0;
+		width: 100%;
 		height: 0px;
 		border-top: 1px solid line-color(normal);
 	}
 
-	&::after {
-		bottom: 0;
-		height: 0px;
-		border-bottom: 1px solid line-color(normal);
+	&::before {
+		top: 0;
 	}
 }
 
 .foottab-nav-label {
-   div {
-      @include reactive-box();
-   }
+	div {
+		@include reactive-box();
+	}
 
-   li {
-      @include fore-panel();
-      @include plane-radius(normal);
-      @include reactive-box(false, false, true);
-   }
+	li {
+		@include fore-panel();
+		@include plane-radius(normal);
+		@include reactive-box(false, false, true);
+	}
 
-   p {
-      @include fore-button();
-      @include plane-radius(normal);
-   }
+	p {
+		@include fore-button();
+		@include plane-radius(normal);
+	}
 
-   q {
-      @include fore-button();
-      @include reactive-box(true, true, true);
-      @include plane-radius(normal);
-   }
+	q {
+		@include fore-button();
+		@include reactive-box(true, true, true);
+		@include plane-radius(normal);
+	}
 
-   s {
-      @include plane-radius(small);
-      @include font-size(small);
-      @include selection();
-   }
+	s {
+		@include plane-radius(small);
+		@include font-size(small);
+		@include selection();
+	}
+}
+
+.decoration-line {
+	position: relative;
+	z-index: 0;
+	left: 0;
+	height: 0;
+	width: 100%;
+	border-top: 1px solid line-color(normal);
 }

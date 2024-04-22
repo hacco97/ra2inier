@@ -6,7 +6,6 @@ import { useStatusState } from '@/states/status';
 import { IniObjectRo } from '@ra2inier/core';
 import { useObjectCtxmenu, CtxItem } from './objectCtxmenu'
 import { useProjectStore } from '@/stores/projectStore';
-import { camelCase } from 'lodash-es';
 
 const props = defineProps<{ object: IniObjectRo, readonly?: boolean }>()
 const emit = defineEmits(['open'])
@@ -25,16 +24,18 @@ const isSubitemShowed = ref(false)
 const rotateStyle = computed<StyleValue>(() => ({
 	rotate: isSubitemShowed.value ? '90deg' : '0deg'
 }))
+const toggle = () => isSubitemShowed.value = !isSubitemShowed.value
 
 </script>
 
 
 <template>
 	<div :class="$style.objview" v-ctxmenu="ctxItem">
-		<h2 @click="isSubitemShowed = !isSubitemShowed" @mouseenter="onMouseEnter(object)" class="list-item">
+		<h2 @click="toggle" @mouseenter="onMouseEnter(object)" class="list-item">
 			<q :style="rotateStyle" class="folder" :folded="!isSubitemShowed">&gt;</q>
-			<p v-svgicon="iniSvg" padding="15%" @click.stop="emit('open', props.object)"></p>
-			<span :title="object.fullname" class="vertical-center" @click.stop="emit('open', props.object)">
+			<p v-svgicon="iniSvg" padding="15%" @click.stop="emit('open', props.object)" @dblclick="toggle"></p>
+			<span :title="object.fullname" class="vertical-center" @click.stop="emit('open', props.object)"
+				@dblclick="toggle">
 				<i>{{ object.name }}</i><i>.</i>
 				<i>{{ object.scope }}</i>
 			</span>

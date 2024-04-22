@@ -33,10 +33,5 @@ yarn.lock
 # vs-code snippets
 .vscode/*.code-snippets
 
-
-# test
-packages/test
-
-
 # media res
 packages/gui/custom

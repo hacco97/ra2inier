@@ -13,6 +13,9 @@ import { IItem, ListViewState } from '@/components/ListViewState';
 import { ReferViewState, useLocalList } from './ReferViewState'
 import Popup from './Popup.vue'
 import { useConfigStore } from '@/stores/config';
+import { useLogger } from '@/boot/logger';
+
+const logger = useLogger('reference-view')
 
 interface Prop {
 	state: ReferViewState,
@@ -73,16 +76,30 @@ const newUrl = ref('')
 async function onCopyClick() {
 	const text = await navigator.clipboard.readText()
 	newUrl.value = text.replaceAll('\n', '')
-	const refer = new Reference({
-		name: Math.random() + '',
-		url: newUrl.value,
-	})
-	const downloaded = await downloadPackage([refer])
-	console.log(downloaded)
+	loadUrl(newUrl.value)
 }
 
 function onRemoteSubmitClick() {
+	if (!newUrl.value) return
+	loadUrl(newUrl.value)
+}
 
+
+const loadUrl = async (url: string) => {
+	const refer = new Reference({
+		name: getName(url),
+		url,
+	})
+	const downloaded = await downloadPackage([refer])
+	for (const refer of downloaded) {
+		addRefer(refer)
+	}
+}
+
+const getName = (url: string) => {
+	const target = url.lastIndexOf('/')
+	if (target < 0) return url.replaceAll('/', '_')
+	return url.substring(target + 1)
 }
 
 const { folded: isLocalFolded, vFolder } = useFolder(undefined, props.folded)

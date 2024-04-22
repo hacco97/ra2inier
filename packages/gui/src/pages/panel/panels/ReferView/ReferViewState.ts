@@ -1,7 +1,7 @@
 import { Item, ListViewState } from "@/components/ListViewState"
 import { ReferItem, useProjectStore } from "@/stores/projectStore"
 import { useGlobalPackages } from "@/stores/staticStore"
-import { Package, Reference, ReferenceWithPath, forIn, fromRaw, overrideArray } from "@ra2inier/core"
+import { Package, Reference, ReferenceWithPath, UniqueObject, forIn, fromRaw, overrideArray } from "@ra2inier/core"
 import { useDebounceFn } from "@vueuse/core"
 import { reactive, watch } from "vue"
 
@@ -86,6 +86,6 @@ export function useLocalList(referList: ReferItem[]) {
 export function pkg2ReferItem(pkg: Package) {
 	const tmp = fromRaw(pkg, ReferItem)
 	tmp.selected = false
-	tmp.value = pkg.fullname
+	tmp.value = UniqueObject.getFullname(pkg)
 	return tmp
 }

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+</head>
+
+<style>
+   * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+   }
+</style>
+
+<body>
+   <div>
+      <ul class="vca">
+         <span>343443</span>
+         <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores, sint.
+         </p>
+      </ul>
+   </div>
+
+   <style>
+      .vertical-center-align {}
+
+      div {
+         height: 100px;
+      }
+
+      ul {
+         height: 100%;
+         background-color: aquamarine;
+         vertical-align: middle;
+      }
+
+      span {
+         background-color: red;
+      }
+
+      p {
+         background-color: antiquewhite;
+      }
+
+      .vca>* {
+         display: inline-block;
+         vertical-align: middle;
+         font-size: initial;
+      }
+
+      .vca {
+         white-space: nowrap;
+         text-overflow: ellipsis;
+         overflow: hidden;
+         font-size: 0;
+      }
+
+      .vca::after {
+         content: '';
+         display: inline-block;
+         width: 0;
+         height: 100%;
+         vertical-align: middle;
+         user-select: none;
+         background-color: rgb(31, 31, 168);
+      }
+   </style>
+</body>
+
+</html>

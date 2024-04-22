@@ -1,12 +1,5 @@
 
 import { Logger, Pipe } from '@ra2inier/core';
-export * from './file'
-export { work, listenWorker } from './worker'
-export const on = window.eApi.on
-export const send = window.eApi.send
-export const off = window.eApi.off
-export { globalEvent } from './event'
-export { useLogger } from './logger'
 
 /**
  * 建立与后端和worker交互的API接口
@@ -110,4 +103,10 @@ function createAPI() {
 }
 
 export const { exec, registerLog, makeExecMethod, makeExecCtx } = createAPI()
-
+export * from './file'
+export { work, listenWorker } from './worker'
+export const on = window.eApi.on
+export const send = window.eApi.send
+export const off = window.eApi.off
+export { globalEvent } from './event'
+export { useLogger } from './logger'

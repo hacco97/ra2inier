@@ -2,66 +2,91 @@ import { reactive, readonly } from "vue";
 import { FootTabType, useFoottabState } from '@/states/footTabList'
 import { defineStore } from "pinia";
 import { useLayoutState } from "./layout";
+import { dateTime, useSingleton } from "@ra2inier/core";
 
 export enum DialogType {
-   askIf,
-   askStr,
-   askFile
+	askIf,
+	askStr,
+	askFile,
+	show
 }
 
-export interface Dialog {
-   id: number
-   callback: Function,
-   question: string,
-   type: DialogType,
-   res: any
+
+const FINISH = Symbol()
+
+export class Dialog {
+	[s: string]: any
+	static nextID = 0
+	id: number = 0
+
+	/**
+	 * 在界面上显示的信息
+	 */
+	question: any = ''
+	/**
+	 * 对话框的类型
+	 */
+	type: DialogType = 0
+	time: string = ''
+
+	/**
+	 * 是否已经完成
+	 */;
+	[FINISH] = -1
+	get finished() { return this[FINISH] }
+
+	declare finish: (res?: any) => void
+
+	constructor(question: any, type: DialogType = DialogType.show) {
+		this.id = Dialog.nextID++
+		this.question = question || ''
+		this.type = type
+		this.time = dateTime()
+	}
 }
 
-export const useDialogState = defineStore('dialog-state', {
-   state: () => {
-      const dialogs: Dialog[] = reactive([])
-      let nextID = 0
 
-      const layout = useLayoutState()
-      const foottab = useFoottabState()
+function createDialogState() {
+	const dialogs: Dialog[] = reactive([])
+	const { footTabSize } = useLayoutState()
+	const foottab = useFoottabState()
 
-      function addDialog(question: string, type = DialogType.askIf) {
-         let rejectHandler: Function
-         const p: Promise<any> = new Promise((solve) => {
-            rejectHandler = () => solve(undefined)
-            dialogs.push({
-               callback(res: any) {
-                  solve(res)
-                  const id = dialogs.findIndex(val => val.id === this.id)
-                  dialogs.splice(id, 1)
-               },
-               question,
-               id: nextID++,
-               type,
-               res: ''
-            })
-         })
-         setTimeout(rejectHandler!, 10_000)
-         return p
-      }
+	function addDialog(question: string, type = DialogType.askIf) {
+		let rejectHandler: Function
+		setTimeout(() => rejectHandler?.(), 10_000)
+		return new Promise((solve) => {
+			rejectHandler = () => solve(undefined)
+			const d = new Dialog(question, type)
+			d.finish = (res?: any) => {
+				const target = dialogs.find(val => val.id === d.id)
+				if (target) {
+					target[FINISH] = Number(Boolean(res))
+				}
+				d.time = dateTime()
+				solve(res)
+			}
+			dialogs.push(d)
+		})
+	}
 
-      function ask(question: string, type: DialogType = DialogType.askIf, modal = true) {
-         if (modal) {
-            layout.footTabSize.max()
-            foottab.selectFootTabByType(FootTabType.Dialog)
-         }
-         return addDialog(question, type).then((res) => {
-            modal && layout.footTabSize.recover()
-            return res
-         })
-      }
+	async function showDialog(question: any, type?: DialogType.show, modal?: boolean): Promise<void | undefined>
+	async function showDialog(question: any, type?: DialogType.askIf, modal?: boolean): Promise<boolean | undefined>
+	async function showDialog(question: any, type?: DialogType.askFile | DialogType.askStr, modal?: boolean): Promise<string | undefined>
+	async function showDialog(question: any, type: DialogType = DialogType.askIf, modal = true): Promise<any> {
+		if (modal) {
+			footTabSize.max()
+			foottab.selectFootTabByType(FootTabType.Dialog)
+		}
+		const res = await addDialog(question, type)
+		modal && footTabSize.recover()
+		return res
+	}
 
-      return {
-         list: readonly(dialogs),
-         addDialog,
-         ask
-      }
-   }
-})
+	return {
+		list: readonly(dialogs),
+		showDialog
+	}
+}
 
+export const useDialogState = defineStore('dialog-state', { state: useSingleton(createDialogState) })
 export type DialogState = ReturnType<typeof useDialogState>

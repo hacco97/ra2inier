@@ -29,7 +29,7 @@ export function createProjectAction(boot: ProjectBoot) {
 	 */
 	async function importLocalPackage(references: ReferenceWithPath[]) {
 		if (!references.length) return {}
-		const { status, data } = await exec<Record<string, PackageVo>>('project/import-package', { data: references })
+		const { status, data } = await exec<Record<string, PackageVo>>('project/load-package', { data: references })
 		if (!status) return void logger.warn('加载包出错', data) || {}
 		await mergePackages(data)
 		return data
@@ -63,10 +63,18 @@ export function createProjectAction(boot: ProjectBoot) {
 		// TODO:
 	}
 
+	/**
+	 * 导入下载远程包
+	 */
+	function importRemotePackage(references: Reference[]) {
+
+	}
+
 	return {
 		saveProjectInfo,
-		importLocalPackage,
 		updatePackage,
+		importLocalPackage,
+		importRemotePackage
 	}
 }
 

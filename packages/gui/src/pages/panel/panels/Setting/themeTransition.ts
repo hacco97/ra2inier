@@ -33,8 +33,7 @@ export function useThemeChangeAnimation() {
 		document.adoptedStyleSheets.splice(target2, 1)
 	})
 	async function onThemeChange(newTheme: string) {
-		if (!(newTheme in theme.map) || newTheme === theme.name)
-			return false
+		if (!(newTheme in theme.map) || newTheme === theme.name) return
 		document.startViewTransition!(async () => {
 			theme.useTheme(newTheme)
 			position.replaceSync(`

@@ -171,7 +171,7 @@ const detailFolded = inject<Ref<boolean>>('detail-folded')!
 					<!-- 新词条输入框 -->
 					<li @flex-focus="onRowFocus">
 						<p>
-							<i></i><span>&nbsp;</span><em>&lt;</em>
+							<em>&lt;</em>
 							<flex-input :class="$style['the-new']" v-model.lazy="state.theNew" @focus="onNewInputFocused"
 								v-focus="state.length" v-auto-focus v-nkeymap />
 						</p>

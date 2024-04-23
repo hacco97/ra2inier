@@ -1,5 +1,6 @@
 <script lang='ts' setup>
 import openSvg from '@/asset/icons/openDir.svg?raw';
+import zipSvg from '@/asset/icons/zip.svg?raw';
 import githubSvg from '@/asset/icons/github.svg?raw';
 import copySvg from '@/asset/icons/copy.svg?raw';
 import submitSvg from '@/asset/icons/submit.svg?raw';
@@ -7,7 +8,7 @@ import ListView from '@/components/ListView.vue';
 import { FlexInput } from '@ra2inier/wc';
 import { useFolder } from '@/hooks/folder';
 import { downloadPackage, openDirectory, readPackageDir } from '@/boot/apis';
-import { computed, reactive, ref, watch } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import { Package, Reference, fromRaw, isEmptyObject } from '@ra2inier/core';
 import { IItem, ListViewState } from '@/components/ListViewState';
 import { ReferViewState, pkg2ReferItem, useLocalList } from './ReferViewState'
@@ -16,7 +17,8 @@ import { useConfigStore } from '@/stores/config';
 
 interface Prop {
 	state: ReferViewState,
-	folded?: boolean
+	folded?: boolean,
+	showDetail?: boolean
 }
 const props = defineProps<Prop>()
 const { config } = useConfigStore()
@@ -25,7 +27,7 @@ const { references, deleteRefer, addRefer } = props.state
 // UI当前的已经引用的包展示
 const referListState: ListViewState = reactive(new ListViewState(references))
 referListState.checkBox = false
-referListState.showDetail = false
+referListState.showDetail = (props.showDetail === undefined || props.showDetail) ? true : false
 watch(references, () => referListState.update(references))
 function onReferDelete(item: IItem) {
 	deleteRefer(item.key)
@@ -63,7 +65,11 @@ async function onOpenClick() {
 	loadPath(dirs)
 }
 function onLocalSubmitClick() {
+	if (!newPath.value) return
 	loadPath([newPath.value])
+}
+function onZipClick() {
+	theLogger.warn('功能尚未实现', '从zip导入包')
 }
 
 // 从远程到日引用逻辑
@@ -87,6 +93,8 @@ const loadUrl = async (url: string) => {
 		url,
 	})
 	const downloaded = await downloadPackage([refer])
+	console.log(downloaded)
+
 	for (const refer of downloaded) {
 		addRefer(pkg2ReferItem(refer))
 	}
@@ -104,7 +112,7 @@ const { folded: isLocalFolded, vFolder } = useFolder(undefined, props.folded)
 
 <template>
 	<ul :class="$style.refer">
-		<ListView :state="referListState" :check-box="false" @delete="onReferDelete">
+		<ListView :state="referListState" :class="$style.current" :check-box="false" @delete="onReferDelete">
 			<template #default>
 				<h2>
 					<b v-folder>&gt;</b>
@@ -126,16 +134,17 @@ const { folded: isLocalFolded, vFolder } = useFolder(undefined, props.folded)
 			<div v-else>没有找到内置包</div>
 			<h3>
 				<span>从本地导入：</span>
-				<flex-input v-model="newPath" class="fore-input"></flex-input>
+				<flex-input v-model="newPath" class="fore-input" placeholder="本地路径"></flex-input>
 				<s class="normal-button" v-svgicon="submitSvg" padding="15%" @click="onLocalSubmitClick"></s>
-				<s class="normal-button" v-svgicon="openSvg" padding="15%" @click="onOpenClick"></s>
+				<s class="normal-button" v-svgicon="openSvg" padding="15%" title="从文件夹导入" @click="onOpenClick"></s>
+				<s class="normal-button" v-svgicon="zipSvg" padding="15%" title="从zip文件导入" @click="onZipClick"></s>
 			</h3>
 			<h3>
 				<span>从远程导入：</span>
-				<flex-input v-model="newUrl" class="fore-input"></flex-input>
+				<flex-input v-model="newUrl" class="fore-input" placeholder="远程连接"></flex-input>
 				<s class="normal-button" v-svgicon="submitSvg" padding="15%" @click="onRemoteSubmitClick"></s>
-				<s v-svgicon="copySvg" class="normal-button" padding="15%" @click="onCopyClick"></s>
-				<a href="https://github.com/" class="normal-button"><span v-svgicon="githubSvg"></span></a>
+				<s v-svgicon="copySvg" class="normal-button" padding="15%" title="从剪贴板导入链接" @click="onCopyClick"></s>
+				<a href="https://github.com/" class="normal-button" title="前往GitHub"><span v-svgicon="githubSvg"></span></a>
 			</h3>
 		</main>
 	</ul>
@@ -188,5 +197,9 @@ $align: align-size(normal);
 		height: 1lh;
 		min-width: 4em;
 	}
+}
+
+.current {
+	line-height: line-height(small);
 }
 </style>

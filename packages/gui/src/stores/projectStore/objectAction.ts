@@ -44,7 +44,7 @@ export function createObjectAction(boot: ProjectBoot) {
          await exec<string>('project/save-object/' + object.key, { data: object })
       const workRes = await work<string>('object/sync', { data: [object] })
       if (status && workRes.status) {
-         logger.info('对象保存成功', object.fullname)
+         logger.debug('对象保存成功', object.fullname)
          // 如果是修改对象则更新和备份旧的对象
          const toDel = setValue('objects', object.key, object)
          if (toDel) backupObject(toDel)
@@ -60,7 +60,7 @@ export function createObjectAction(boot: ProjectBoot) {
          if (res.status) {
             const toDel = setValue('objects', object.key, undefined)
             toDel && backupObject(toDel)
-            logger.info('删除对象成功', object.fullname)
+            logger.debug('删除对象成功', object.fullname)
          } else {
             logger.warn('删除对象失败', res.data)
          }

@@ -19,7 +19,7 @@ export function createMetaAction(boot: ProjectBoot) {
       const { status, data } = await exec('project/save-scope', { data: scope })
       if (!status) return logger.warn('保存"对象类型"失败', data)
       setValue('scopes', scope.key, scope)
-      logger.info('保存"对象类型"成功', scope.fullname)
+      logger.debug('保存"对象类型"成功', scope.fullname)
    }
 
    function addWord(name = Math.random() + '') {
@@ -37,7 +37,7 @@ export function createMetaAction(boot: ProjectBoot) {
       const { status, data } = await exec('project/save-word', { data: word })
       if (!status) return logger.warn('保存"词条"失败', data)
       setValue('dictionary', word.key, word)
-      logger.info('保存"词条"成功', word.fullname)
+      logger.debug('保存"词条"成功', word.fullname)
    }
 
    const NONE_VALIDITY = new WordValidity
@@ -67,7 +67,7 @@ export function createMetaAction(boot: ProjectBoot) {
       setValue('mappers', mapper.key, mapper)
       const { status, data } = await exec('project/save-mapper', { data: mapper })
       if (!status) return logger.warn('保存"输出器"失败', data)
-      logger.info('保存"输入器"成功', mapper.fullname)
+      logger.debug('保存"输入器"成功', mapper.fullname)
       // TODO:
       const { } = await work('mapper/sync', mapper)
    }

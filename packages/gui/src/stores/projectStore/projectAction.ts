@@ -20,7 +20,7 @@ export function createProjectAction(boot: ProjectBoot) {
 		const pkg = fromRaw(boot.project.main, Package, true)
 		const { status, data } = await exec('project/save-pkginfo', { project, pkg })
 		if (!status) return logger.warn('保存包信息失败', data)
-		logger.info('保存包信息成功')
+		logger.debug('保存包信息成功')
 		return true
 	}
 
@@ -51,15 +51,15 @@ export function createProjectAction(boot: ProjectBoot) {
 		const loaded = await importLocalPackage(<ReferenceWithPath[]>toAdd)
 
 		// 检查哪些包需要下载
-		const toDownload: Reference[] = []
-		for (const r of toAdd) {
-			if (r.key in loaded) continue
-			if (r.url) toDownload.push(r)
-		}
-		if (toDownload.length <= 0) return
-		const downloaded = <ReferenceWithPath[]>await downloadPackage(toDownload)
-		const newLoaded = await importLocalPackage(downloaded)
-		console.log('正在下载')
+		// const toDownload: Reference[] = []
+		// for (const r of toAdd) {
+		// 	if (r.key in loaded) continue
+		// 	if (r.url) toDownload.push(r)
+		// }
+		// if (toDownload.length <= 0) return
+		// const downloaded = <ReferenceWithPath[]>await downloadPackage(toDownload)
+		// const newLoaded = await importLocalPackage(downloaded)
+		// console.log('正在下载')
 		// TODO:
 	}
 

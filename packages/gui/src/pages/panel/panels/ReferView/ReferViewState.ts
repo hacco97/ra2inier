@@ -49,12 +49,18 @@ export function useReferViewState(referList: ReferItem[]) {
 		})
 		return tmp
 	}
+
+	function update(referList: ReferItem[]) {
+		references.splice(0, references.length, ...referList)
+	}
+
 	return {
 		references,
 		flushDetail,
 		addRefer,
 		deleteRefer,
-		getReferMap
+		getReferMap,
+		update
 	}
 }
 

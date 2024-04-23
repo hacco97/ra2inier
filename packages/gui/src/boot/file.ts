@@ -1,4 +1,4 @@
-import { Package, PackageVo, Pipe, Reference } from "@ra2inier/core"
+import { Package, PackageVo, Pipe, Reference, fromRaw } from "@ra2inier/core"
 import { exec, useLogger } from "./apis"
 
 const logger = useLogger('static-store')
@@ -25,7 +25,7 @@ export async function showInFileBroser(path: string) {
 export const readPackageDir = new Pipe(async (paths: string[]) => {
 	const { status, data } = await exec<(Package & { path: string })[]>('static/package', { paths })
 	if (status && data[0]) return data
-	logger.warn('打开包文件夹失败')
+	logger.warn('打开包文件夹失败', paths.join('\n'))
 	throw Error('打开包文件夹失败')
 }).catch(x => []).value
 
@@ -38,12 +38,16 @@ export async function downloadPackage(refers: Reference[]) {
 	if (!refers.length) return []
 	const msg = refers.map(_f).join('\n')
 	logger.info('正在下载包', msg)
-	const { status, data, detail } = await exec<Package[]>('download/remote-package',
+	const { status, data, detail } = await exec<PackageWithPath[]>('download/remote-package',
 		{ data: refers, timeout: 1000 * 60 * 60 * 24 })
 	if (status && data.length > 0) {
 		const msg = data.map(_f).join('\n')
 		logger.debug('包下载成功', msg)
-		return data
+		return data.map(x => {
+			const tmp = fromRaw(x, Package)
+			tmp.path = x.path
+			return <PackageWithPath>tmp
+		})
 	}
 	logger.warn('包下载失败', detail || data)
 	return []
@@ -53,6 +57,7 @@ const GITHUB_URL = /^https:\/\/.*github\.com\/.+/
 const IS_URL = ({ url }: { url: string }) => {
 	url = url.trim()
 	let tmp = Boolean(url.match(GITHUB_URL))
-	tmp || logger.warn('包链接不正确', url)
+	tmp || logger.warn('仓库链接不正确', url)
 	return tmp
 }
+type PackageWithPath = Package & { path: string }

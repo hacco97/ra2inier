@@ -38,7 +38,7 @@ function onDeleteClick(...a: EmitType) {
 				<popup-box>
 					<label :for="item.id">
 						<span>{{ item.value || '?' }}</span>
-						<u v-if="item.detail">({{ item.detail }})</u>
+						<u v-if="state.showDetail && item.detail">({{ item.detail }})</u>
 					</label>
 					<pre slot="pop" class="popup">
                   <slot name="popup" v-bind="item"></slot>

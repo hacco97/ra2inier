@@ -27,7 +27,7 @@ const toRaw = useToRaw(new MarkdownDto, true)
 export async function saveMarkdown(markdown: MarkdownRo) {
 	const { status, data } = await exec('markdown/save', { data: toRaw(markdown) })
 	if (status) {
-		logger.info('保存markdown文件成功', markdown.fullname)
+		logger.debug('保存markdown文件成功', markdown.fullname)
 	} else {
 		logger.warn('保存markdown文件失败', data)
 	}

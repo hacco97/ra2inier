@@ -2,7 +2,7 @@
 /// <reference types="vite/client" />
 /// <reference types="view-transitions-api-types" />
 
-import { ProjectVo } from "@ra2inier/core"
+import { Logger, ProjectVo } from "@ra2inier/core"
 import { BrowserWindow } from "electron"
 
 interface ImportMetaEnv {
@@ -41,5 +41,7 @@ declare global {
 
 
 	var projectVo: ProjectVo | undefined
+
+	var theLogger: Logger
 }
 

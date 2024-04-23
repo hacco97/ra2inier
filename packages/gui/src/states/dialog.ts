@@ -31,7 +31,7 @@ export class Dialog {
 	time: string = ''
 
 	/**
-	 * 是否已经完成
+	 * 是否已经完成，0为拒绝，1为接受
 	 */;
 	[FINISH] = -1
 	get finished() { return this[FINISH] }
@@ -64,11 +64,11 @@ function createDialogState() {
 			const d = new Dialog(question, type)
 			d.finish = (res?: any) => {
 				const target = dialogs.find(val => val.id === d.id)
-				if (target) {
+				if (target && target[FINISH] < 0) {
 					target[FINISH] = Number(Boolean(res))
+					d.time = dateTime()
+					solve(res)
 				}
-				d.time = dateTime()
-				solve(res)
 			}
 			const r = shallowReactive(d)
 			dialogs.push(r)

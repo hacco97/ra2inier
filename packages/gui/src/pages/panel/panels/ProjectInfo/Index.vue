@@ -20,6 +20,8 @@ const referViewState = useReferViewState(info.references)
 const [onFlushClick] = useDisabled(async () => {
 	// 获取需要添加的包
 	await store.updatePackage(referViewState.getReferMap())
+	await init()
+	referViewState.update(info.references)
 	// for (const r of info.references) {
 	//    r.detail = (r.key in store.packages) ? DetailType.loaded : DetailType.unloaded
 	// }
@@ -42,7 +44,8 @@ const [onFlushClick] = useDisabled(async () => {
 			<li class="line"><span>项目名称：</span><span>{{ info.name }}</span></li>
 			<li class="line"><span>项目作者：</span><flex-input class="normal-input" v-model.lazy="info.author" /></li>
 			<li class="line"><span>目标环境：</span><flex-input class="normal-input" v-model.lazy="info.target" /></li>
-			<ReferView :state="referViewState" :folded="true"></ReferView>
+			<ReferView :state="referViewState" :folded="true" :show-detail="true">
+			</ReferView>
 			<ul class="line">
 				<p><span>环境变量：</span></p>
 				<MapBox :map="{}"></MapBox>

@@ -1,14 +1,10 @@
 import 'default-passive-events';
 import '@ra2inier/wc';
-
 import { createApp } from 'vue';
-
-import { createPinia } from 'pinia';
-
-import { forIn } from '@ra2inier/core';
-
 import App from './App.vue';
+import { createPinia } from 'pinia';
 import directives from './boot/directives';
+import { forIn } from '@ra2inier/core';
 
 const app = createApp(App)
 app.use(createPinia())

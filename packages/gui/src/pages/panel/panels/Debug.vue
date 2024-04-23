@@ -1,6 +1,7 @@
 <script lang='ts' setup>
 import { useLogger } from '@/boot/logger';
 import { DialogType, useDialogState } from '@/states/dialog';
+import { useLocalStorage } from '@vueuse/core';
 
 const dialog = useDialogState()
 const logger = useLogger('debug')
@@ -10,6 +11,7 @@ async function onAskClick() {
 	logger.debug(String(ret || 'false'))
 }
 
+ 
 </script>
 
 
@@ -22,6 +24,7 @@ async function onAskClick() {
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti, tempore.
 		</li>
 		<button @click="onAskClick">ask</button>
+		<span>local:{{  }}</span>
 	</div>
 </template>
 

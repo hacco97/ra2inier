@@ -5,12 +5,11 @@ import { EMPTY_PROJECT_ACTION, createProjectAction } from './projectAction'
 import { EMPTY_OBJECT_ACTION, createObjectAction } from './objectAction'
 import { EMPTY_MEAT_ACTION, createMetaAction } from './metaAction'
 import { EMPTY_DERIVED, createDerived } from './derived'
-import { Package, PackageRo, ProjectInfoDto, ProjectVo, date, fromRaw } from '@ra2inier/core'
+import { Package, ProjectInfoDto, ProjectVo, fromRaw } from '@ra2inier/core'
 import { globalEvent, makeExecMethod } from '@/boot/apis'
 import { useConfigStore } from '../config'
 import { useDisabled } from '@/hooks/disabledFn'
 import { ProjectInfo } from './Info'
-import { info } from 'console'
 
 export * from '../build'
 export * from './Info'
@@ -26,12 +25,15 @@ function parseProjectVo(vo: ProjectVo) {
 /**
  * 全局静态函数，打开一个项目
  */
-export const openProject = useDisabled(makeExecMethod<ProjectVo>('project/open', '打开项目失败')
-	.comp((path?: string) => {
-		path = path || useConfigStore().config.PROJECT_PATH
-		return { path }
-	})
-	.pipe(parseProjectVo).value)[0]
+export const openProject = useDisabled(
+	makeExecMethod<ProjectVo>('project/open', '打开项目失败', '打开项目成功')
+		.comp((path?: string) => {
+			path = path || useConfigStore().config.PROJECT_PATH
+			return { path }
+		})
+		.pipe(parseProjectVo)
+		.value
+)[0]
 
 // 立即执行一次打开项目的操作
 openProject('')
@@ -46,14 +48,14 @@ export const openProjectFromBrowser = useDisabled(makeExecMethod<string[]>('dial
 /**
  * 全局静态函数，保存项目
  */
-export const saveProject = makeExecMethod<boolean>('project/save', '保存项目失败')
+export const saveProject = makeExecMethod<boolean>('project/save', '保存项目失败', '保存项目成功')
 	.comp((x: ProjectVo) => ({ data: x })).value
 
 
 /**
  * 新建一个项目
  */
-export const newProject = makeExecMethod<ProjectVo>('project/new', '创建项目失败')
+export const newProject = makeExecMethod<ProjectVo>('project/new', '创建项目失败', '创建项目成功')
 	.comp((o: { path: string, info: ProjectInfo, main: Package }) => {
 		const dto = fromRaw(o.info, ProjectInfoDto)
 		dto.path = o.path
@@ -105,7 +107,7 @@ export const useProjectStore = defineStore('project-store', {
 			...derived,
 			...projectAction,
 			...metaAction,
-			...objectAction
+			...objectAction,
 		}
 	}
 })

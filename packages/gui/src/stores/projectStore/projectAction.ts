@@ -1,7 +1,6 @@
 import { Package, PackageVo, Project, Reference, ReferenceWithPath, destruct, forIn, fromRaw, } from '@ra2inier/core';
 import { downloadPackage, exec, useLogger } from '@/boot/apis';
 import { createEmpty, ProjectBoot } from './boot';
-import { ProjectInfo } from '.';
 
 
 /**
@@ -16,6 +15,7 @@ export function createProjectAction(boot: ProjectBoot) {
 	 * 保存项目的info文件
 	 */
 	async function saveProjectInfo() {
+		if (boot.project.isEmpty) return logger.warn('请打开一个项目')
 		const project = fromRaw(boot.project, Project, true)
 		const pkg = fromRaw(boot.project.main, Package, true)
 		const { status, data } = await exec('project/save-pkginfo', { project, pkg })
@@ -51,23 +51,23 @@ export function createProjectAction(boot: ProjectBoot) {
 		const loaded = await importLocalPackage(<ReferenceWithPath[]>toAdd)
 
 		// 检查哪些包需要下载
-		// const toDownload: Reference[] = []
-		// for (const r of toAdd) {
-		// 	if (r.key in loaded) continue
-		// 	if (r.url) toDownload.push(r)
-		// }
-		// if (toDownload.length <= 0) return
-		// const downloaded = <ReferenceWithPath[]>await downloadPackage(toDownload)
-		// const newLoaded = await importLocalPackage(downloaded)
+		const toDownload: Reference[] = []
+		for (const r of toAdd) {
+			if (r.key in loaded) continue
+			if (r.url) toDownload.push(r)
+		}
+		if (toDownload.length <= 0) return
+		const downloaded = <ReferenceWithPath[]>await downloadPackage(toDownload)
+		const newLoaded = await importLocalPackage(downloaded)
 		// console.log('正在下载')
-		// TODO:
+		// TODO: 
 	}
 
 	/**
 	 * 导入下载远程包
 	 */
 	function importRemotePackage(references: Reference[]) {
-
+		theLogger.warn('方法没有实现', '导入远程包')
 	}
 
 	return {

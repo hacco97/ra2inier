@@ -1,44 +1,51 @@
 {
-   "compilerOptions": {
-      "target": "ESNext",
-      "module": "ESNext",
-      "moduleResolution": "Bundler",
-      "strict": true,
-      "jsx": "preserve",
-      "resolveJsonModule": true,
-      "isolatedModules": true,
-      "esModuleInterop": true,
-      "rootDir": ".",
-      "lib": [
-         "ESNext",
-         "DOM",
-         "DOM.Iterable"
-      ],
-      "experimentalDecorators": true,
-      "useDefineForClassFields": false,
-      "skipLibCheck": true,
-      "noEmit": true,
-      "baseUrl": ".",
-      "paths": {
-         "@/*": [
-            "src/*"
-         ]
-      }
-   },
-   "include": [
-      "src",
-      "electron/preload/renderer.d.ts",
-      "env/env.d.ts", "../core/utils/Pipe.ts",
-   ],
-   "exclude": [
-      "src/worker",
-   ],
-   "references": [
-      {
-         "path": "./tsconfig.node.json",
-      },
-      {
-         "path": "./tsconfig.worker.json",
-      },
-   ]
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"strict": true,
+		"jsx": "preserve",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"rootDir": ".",
+		"lib": [
+			"ESNext",
+			"DOM",
+			"DOM.Iterable"
+		],
+		"experimentalDecorators": true,
+		"useDefineForClassFields": false,
+		"skipLibCheck": true,
+		"noEmit": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": [
+				"src/*"
+			],
+			"@pages/*": [
+				"src/pages/*"
+			],
+			"@widget/*": [
+				"src/pages/widget/*"
+			]
+		}
+	},
+	"include": [
+		"src",
+		"electron/preload/renderer.d.ts",
+		"env/env.d.ts",
+		"../core/utils/Pipe.ts",
+	],
+	"exclude": [
+		"src/worker",
+	],
+	"references": [
+		{
+			"path": "./tsconfig.node.json",
+		},
+		{
+			"path": "./tsconfig.worker.json",
+		},
+	]
 }

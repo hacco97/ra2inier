@@ -7,8 +7,8 @@ import HeaderLayout from '../HeaderLayout.vue'
 import { createProjectInfo } from './state';
 import { useDisabled } from '@/hooks/disabledFn'
 import { useProjectStore } from '@/stores/projectStore';
-import ReferView from '../ReferView/ReferView.vue';
-import { useReferViewState } from '../ReferView/ReferViewState';
+import ReferView from '@widget/ReferView/ReferView.vue';
+import { useReferViewState } from '@widget/ReferView/ReferViewState';
 
 defineOptions({ name: 'ProjectInfo' })
 const store = useProjectStore()

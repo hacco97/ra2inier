@@ -11,7 +11,7 @@ import { Option, useObjects, useOption } from './option';
 import { usePromptKeymap } from './promptKeymap';
 import { PromptState, PromptType, useChildFocus } from './promptState';
 import { useProjectStore } from '@/stores/projectStore';
-import { EntryRo } from '../ObjectEditor/Entry';
+import { EntryRo } from '@/states/Entry';
 
 
 const props = defineProps({

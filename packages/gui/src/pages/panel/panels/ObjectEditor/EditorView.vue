@@ -4,11 +4,11 @@ import ListBox from '@/components/dirty/ListBox.vue';
 import MapBox from '@/components/dirty/MapBox.vue';
 import { useFocus } from '@/hooks/focus';
 import { FlexArea, FlexInput } from '@ra2inier/wc';
-import Prompt from '../Prompt/Prompt.vue';
-import { PromptState, usePromptHelper } from '../Prompt/promptState';
+import Prompt from '@widget/Prompt/Prompt.vue';
+import { PromptState, usePromptHelper } from '@widget/Prompt/promptState';
 import { useEditorKeymap } from './editorKeymap';
 import { EditorState, usePromptCoord, } from './EditorState';
-import { EntryRo } from './Entry';
+import { EntryRo } from '@/states/Entry';
 import { useCursorCoord, useQueryObject, useWindowResize } from './hooks';
 import { useProjectStore } from '@/stores/projectStore';
 

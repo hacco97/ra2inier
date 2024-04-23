@@ -1,10 +1,9 @@
 import { Focus } from '@/hooks/focus';
 import { useKeyMap } from '@/hooks/keymap';
 
-import { PromptState } from '../Prompt/promptState';
+import { PromptState } from '@widget/Prompt/promptState';
 import { EditorState } from './EditorState';
-import { EntryRo } from './Entry';
-import { useProjectStore } from '@/stores/projectStore';
+import { EntryRo } from '@/states/Entry';
 
 // const dict = useDict()
 const VALIDATE_NEW = /^[a-zA-Z\$#@][a-zA-Z\d]*$/

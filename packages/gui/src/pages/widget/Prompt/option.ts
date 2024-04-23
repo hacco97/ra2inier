@@ -3,7 +3,7 @@ import {
    IniObjectRo, overrideArray, WordValueType, WordValueTypeParam,
 } from '@ra2inier/core';
 
-import { EntryRo } from '../ObjectEditor/Entry';
+import { EntryRo } from '@/states/Entry';
 import { PromptState, PromptType } from './promptState';
 import { useProjectStore } from '@/stores/projectStore';
 

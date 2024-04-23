@@ -6,11 +6,11 @@ import openDirSvg from '@/asset/icons/openDir.svg?raw';
 import { useConfigStore } from '@/stores/config';
 import { FlexInput, LazyButton } from '@ra2inier/wc';
 import HeaderLayout from './HeaderLayout.vue';
-import ReferView from './ReferView/ReferView.vue';
+import ReferView from '@widget/ReferView/ReferView.vue';
 import { openDirectory } from '@/boot/file';
-import { ProjectInfo, newProject, useProjectStore } from '@/stores/projectStore';
+import { ProjectInfo, newProject } from '@/stores/projectStore';
 import { PanelParam } from '@/states/panelList';
-import { useReferViewState } from './ReferView/ReferViewState';
+import { useReferViewState } from '@widget/ReferView/ReferViewState';
 import { Package, Reference } from '@ra2inier/core';
 
 const { config } = useConfigStore()

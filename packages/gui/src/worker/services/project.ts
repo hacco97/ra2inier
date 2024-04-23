@@ -1,66 +1,63 @@
 import {
-   forIn, IniObjectRo, MapperRo, mergeMappers, mergeObjects,
-   mergeScopes, mergeWords, ProjectVo, WordValidity,
+	forIn, IniObjectRo, mergeMappers, mergeObjects,
+	mergeScopes, mergeWords, ProjectVo, useEffect,
 } from '@ra2inier/core';
 
-import { exec, log, on } from '../apis';
-import {
-   clearAll, clearAllByPkgKey, dictionary, mappers, objects, scopes,
-   setMapper,
-} from '../boot';
-import { checkWordHook, createCtx, doBuild } from './build';
-
-// 项目初始化
-on('project/init', (project: ProjectVo) => {
-   clearAll()
-   forIn(project.packages, (pkgKey, packageVo) => {
-      mergeObjects(packageVo.objects, pkgKey, objects)
-      mergeScopes(packageVo.scopes, pkgKey, scopes)
-      mergeWords(packageVo.dictionary, pkgKey, dictionary)
-      mergeMappers(packageVo.mappers, pkgKey, mappers)
-   })
-   return true
-})
-
-// 单词条校验逻辑
-on('word/validate', (info: { wordKey: string, values: string[] }) => {
-   const { wordKey, values } = info
-   // 在本地字典中寻找目标的word
-   const word = dictionary[wordKey], validity = new WordValidity
-   checkWordHook(word)
-   if (word.hooks.validate) {
-      try { return word.hooks.validate(values, createCtx()) ?? validity }
-      catch (e) { log.error(`执行${word.fullname}的"validate hook"时出错:${e}`) }
-   }
-   return validity
-})
-
-// 项目构建入口
-on('project/build', (buildList: string[]) => {
-   const objectsList: IniObjectRo[] = []
-   for (const key of buildList) {
-      const object = objects[key]
-      if (object) objectsList.push(object)
-   }
-
-   const outputs = doBuild(objectsList)
-
-   forIn(outputs, (path, data) => {
-      exec('project/output', {
-         outputPath: path,
-         data
-      })
-   })
-})
+import { useMasterAPI, useBackendAPI } from '../apis';
+import { useProject, resetProject } from '../boot';
+import { doBuild } from '../lib';
+import { useObjectHandlers } from './object';
 
 
-on('mapper/sync', (mapper: MapperRo) => {
-   // mappers[mapper.key] = mapper
-   setMapper(mapper.key, mapper)
-})
+/**
+ * 初始化项目处理相关的逻辑
+ */
+function createProjectHandlers() {
+	const { on } = useMasterAPI()
+	const { exec } = useBackendAPI()
 
-on('package/remove', (pkgs: string[]) => {
-   for (const key of pkgs) {
-      clearAllByPkgKey(key)
-   }
-})
+	const { objects, mappers, dictionary, removePackage } = useProject()
+
+	// 项目初始化
+	on('project/init', (project: ProjectVo) => {
+		resetProject()
+		const { objects, scopes, dictionary, mappers } = useProject()
+		forIn(project.packages, (pkgKey, packageVo) => {
+			mergeObjects(packageVo.objects, pkgKey, objects)
+			mergeScopes(packageVo.scopes, pkgKey, scopes)
+			mergeWords(packageVo.dictionary, pkgKey, dictionary)
+			mergeMappers(packageVo.mappers, pkgKey, mappers)
+		})
+		useObjectHandlers()
+		useProjectHandlers()
+		return true
+	})
+
+	// 项目构建入口
+	on('project/build', (buildList: string[]) => {
+		const objectsList: IniObjectRo[] = []
+		for (const key of buildList) {
+			const object = objects[key]
+			if (object) objectsList.push(object)
+		}
+
+		const outputs = doBuild(objectsList, mappers, dictionary)
+
+		forIn(outputs, (path, data) => {
+			exec('project/output', {
+				outputPath: path,
+				data
+			})
+		})
+	})
+
+	on('package/remove', (pkgs: string[]) => {
+		for (const key of pkgs) {
+			removePackage(key)
+		}
+	})
+
+	return [0, () => { }] as [0, any]
+}
+
+export const useProjectHandlers = useEffect(createProjectHandlers)

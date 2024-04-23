@@ -40,7 +40,7 @@ function createWorker() {
       if (ev.data !== 'establish-port-worker-pass') return
       if (ev.ports[0]) {
          const trans = [ev.ports[0]]
-         worker.postMessage('give you port', trans)
+         worker.postMessage('pass port to worker', trans)
       }
    })
 

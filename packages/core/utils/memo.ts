@@ -68,18 +68,18 @@ export function useEffect<A extends any[], R>(effect: ((...args: A) => [R, () =>
  * 将一个工厂函数包装为一个单例对象工厂函数
  */
 export function useSingleton<A extends any[], R, L extends (...args: A) => R>(factory: L): L
-export function useSingleton<A extends any[], R, L extends (...args: A) => R>(factory: L, withHandler: false): L
+export function useSingleton<A extends any[], R, L extends (...args: A) => R>(factory: L, withExpire: false): L
 /**
  * 将一个工厂函数包装为一个单例对象工厂函数
  * @returns [factoryFn: typeof factory, expire: ()=>void]
  */
-export function useSingleton<A extends any[], R, L extends (...args: A) => R>(factory: L, withHandler: true): [L, () => void]
-export function useSingleton<A extends any[], R>(factory: (...args: A) => R, withHandler?: boolean): any {
+export function useSingleton<A extends any[], R, L extends (...args: A) => R>(factory: L, withExpire: true): [L, () => void]
+export function useSingleton<A extends any[], R>(factory: (...args: A) => R, withExpire?: boolean): any {
 	let r: R | undefined
 	const ret = (...args: A) => {
 		if (!r) r = factory(...args)
 		return r
 	}
-	if (!withHandler) return ret
+	if (!withExpire) return ret
 	return [ret, () => r = undefined]
 }

@@ -1,5 +1,11 @@
-import { log } from './apis';
+import { useLogger } from './apis';
+import { useObjectHandlers } from './services/object';
+import { useProjectHandlers } from './services/project'
 
-import.meta.glob('./services/**/*', { eager: true })
+async function main() {
+	useLogger().info('worker online')
+	useObjectHandlers()
+	useProjectHandlers()
+}
 
-log.info('worker online')
+main()

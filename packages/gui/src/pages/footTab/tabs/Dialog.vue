@@ -44,10 +44,12 @@ function getIcon(num: number) {
 				<!-- 选项 -->
 				<template v-if="dialog.type === DialogType.askIf && dialog.finished < 0">
 					<p>
-						<u v-svgicon="submitSvg" class="fore-button" @click="dialog.finish(true)"></u>
+						<u v-svgicon="submitSvg" class="fore-button" :class="$style['bounce-box']"
+							@click="dialog.finish(true)"></u>
 						<span v-show="dialog.count > 0">({{ dialog.count }}s)</span>
 						<i style="width: 1ch;"></i>
-						<u v-svgicon="canselSvg" class="fore-button" @click="dialog.finish(false)"></u>
+						<u v-svgicon="canselSvg" class="fore-button" :class="$style['bounce-box']"
+							@click="dialog.finish(false)"></u>
 					</p>
 				</template>
 				<template v-else-if="dialog.type === DialogType.askStr && dialog.finished < 0">
@@ -69,7 +71,7 @@ function getIcon(num: number) {
 		<p v-svgicon="submitSvg" class="fore-button" title="确认"></p>
 		<p v-svgicon="canselSvg" class="fore-button" title="取消"></p>
 		<i style="width: 1em;"></i>
-		<p v-svgicon="clearSvg" class="fore-button" title="清除"></p>
+		<p v-svgicon="clearSvg" class="fore-button" title="清除" padding="5%"></p>
 	</Teleport>
 </template>
 
@@ -102,6 +104,16 @@ $align: align-size(normal);
 	height: 1.5em;
 	aspect-ratio: 1;
 	vertical-align: center;
+}
+
+@keyframes bounce {
+	50% {
+		background-color: info-color(detail);
+	}
+}
+
+.bounce-box {
+	animation: 1s bounce ease infinite;
 }
 </style>
 

@@ -33,29 +33,8 @@ function createProject() {
 	function setValue<T extends AllTypeKey>(type: T, key: string, data: AllType[T]) {
 		all[type][key] = data
 	}
-
-	function setObject(key: string, obejct: IniObjectRo) {
-		objects_[key] = obejct
-	}
-
-	function setWord(key: string, word: WordRo) {
-		dictionary_[key] = word
-	}
-
-	function setScope(key: string, scope: ScopeRo) {
-		scopes_[key] = scope
-	}
-
-	function setMapper(key: string, mapper: MapperRo) {
-		mappers_[key] = mapper
-	}
-
+	
 	const types: AllTypeKey[] = ['objects', 'scopes', 'mappers', 'dictionary']
-
-	function clearAll() {
-		for (const type of types)
-			for (const key in all[type]) delete all[type][key]
-	}
 
 	function removePackage(pkgKey: string) {
 		for (const type of types)
@@ -73,11 +52,6 @@ function createProject() {
 		main,
 
 		setValue,
-		setObject,
-		setMapper,
-		setScope,
-		setWord,
-
 		removePackage
 	}
 }

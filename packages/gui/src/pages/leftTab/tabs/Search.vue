@@ -15,7 +15,7 @@ const { folded, vFolder } = useFolder()
    <aside :class="$style.search" class="normal-panel">
       <header>
          <span v-folder>&gt;</span>
-         <s v-svgicon="searchSvg" padding="20%" @click="folded = !folded"></s>
+         <s v-svgicon="searchSvg" padding="7%" @click="folded = !folded"></s>
          <input type="text" class="fore-input" :placeholder="placeholder">
       </header>
       <nav v-show="!folded" class="list-view">

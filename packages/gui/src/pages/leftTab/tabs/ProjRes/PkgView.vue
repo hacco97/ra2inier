@@ -40,7 +40,7 @@ const { folded, vFolder } = useFolder(undefined, !props.isMain)
 		<h1 class="list-item normal-panel" v-pkgview-menu @click="folded = !folded">
 			<q class="vertical-center" @mouseenter="onPackageNameEnter">
 				<b v-folder @click.stop>&gt;</b>
-				<p v-svgicon="pkgSvg" style="height: 1lh;" padding="0%"></p>
+				<p v-svgicon="pkgSvg" style="height: 1lh;" padding="3%"></p>
 				<span>{{ pkg.name }}</span>
 			</q>
 			<!-- <aside>

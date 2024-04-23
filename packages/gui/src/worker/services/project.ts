@@ -30,6 +30,8 @@ function createProjectHandlers() {
 		})
 		useObjectHandlers()
 		useProjectHandlers()
+		console.log(useProject())
+		
 		return true
 	})
 

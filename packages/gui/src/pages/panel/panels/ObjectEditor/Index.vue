@@ -45,9 +45,10 @@ function ondeleteClick() {
 }
 function onColumnClick() { state.columnCount = (state.columnCount + 1) % 5 }
 
-const { } = useQueryWord()
-function onCheckClick() {
-
+const { validateWord } = useQueryWord()
+async function onCheckClick() {
+	const validity = await state.entrys.forEach(validateWord)
+	console.log(validity)
 }
 const labelHelper = ref<HTMLElement>()
 const { folded: detailFolded, vFolder } = useFolder(undefined, true)

@@ -37,6 +37,8 @@ function createObjectHandlers() {
 		// 在本地字典中寻找目标的word
 		const word = dictionary[wordKey], validity = new WordValidity
 		checkWordHook(word)
+		console.log(word)
+		
 		if (word.hooks.validate) {
 			try { return word.hooks.validate(values, createCtx(logger)) ?? validity }
 			catch (e: any) { logger.error(`执行${word.fullname}的"validate hook"时出错`, e?.stack || e) }

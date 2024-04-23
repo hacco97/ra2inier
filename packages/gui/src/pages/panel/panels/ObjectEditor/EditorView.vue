@@ -240,7 +240,6 @@ $align: align-size(normal);
 		}
 	}
 
-
 	@import './editor-view.scss';
 }
 

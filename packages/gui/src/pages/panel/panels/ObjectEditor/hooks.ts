@@ -32,9 +32,10 @@ export function useQueryWord() {
 	async function validateWord(entry: EntryRo) {
 		const word = await store.queryWordAsync(entry.wordName)
 		const validity = await store.validateWord(word.key, entry.values)
-		if (!entry.validitys.find(
-			x => x.status === validity.status && x.msg === validity.msg
-		)) { entry.validitys.push(validity) }
+		// if (!entry.validitys.find(
+		// 	x => x.status === validity.status && x.msg === validity.msg
+		// )) { entry.validitys.push(validity) }
+		return validity
 	}
 
 	return {

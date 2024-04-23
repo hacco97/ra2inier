@@ -1,5 +1,5 @@
-import { round } from 'lodash-es';
+import { round } from 'lodash';
 
 export function lpd() {
-   return round(123.22, 1)
+	return round(123.22, 1)
 }

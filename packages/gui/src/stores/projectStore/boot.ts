@@ -1,7 +1,7 @@
 import { useLogger } from '@/boot/logger';
 import {
 	createProjectRo, EMPTY_PROJECTVO, forIn, IniObjectRo, MapperRo, PackageRo,
-	PackageVo, parsePackages, Project, ProjectVo, Reference, ScopeRo, WordRo,
+	PackageVo, parsePackages, Project, ProjectVo, Reference, resolveReferences, ScopeRo, WordRo,
 } from '@ra2inier/core';
 import { computed, reactive, shallowReactive } from 'vue';
 
@@ -9,16 +9,22 @@ import { computed, reactive, shallowReactive } from 'vue';
  * 创建一个项目初始化值
  */
 export function createProject(projectVo: ProjectVo) {
-	/**
-	 * 核心project对象
+	/*
+	  核心project对象
 	 */
 	const project = reactive(createProjectRo(projectVo))
-	/**
-	 * 主包对象
+	/*
+	  主包对象
 	 */
 	const main = computed(() => project.main || new PackageRo)
 	const mainKey = computed(() => project.main?.key || '')
 	const loaded = computed(() => !project.isEmpty)
+	/*
+	  依赖图对象
+	*/
+	const { graph: depthGraph = [] } = resolveReferences(mainKey.value, project.packages)
+	console.log(depthGraph)
+
 
 	/**
 	 * 修改主包中的对象
@@ -107,6 +113,7 @@ export function createProject(projectVo: ProjectVo) {
 		main,
 		mainKey,
 		loaded,
+		depthGraph,
 		setValue,
 		setProjectInfo,
 		setPackage,
@@ -141,6 +148,9 @@ export const EMPTY_METHOD = () => {
 	throw Error('请打开一个项目')
 }
 
+/**
+ * 使用一个工厂函数创建一个对象，将其中所有的函数替换成空方法 EMPTY_METHOD
+ */
 export function createEmpty<K extends (...args: any) => any>(factory: K) {
 	const EMPTY_DERIVED: Record<string, any> = factory(EMPTY_BOOT)
 	for (const key in EMPTY_DERIVED) {

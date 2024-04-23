@@ -75,7 +75,6 @@ function useElectron(env: Record<string, string>) {
 				rollupOptions: {
 					output: {
 						entryFileNames: '[name].js',
-						chunkFileNames: "dev.js"
 					},
 				},
 			},

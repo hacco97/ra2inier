@@ -1,7 +1,7 @@
 import {
-	createMapperHandlers, createWordHooks, Entry, FinalHandler, FinalOutput,
-	forIn, HookCtx, IniObjectRo, Logger, MapperRo, objectTranslator, OutputHandler,
-	StartHandler, WordRo,
+	createMapperHandlers, createWordHooks, Entry, FinalHandler,
+	FinalOutput, forIn, HookCtx, IniObjectRo, Logger, MapperRo,
+	objectTranslator, OutputHandler, StartHandler, WordRo,
 } from '@ra2inier/core';
 import { createLogger } from '../apis';
 import { readonly } from 'vue'
@@ -58,6 +58,7 @@ export function findWordByName(wordName: string, dictionary: Record<string, Word
 
 /**
  * 检查一个word的hooks是否存在，如果不存在就为其创建
+ * @dirty word.hooks
  */
 export function checkWordHook(word: WordRo) {
 	if (!word.hooks) {
@@ -68,6 +69,7 @@ export function checkWordHook(word: WordRo) {
 
 /**
  * 检查一个mapper的handler是否已经解析，如果不存在则为其创建
+ * @dirty mapper.handlers
  */
 export function checkMapperHandlers(mapper: MapperRo) {
 	if (!mapper.data) mapper.data = {}

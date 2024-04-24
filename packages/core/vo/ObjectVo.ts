@@ -10,14 +10,21 @@ export interface ResourceVo extends UniqueObject { }
 export interface ScopeVo extends Scope { }
 
 export interface WordVo extends Word {
-	detail: string   // 一个markdown对象的key值
+	/**
+	 * 一个markdown对象的key值
+	 */
+	detail: string 
 }
 
 export interface MapperVo extends Mapper { }
 
 export interface MarkdownVo extends UniqueObject {
+	/**
+	 * markdown原文本
+	 */
 	raw: string
-
-	// 图片的名字
+	/**
+	 * 图片的名字：图片数据
+	 */
 	images: Record<string, Uint8Array>
 }

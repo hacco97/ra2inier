@@ -9,11 +9,11 @@ li {
    max-width: 100%;
 
    &:nth-child(even) {
-      background-color: var(--color-bg-1);
+      background-color: var(--color-line-even);
    }
 
    &:nth-child(odd) {
-      background-color: var(--color-bg-2);
+      background-color: var(--color-line-odd);
    }
 
    p {
@@ -54,11 +54,10 @@ li {
       text-overflow: ellipsis;
       text-align: right;
       border-radius: var(--textbox-radius);
-      background-color: var(--color-bg-3);
+      background-color: var(--color-word);
 
       &[selected="true"] {
-         color: var(--color-t-5);
-         background-color: var(--color-bg-5);
+         background-color: var(--color-word-selected);
       }
 
       &[cursor="true"]::after {
@@ -79,12 +78,11 @@ li {
       padding: 0 align-size(large);
       text-align: center;
       border-radius: var(--textbox-radius);
-      background-color: var(--color-bg-4);
+      background-color: var(--color-input);
    }
 
    flex-input:focus {
-      color: var(--color-t-2);
-      outline: var(--color-line-light) solid 2px;
+      outline: var(--color-input-focus) solid 2px;
       outline-offset: -1px;
    }
 

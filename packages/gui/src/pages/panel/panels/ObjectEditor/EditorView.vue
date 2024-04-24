@@ -148,7 +148,7 @@ const detailFolded = inject<Ref<boolean>>('detail-folded')!
 				<hr style="height: 10px;">
 				<ul :style="columCount">
 					<!-- 词条编辑框 -->
-					<li v-for="(entry, eid) in entrys" :key="entry.id" @click="onRowClick(eid)"
+					<li v-for="(entry, eid) in entrys" :key="entry.id" class="oe-line" @click="onRowClick(eid)"
 						:style="{ order: entry.order }">
 						<p @flex-focus="onRowFocus">
 							<i @click="onSubFoldClick(entry)" class="folder" :folded="entry.isSubFolded">&gt;</i>
@@ -157,7 +157,7 @@ const detailFolded = inject<Ref<boolean>>('detail-folded')!
 								{{ entry.wordName }}
 							</span>
 							<em>=</em>
-							<flex-input v-for="(value, vid) in entry.values" :key="vid" :value="value"
+							<flex-input class="oe-input" v-for="(value, vid) in entry.values" :key="vid" :value="value"
 								@change="onInputChange($event, eid, vid)" v-focus="entry.order + vid" v-keymap="entry"
 								@blur="onInputBlur" @focus="onInputFocused($event, entry.order, vid, entry)"
 								@keydown="onInputKeydown" @keyup="onInputKeyup" @contextmenu="onInputCtxMenu" />
@@ -169,11 +169,11 @@ const detailFolded = inject<Ref<boolean>>('detail-folded')!
 					</li>
 
 					<!-- 新词条输入框 -->
-					<li @flex-focus="onRowFocus">
+					<li @flex-focus="onRowFocus" class="oe-line">
 						<p>
 							<em>&lt;</em>
-							<flex-input :class="$style['the-new']" v-model.lazy="state.theNew" @focus="onNewInputFocused"
-								v-focus="state.length" v-auto-focus v-nkeymap />
+							<flex-input :class="$style['the-new']" class="oe-input" v-model.lazy="state.theNew"
+								@focus="onNewInputFocused" v-focus="state.length" v-auto-focus v-nkeymap />
 						</p>
 					</li>
 				</ul>
@@ -181,15 +181,6 @@ const detailFolded = inject<Ref<boolean>>('detail-folded')!
 		</section>
 	</main>
 </template>
-
-<style scoped lang="scss">
-.new-input {
-	position: absolute;
-	top: 0;
-	left: 0;
-	background-color: red !important;
-}
-</style>
 
 <style scoped lang='scss' module>
 $height: align-size(larger);
@@ -200,7 +191,6 @@ $align: align-size(normal);
 	padding: $align 0;
 	z-index: var(--z-index-main);
 	min-height: 0;
-	color: var(--color-t-1);
 	line-height: var(--line-height);
 
 	section {
@@ -220,7 +210,7 @@ $align: align-size(normal);
 	flex-area {
 		display: block;
 		width: 100%;
-		padding: 0 align-size(small);
+		padding: 0 $align;
 	}
 
 	ul {

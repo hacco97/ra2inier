@@ -46,8 +46,30 @@ export function createAll() {
 	}
 }
 
+/**
+ * "all type"的名字键值
+ */
 export type AllType = ReturnType<typeof createAll>
+
+/**
+ * "all type"的名字键值
+ */
 export type AllTypeKey = keyof ReturnType<typeof createAll>
+
+/**
+ * 资源集合的名字键值
+ */
+export type ValueSetType = {
+	objects: IniObjectRo
+	dictionary: WordRo
+	mappers: MapperRo
+	scopes: ScopeRo
+}
+
+/**
+ * 资源集合的名字键值
+ */
+export type ValueSetKey = keyof ValueSetType
 
 
 /**

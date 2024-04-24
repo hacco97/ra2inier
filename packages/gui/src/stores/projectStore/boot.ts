@@ -1,7 +1,8 @@
 import { useLogger } from '@/boot/logger';
 import {
-	createProjectRo, EMPTY_PROJECTVO, forIn, IniObjectRo, MapperRo, PackageRo,
-	PackageVo, parsePackages, Project, ProjectVo, Reference, resolveReferences, ScopeRo, WordRo,
+	createProjectRo, EMPTY_PROJECTVO, forIn, PackageRo,
+	PackageVo, parsePackages, Project, ProjectVo, Reference,
+	resolveReferences, ValueSetKey, ValueSetType,
 } from '@ra2inier/core';
 import { computed, reactive, shallowReactive } from 'vue';
 
@@ -125,21 +126,6 @@ export function createProject(projectVo: ProjectVo) {
 }
 
 export type ProjectBoot = ReturnType<typeof createProject>
-
-/**
- * 资源集合的名字键值
- */
-export type ValueSetType = {
-	objects: IniObjectRo
-	dictionary: WordRo
-	mappers: MapperRo
-	scopes: ScopeRo
-}
-
-/**
- * 资源集合的名字键值
- */
-export type ValueSetKey = keyof ValueSetType
 
 export const EMPTY_BOOT = createProject(new EMPTY_PROJECTVO)
 const logger = useLogger('no project')

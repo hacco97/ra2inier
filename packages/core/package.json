@@ -14,7 +14,7 @@
 	},
 	"author": "",
 	"devDependencies": {
-		"@ra2inier/core": "workspace:./",
+		"@root": "workspace:./",
 		"@types/lodash": "^4.17.0",
 		"@types/node": "^20.12.7",
 		"lodash": "^4.17.21"

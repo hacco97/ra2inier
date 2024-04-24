@@ -1,6 +1,6 @@
 import { computed } from "vue";
-import { EMPTY_BOOT, ProjectBoot, ValueSetKey, ValueSetType } from "./boot";
-import { IniObjectRo, MapperRo, PackageRo, ScopeRo, WordRo, forIn } from "@ra2inier/core";
+import { EMPTY_BOOT, ProjectBoot } from "./boot";
+import { IniObjectRo, MapperRo, PackageRo, ScopeRo, ValueSetKey, ValueSetType, WordRo, forIn } from "@ra2inier/core";
 
 export const EMPTY_WORDRO = new WordRo
 

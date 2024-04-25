@@ -86,7 +86,7 @@ onMounted(() => {
 
 	s {
 		display: inline-block;
-		width: line-height(small);
+		width: line-height(normal);
 		aspect-ratio: 1;
 		margin: 0 align-size(tiny);
 	}

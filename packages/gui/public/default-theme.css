@@ -110,12 +110,8 @@
 	/* lfp:// 表示图片在ra2 inier程序所在目录下的路径 */
 	/* 左上图标 */
 	--image-icon: url(lfp://custom/icons/favicontext.svg) center / contain no-repeat;
-	/* 编辑器背景 */
-	--image-editor: ;
-	/* 左侧边栏底纹 */
-	--image-lefttab: ;
-	/* 右下抽屉图片 */
-	--image-foottab: ;
+	/* 欢迎页logo */
+	--hero-icon: url(lfp://custom/icons/favicontext.svg) center / contain no-repeat;
 }
 
 /* 整个页面 */
@@ -128,6 +124,16 @@
 	a {
 		filter: invert(1);
 	}
+}
+
+/* hero logo */
+#hero {
+	opacity: 0.9;
+	filter: invert(1)
+		/**/
+		drop-shadow(7px 7px 10px var(--info-color-success))
+		/**/
+		drop-shadow(-7px 7px 14px var(--info-color-detail));
 }
 
 /* 标题 */

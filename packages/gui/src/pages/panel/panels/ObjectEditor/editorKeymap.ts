@@ -4,6 +4,7 @@ import { useKeyMap } from '@/hooks/keymap';
 import { PromptState } from '@widget/Prompt/promptState';
 import { EditorState } from './EditorState';
 import { EntryRo } from '@/states/Entry';
+import { Logger } from '@ra2inier/core';
 
 // const dict = useDict()
 const VALIDATE_NEW = /^[a-zA-Z\$#@][a-zA-Z\d]*$/
@@ -42,11 +43,12 @@ function defaultValidator(string: string) {
 interface Ctx {
 	state: EditorState,
 	promptState: PromptState,
-	focus: Focus
+	focus: Focus,
+	logger: Logger
 }
 
 export function useEditorKeymap(ctx: Ctx) {
-	const { state, focus, promptState } = ctx
+	const { state, focus, promptState, logger } = ctx
 
 	function closeNav() {
 		promptState.unactive()
@@ -112,13 +114,14 @@ export function useEditorKeymap(ctx: Ctx) {
 	}, { prevent: true, tabindex: 0 })
 
 	const theNewKeymap = useKeyMap({
-		enter(e) {
-			const newOne = defaultValidator((<HTMLInputElement>this).value)
-			if (!newOne) return
+		enter(this: HTMLInputElement) {
+			const value: string = this.value
+			const newOne = defaultValidator(value)
+			if (!newOne) return logger.warn('词条名无效', value)
 			const target = state.insert(newOne)
 			if (target < 0) return
 			focus.focusAt(target);
-			(<HTMLInputElement>this).value = ''
+			this.value = ''
 		},
 		arrowup(e) { focus.focusPrev() },
 		arrowdown(e) { focus.focusAt(0) },

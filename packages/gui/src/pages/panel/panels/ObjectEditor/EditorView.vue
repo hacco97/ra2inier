@@ -11,6 +11,7 @@ import { EditorState, usePromptCoord, } from './EditorState';
 import { EntryRo } from '@/states/Entry';
 import { useCursorCoord, useQueryObject, useWindowResize } from './hooks';
 import { useProjectStore } from '@/stores/projectStore';
+import { useLogger } from '@/boot/logger';
 
 // 初始化数据
 const props = defineProps<{ state: EditorState }>()
@@ -18,6 +19,7 @@ const state = props.state
 const { entrys, data: object } = state
 const promptState = shallowReactive(new PromptState)
 const store = useProjectStore()
+const logger = useLogger('object-editor')
 
 // 焦点逻辑
 const focus = useFocus()
@@ -27,9 +29,9 @@ const vAutoFocus = { mounted(el: HTMLElement) { el.focus() } }
 // 提示框定位逻辑
 const { onColFocus, onRowFocus, translate: promptPosition } = usePromptCoord()
 const promptHelper = usePromptHelper(store, promptState)
-function onInputFocused(e: Event, order: number, vid: number, entry: EntryRo) {
+function onInputFocused(e: Event, entry: EntryRo, vid: number) {
 	// 切换焦点
-	focus.setCurrent(order + vid)
+	focus.setCurrent(entry.order + vid)
 	// 切换被选择的词条
 	entry.vid = vid
 	promptHelper.updateEntry(entry)
@@ -39,8 +41,7 @@ function onInputFocused(e: Event, order: number, vid: number, entry: EntryRo) {
 	e.currentTarget!.dispatchEvent(new CustomEvent('flex-focus', { bubbles: true }))
 }
 function onNewInputFocused(e: KeyboardEvent) {
-	const order = state.length
-	focus.setCurrent(order)
+	focus.setCurrent(state.length)
 	promptState.hide()
 	onColFocus(e)
 	e.currentTarget!.dispatchEvent(new CustomEvent('flex-focus', { bubbles: true }))
@@ -64,7 +65,7 @@ useWindowResize(() => promptState.close())
 const {
 	inputKeymap: vKeymap,
 	theNewKeymap: vNkeymap
-} = useEditorKeymap({ state, focus, promptState })
+} = useEditorKeymap({ state, focus, promptState, logger })
 function onInputKeydown(e: KeyboardEvent) {
 	if (promptState.isShowed) return
 	if (e.key.length !== 1) return
@@ -159,8 +160,8 @@ const detailFolded = inject<Ref<boolean>>('detail-folded')!
 							<em>=</em>
 							<flex-input class="oe-input" v-for="(value, vid) in entry.values" :key="vid" :value="value"
 								@change="onInputChange($event, eid, vid)" v-focus="entry.order + vid" v-keymap="entry"
-								@blur="onInputBlur" @focus="onInputFocused($event, entry.order, vid, entry)"
-								@keydown="onInputKeydown" @keyup="onInputKeyup" @contextmenu="onInputCtxMenu" />
+								@blur="onInputBlur" @focus="onInputFocused($event, entry, vid)" @keydown="onInputKeydown"
+								@keyup="onInputKeyup" @contextmenu="onInputCtxMenu" />
 						</p>
 						<article v-show="entry.validitys.length > 0">
 							<h3 v-for="validity in entry.validitys">{{ validity.msg }}</h3>

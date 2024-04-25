@@ -3,19 +3,20 @@ import { inject, Ref } from 'vue';
 import { Dialog, DialogType, useDialogState } from '@/states/dialog';
 import { FootTabType, useFoottabState } from '@/states/footTabList';
 import submitSvg from '@/asset/icons/submit.svg?raw'
+import dirSvg from '@/asset/icons/openDir.svg?raw'
 import canselSvg from '@/asset/icons/close.svg?raw'
 import clearSvg from '@/asset/icons/clear.svg?raw';
 import askSvg from '@/asset/icons/ask.svg?raw'
+import { FlexInput } from '@ra2inier/wc';
+import { openDirectory } from '@/boot/file';
+import { useLayoutState } from '@/states/layout';
+import { date } from '@ra2inier/core';
 
 const foottab = useFoottabState()
 const dialogs = useDialogState()
+const { footTabSize, } = useLayoutState()
 // foottab的自定义按钮逻辑
 const mounted = <Ref<boolean>>inject('foottab-mounted')
-
-function onFileChange(e: Event, dialog: Dialog) {
-	const input = e.target as HTMLInputElement
-	dialog.data = input.files ? input.files[0].path : ''
-}
 
 const iconList: Record<number, string> = {
 	0: canselSvg,
@@ -26,6 +27,16 @@ function getIcon(num: number) {
 	return iconList[num] ?? iconList[-1]
 }
 
+async function onOpenClick(dialog: Dialog) {
+	footTabSize.giveAChance()
+	const [file] = await openDirectory() || []
+	if (file) dialog.data = file
+}
+
+function onSubmitClick(dialog: Dialog) {
+	if (!dialog.data) return
+	dialog.finish(dialog.data)
+}
 </script>
 
 
@@ -54,14 +65,20 @@ function getIcon(num: number) {
 				</template>
 				<template v-else-if="dialog.type === DialogType.askStr && dialog.finished < 0">
 					<p>
-						<input type="text" v-model="dialog.data" />
-						<u v-svgicon="submitSvg" class="fore-button" @click="dialog.finish(dialog.data)"></u>
+						<flex-input v-model="dialog.data" :placeholder="dialog.remark" class="fore-input" />
+						<span v-show="dialog.count > 0">({{ dialog.count }}s)</span>
+						<i style="width: 1ch;"></i>
+						<u v-svgicon="submitSvg" class="fore-button" @click="onSubmitClick(dialog)"></u>
 					</p>
 				</template>
 				<template v-else-if="dialog.type === DialogType.askFile && dialog.finished < 0">
 					<p>
-						<input type="file" @change="onFileChange($event, dialog)" />
-						<u v-svgicon="submitSvg" class="fore-button" @click="dialog.finish(dialog.data)"></u>
+						<flex-input class="fore-input" v-model="dialog.data" />
+						<span v-show="dialog.count > 0">({{ dialog.count }}s)</span>
+						<i style="width: 1ch;"></i>
+						<u v-svgicon="dirSvg" class="fore-button" @click="onOpenClick(dialog)"></u>
+						<i style="width: 1ch;"></i>
+						<u v-svgicon="submitSvg" class="fore-button" @click="onSubmitClick(dialog)"></u>
 					</p>
 				</template>
 			</li>

@@ -11,14 +11,12 @@ export enum DialogType {
 	show
 }
 
-
-const FINISH = Symbol()
-const COUNT = Symbol()
+const FINISH = Symbol(), COUNT = Symbol(), DATA = Symbol(), TYPE = Symbol()
 
 export class Dialog {
 	[s: string]: any
 	static nextID = 0
-	id: number = 0
+	readonly id: number = 0
 
 	/**
 	 * 在界面上显示的信息
@@ -26,8 +24,9 @@ export class Dialog {
 	question: any = ''
 	/**
 	 * 对话框的类型
-	 */
-	type: DialogType = 0
+	 */;
+	[TYPE]: DialogType = 0
+	get type() { return this[TYPE] }
 	time: string = ''
 
 	/**
@@ -47,23 +46,46 @@ export class Dialog {
 	constructor(question: any, type: DialogType = DialogType.show) {
 		this.id = Dialog.nextID++
 		this.question = question || ''
-		this.type = type
+		this[TYPE] = type
 		this.time = dateTime()
 	}
+
+	/**
+	 * 用于交互的数据结构
+	 */
+	data: any = ''
+
+	remark: string = ''
 }
 
+const countMap: Record<DialogType, number> = {
+	[DialogType.askIf]: 9,
+	[DialogType.askStr]: 99,
+	[DialogType.askFile]: 99,
+	[DialogType.show]: -1
+}
+
+class DialogParam {
+	question: any = ''
+	type = DialogType.askIf
+	modal = true
+	remark = ''
+	count = 10
+}
 
 function createDialogState() {
-	const dialogs: Dialog[] = reactive([])
+	const list: Dialog[] = reactive([])
 	const { footTabSize } = useLayoutState()
 	const foottab = useFoottabState()
 
-	function addDialog(question: string, type = DialogType.askIf) {
-		foottab.setDialogBadge(dialogs.length + 1)
+	function addDialog(question: string, type = DialogType.askIf, remark = '') {
+		foottab.setDialogBadge(list.length + 1)
 		return new Promise((solve) => {
 			const d = new Dialog(question, type)
+			const count = countMap[type]
+			d[COUNT] = count > 5 ? count : -1
 			d.finish = (res?: any) => {
-				const target = dialogs.find(val => val.id === d.id)
+				const target = list.find(val => val.id === d.id)
 				if (target && target[FINISH] < 0) {
 					target[FINISH] = Number(Boolean(res))
 					d.time = dateTime()
@@ -71,12 +93,14 @@ function createDialogState() {
 				}
 			}
 			const r = shallowReactive(d)
-			dialogs.push(r)
-			const stop = setInterval(() => {
-				if (--r[COUNT] > 0) return;
-				d.finish()
-				clearInterval(stop)
-			}, 1000)
+			list.push(r)
+			if (d[COUNT] !== -1) {
+				const stop = setInterval(() => {
+					if (--r[COUNT] > 0) return;
+					d.finish()
+					clearInterval(stop)
+				}, 1000)
+			}
 		})
 	}
 
@@ -94,8 +118,8 @@ function createDialogState() {
 	}
 
 	return {
-		list: readonly(dialogs),
-		showDialog
+		list,
+		showDialog,
 	}
 }
 

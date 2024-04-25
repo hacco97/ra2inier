@@ -72,7 +72,7 @@ provide('detail-folded', detailFolded)
 							<em>.</em>
 							<flex-input v-model.lazy.trim="state.data.scope" placeholder="NullTypes" /><i></i>
 							<em>/</em><i @click="labelHelper?.focus()"></i>
-							<flex-input ref="labelHelper" v-model.lazy.trim="state.currentChild" placeholder="root" />
+							<flex-input ref="labelHelper" v-model.lazy.trim="state.currentChild" placeholder="." />
 						</h2>
 						<label @click="labelHelper?.focus()"></label>
 						<label></label>
@@ -86,7 +86,7 @@ provide('detail-folded', detailFolded)
 							<s title="详情" v-folder padding="15%" v-svgicon="rightSvg" class="fore-button"></s>
 							<s title="分栏" padding="15%" v-svgicon="columnSvg" class="fore-button" :column="state.columnCount"
 								:class="$style.column" @click="onColumnClick"></s>
-							<em></em>
+							<em style="flex-basis: 1em;"></em>
 							<lazy-button @click="ondeleteClick">
 								<s title="删除(Delete)" v-svgicon="delSvg" class="fore-button"></s>
 							</lazy-button>

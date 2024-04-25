@@ -7,11 +7,11 @@ const dialog = useDialogState()
 const logger = useLogger('debug')
 
 async function onAskClick() {
-	const ret = await dialog.showDialog('你好吗？', DialogType.askIf)
+	const ret = await dialog.showDialog('请输入字符串', DialogType.askFile)
 	logger.debug(String(ret || 'false'))
 }
 
- 
+
 </script>
 
 
@@ -24,7 +24,7 @@ async function onAskClick() {
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti, tempore.
 		</li>
 		<button @click="onAskClick">ask</button>
-		<span>local:{{  }}</span>
+		<span>local:{{ }}</span>
 	</div>
 </template>
 

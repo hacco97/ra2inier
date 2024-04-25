@@ -17,7 +17,7 @@ defineOptions({
 })
 defineEmits(['toggleTab'])
 
-const { footTabSize, tryUnFocusFoottab } = useLayoutState()
+const { footTabSize } = useLayoutState()
 const foottab = useFoottabState()
 
 //选项卡开启与关闭
@@ -37,7 +37,7 @@ const isFixSelected = ref(false)
 function onFocusout() {
 	footTabSize.active = false
 	if (isFixSelected.value) return
-	setTimeout(tryUnFocusFoottab, 20)
+	setTimeout(() => footTabSize.tryClose(), 10)
 }
 
 // 选项卡拖动逻辑

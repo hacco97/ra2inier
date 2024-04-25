@@ -1,10 +1,10 @@
 import {
-  Entry, forIn, HookCtx, IniObjectRo, MapperHandler,
-  MapperRo, safeScript, WordHooks, WordRo,
+	Entry, forIn, HookCtx, IniObjectRo, MapperHandler,
+	MapperRo, safeScript, WordHooks, WordRo,
 } from '@ra2inier/core/boot';
 
 function preTranslator() {
-   console.log('pre translate')
+	console.log('pre translate')
 }
 
 /**
@@ -13,74 +13,74 @@ function preTranslator() {
  * @returns 返回翻译之后的结果，若果有任何hook错误，则返回false
  */
 export function objectTranslator(object: IniObjectRo, words: Record<string, WordRo>, ctx: HookCtx) {
-   if (!(object && words)) return false
+	if (!(object && words)) return false
 
-   // TODO: 预处理环境变量
-   preTranslator()
+	// TODO: 预处理环境变量
+	preTranslator()
 
-   // 正式开始执行词条
-   const translation: string[][][] = []
-   const adjusts: Record<string, WordHooks['adjust']> = {}
-   const outputs: Record<string, WordHooks['output']> = {}
-   try {
-      for (const entry of object.entry) {
-         const hooks: any = words[entry.wordName]?.hooks ?? {}
-         const ret = entryTranslator(entry, hooks.translate, ctx)
-         if (!ret) return false
-         translation.push(ret)
+	// 正式开始执行词条
+	const translation: string[][][] = []
+	const adjusts: Record<string, WordHooks['adjust']> = {}
+	const outputs: Record<string, WordHooks['output']> = {}
+	try {
+		for (const entry of object.entry) {
+			const hooks: any = words[entry.wordName]?.hooks ?? {}
+			const ret = entryTranslator(entry, hooks.translate, ctx)
+			if (!ret) return false
+			translation.push(ret)
 
-         // 记录adjust和output hook
-         if (hooks.adjust) adjusts[entry.wordName] = hooks.adjust
-         if (hooks.output) outputs[entry.wordName] = hooks.output
-      }
-   } catch (e) {
-      ctx.log(e)
-      return false
-   }
+			// 记录adjust和output hook
+			if (hooks.adjust) adjusts[entry.wordName] = hooks.adjust
+			if (hooks.output) outputs[entry.wordName] = hooks.output
+		}
+	} catch (e) {
+		ctx.log(e)
+		return false
+	}
 
-   // 开始执行adjust hook
-   return objectAdjuster(translation.flat(), adjusts, ctx)
+	// 开始执行adjust hook
+	return objectAdjuster(translation.flat(), adjusts, ctx)
 }
 
 /**
  * 翻译单个entry
  */
 export function entryTranslator(entry: Entry, translate: WordHooks['translate'], ctx: HookCtx) {
-   try {
-      if (!translate) return [nullTranslator(entry)]
-      const ret: string[][] = []
-      const tr = translate(entry.values, ctx)
-      if (typeof tr === 'string') {
-         ret.push([entry.wordName, tr])
-      } else if (tr instanceof Array) {
-         ret.push(...tr)
-      } else if (typeof tr === 'object') {
-         for (const key in tr as any) { ret.push([key, tr[key]]) }
-      } else {
-         ret.push(nullTranslator(entry))
-      }
-      return ret
-   } catch (e) {
-      ctx.log(e)
-      return false
-   }
+	try {
+		if (!translate) return [nullTranslator(entry)]
+		const ret: string[][] = []
+		const tr = translate(entry.values, ctx)
+		if (typeof tr === 'string') {
+			ret.push([entry.wordName, tr])
+		} else if (tr instanceof Array) {
+			ret.push(...tr)
+		} else if (typeof tr === 'object') {
+			for (const key in tr as any) { ret.push([key, tr[key]]) }
+		} else {
+			ret.push(nullTranslator(entry))
+		}
+		return ret
+	} catch (e) {
+		ctx.log(e)
+		return false
+	}
 }
 
 export function nullTranslator(entry: Entry) {
-   return [entry.wordName, entry.values.join(',')]
+	return [entry.wordName, entry.values.join(',')]
 }
 
 export function objectAdjuster(entrys: string[][], adjusts: Record<string, WordHooks['adjust']>, ctx: HookCtx) {
-   try {
-      forIn(adjusts, (name, adjust) => {
-         const ret = adjust?.(entrys, ctx)
-         if (ret && ret instanceof Array) entrys = ret
-      })
-   } catch (e) {
-      ctx.log(e)
-      return false
-   }
-   return entrys
+	try {
+		forIn(adjusts, (name, adjust) => {
+			const ret = adjust?.(entrys, ctx)
+			if (ret && ret instanceof Array) entrys = ret
+		})
+	} catch (e) {
+		ctx.log(e)
+		return false
+	}
+	return entrys
 }
 
 
@@ -88,8 +88,8 @@ export function objectAdjuster(entrys: string[][], adjusts: Record<string, WordH
  * 为mapper创建handlers
  */
 export function createMapperHandlers(mapper: MapperRo) {
-   const handlers = [...mapper.outputList, 'start', 'final']
-   forIn(mapper.inputList, (key, val) => { handlers.push(val) })
-   const f = safeScript(mapper.handlerScript, handlers)
-   return f() as Record<string, MapperHandler>
+	const handlers = [...mapper.outputList, 'start', 'final']
+	forIn(mapper.inputList, (key, val) => { handlers.push(val) })
+	const f = safeScript(mapper.handlerScript, handlers)
+	return f() as Record<string, MapperHandler>
 }

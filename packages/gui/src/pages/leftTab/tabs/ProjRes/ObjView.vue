@@ -3,7 +3,7 @@ import { computed, ref, StyleValue, watchEffect } from 'vue';
 import iniSvg from '@/asset/icons/ini.svg?raw'
 import addonSvg from '@/asset/icons/addon.svg?raw'
 import { useStatusState } from '@/states/status';
-import { IniObjectRo } from '@ra2inier/core';
+import { IniObject, IniObjectRo } from '@ra2inier/core';
 import { useObjectCtxmenu, CtxItem } from './objectCtxmenu'
 import { useProjectStore } from '@/stores/projectStore';
 
@@ -37,7 +37,7 @@ const toggle = () => isSubitemShowed.value = !isSubitemShowed.value
 			<span :title="object.fullname" class="vertical-center" @click.stop="emit('open', props.object)"
 				@dblclick="toggle">
 				<i>{{ object.name }}</i><i>.</i>
-				<i>{{ object.scope }}</i>
+				<i>{{ object.scope || IniObject.DEFAULT_SCOPE_NAME }}</i>
 			</span>
 		</h2>
 		<ul v-show="isSubitemShowed">

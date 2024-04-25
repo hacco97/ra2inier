@@ -1,4 +1,3 @@
-export * from './hashcode'
 export * from './lang'
 export * from './object'
 export * from './service'

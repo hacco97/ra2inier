@@ -1,4 +1,4 @@
-import { Package, ValueSetKey, WordRo } from "../../boot"
+import { Package, ValueSetKey, WordRo } from "@ra2inier/core/boot"
 
 export class GraphWalker {
 	graph: Package[][] = []

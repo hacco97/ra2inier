@@ -1,5 +1,5 @@
 import { computed, ref, shallowReactive, StyleValue } from 'vue';
-import { cloneTyped, Entry, EventEmitter, IniObjectRo, removeFrom, } from '@ra2inier/core';
+import { cloneTyped, Entry, EventEmitter, IniObjectRo, removeFrom, UniqueObject, } from '@ra2inier/core';
 import { createEntryRo, EntryRo } from '@/states/Entry';
 
 const COLUMN_COUNT = Symbol('column count')
@@ -29,14 +29,21 @@ export class EditorState extends EventEmitter {
 	}
 
 	/**
-	 * 最终保存和提交数据的函数
+	 * 结算当前的编辑器的value，返回一个IniObjectRo实例
 	 */
 	get value() {
-		// 拷贝数据到原对象中
 		if (!this.data) return
 		const ret = cloneTyped(this.data, IniObjectRo)
-		ret.entry = []
+
+		// 更新版本
+		UniqueObject.update(ret)
+
+		// 结算细节
 		ret.detail = this.detail
+		ret.scope = ret.scope || IniObjectRo.DEFAULT_SCOPE_NAME
+
+		// 结算entry值
+		ret.entry = []
 		let tmp: Entry
 		for (let word of this.entrys) {
 			tmp = {
@@ -74,7 +81,7 @@ export class EditorState extends EventEmitter {
 			values: [val]
 		}))
 		this.reOrder()
-		return this.entrys.length - 1
+		return this.length - 1
 	}
 
 	/**
@@ -90,7 +97,7 @@ export class EditorState extends EventEmitter {
 	}
 
 	/**
-	 * 取消所有词条的选中
+	 * 删除所有选中的词条
 	 */
 	removeSelected() {
 		removeFrom(this.entrys, e => e.selected)

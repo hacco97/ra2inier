@@ -3,9 +3,6 @@
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.ts",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
 	"keywords": [],
 	"exports": {
 		".": "./index.ts",
@@ -14,7 +11,7 @@
 	},
 	"author": "",
 	"devDependencies": {
-		"@root": "workspace:./",
+		"@ra2inier/core": "./",
 		"@types/lodash": "^4.17.0",
 		"@types/node": "^20.12.7",
 		"lodash": "^4.17.21"

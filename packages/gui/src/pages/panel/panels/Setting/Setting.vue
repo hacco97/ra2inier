@@ -99,6 +99,10 @@ function onAddThemeClick() {
 			<span>消息显示等级：</span>
 			<Options :values="['1', '2', '3', '4']" />
 		</li>
+		<li>
+			<span>制表符大小：</span>
+			<Options :values="['1', '2', '3', '4', '5']" />
+		</li>
 		<h2>对象编辑器</h2>
 		<li>
 			<span>关闭标签时触发保存：</span>
@@ -114,6 +118,7 @@ function onAddThemeClick() {
 
 <style scoped lang='scss' module>
 $align: align-size(normal);
+
 .setting {
 	padding: $align 0;
 

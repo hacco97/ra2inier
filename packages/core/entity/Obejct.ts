@@ -26,7 +26,7 @@ export class UniqueObject implements IUniqueObject {
 	/**
 	 * 对象的版本值，对象在修改的时候的时间戳
 	 */
-	version: number
+	readonly version: number
 	/**
 	 * 对象对外可见的名字
 	 */
@@ -58,7 +58,7 @@ export class UniqueObject implements IUniqueObject {
 	 * 对外有重名时，使用全名可以加以区分
 	 */
 	get fullname() {
-		return `${this.name}.i${this.hash}.v${this.version}`
+		return `${this.name}.${this.hash}.${this.version.toString(36)}`
 	}
 
 	static getKey(object: UniqueObject) {
@@ -74,12 +74,16 @@ export class UniqueObject implements IUniqueObject {
 	}
 
 	static getFullname(object: UniqueObject) {
-		return `${object.name}.i${UniqueObject.getHash(object)}.v${object.version}`
+		return `${object.name}.${UniqueObject.getHash(object)}.${object.version.toString(36)}`
 	}
 
 	static getVString(version: number) {
 		const d = new Date(version)
 		return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
+	}
+
+	static update(object: UniqueObject) {
+		Reflect.set(object, 'version', Date.now())
 	}
 }
 
@@ -109,13 +113,18 @@ export interface Entry {
 
 export class IniObject extends UniqueObject {
 	/**
+	 * 默认的scope名字值
+	 */
+	static DEFAULT_SCOPE_NAME = 'NullTypes'
+
+	/**
 	 * 两级分组
 	 */
 	group: string = ''
 	/**
-	 * 记录scope对象的key值
+	 * 记录scope对象的name值
 	 */
-	scope: string = ''
+	scope: string = IniObject.DEFAULT_SCOPE_NAME
 	/**
 	 * 记录词条数据
 	 */

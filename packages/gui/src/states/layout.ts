@@ -84,10 +84,14 @@ const createLayoutState = () => {
 
 	// 全局遮罩
 	const isMasked = ref(false)
-	function closeMask(cb?: Function) {
-		cb?.()
+	function closeMask() {
 		isMasked.value = false
+		for (const cb of callback) {
+			if (typeof cb === 'function') cb()
+		}
+		callback = []
 	}
+	let callback: Function[] = []
 
 	return {
 		leftTabSize,
@@ -95,6 +99,9 @@ const createLayoutState = () => {
 		isMasked: computed(() => isMasked.value),
 		closeMask,
 		showMask() { isMasked.value = true },
+		onceCloseMask(cb: () => void) {
+			callback.push(cb)
+		}
 	}
 }
 

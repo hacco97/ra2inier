@@ -55,11 +55,11 @@ function onSubmitClick(dialog: Dialog) {
 				<!-- 选项 -->
 				<template v-if="dialog.type === DialogType.askIf && dialog.finished < 0">
 					<p>
-						<u v-svgicon="submitSvg" class="fore-button" :class="$style['bounce-box']"
+						<u v-svgicon="submitSvg" class="fore-button" :class="$style['bounce-box-success']"
 							@click="dialog.finish(true)"></u>
 						<span v-show="dialog.count > 0">({{ dialog.count }}s)</span>
 						<i style="width: 1ch;"></i>
-						<u v-svgicon="canselSvg" class="fore-button" :class="$style['bounce-box']"
+						<u v-svgicon="canselSvg" class="fore-button" :class="$style['bounce-box-fail']"
 							@click="dialog.finish(false)"></u>
 					</p>
 				</template>
@@ -123,14 +123,24 @@ $align: align-size(normal);
 	vertical-align: center;
 }
 
-@keyframes bounce {
+@keyframes bounce-success {
 	50% {
-		background-color: info-color(detail);
+		background-color: info-color(success);
 	}
 }
 
-.bounce-box {
-	animation: 1s bounce ease infinite;
+.bounce-box-success {
+	animation: 1s bounce-success ease infinite;
+}
+
+@keyframes bounce-fail {
+	50% {
+		background-color: info-color(error);
+	}
+}
+
+.bounce-box-fail {
+	animation: 1s bounce-fail ease infinite;
 }
 </style>
 

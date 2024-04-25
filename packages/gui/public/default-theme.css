@@ -109,7 +109,7 @@
 	/* 背景图片 */
 	/* lfp:// 表示图片在ra2 inier程序所在目录下的路径 */
 	/* 左上图标 */
-	--image-icon: url(favicon.svg) center / contain no-repeat;
+	--image-icon: url(lfp://custom/icons/favicontext.svg) center / contain no-repeat;
 	/* 编辑器背景 */
 	--image-editor: ;
 	/* 左侧边栏底纹 */
@@ -123,8 +123,10 @@
 
 /* logo */
 #favicon {
-	path {
-		fill: var(--plane-color-fore);
+	background-color: var(--plane-color-fore);
+
+	a {
+		filter: invert(1);
 	}
 }
 
